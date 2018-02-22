@@ -2,4 +2,5 @@
 
 export(Job)
 export(JobArray)
+export(JobInfo)
 export(getJobNumber)
