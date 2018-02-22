@@ -1,0 +1,13 @@
+Package: rSubmitter
+Title: A plataform to submit jobs to a High Performance Computing Cluster managed by SLURM
+Version: 0.1
+Authors@R: person("Pablo", "Garcia-Nieto", "Eduardo",
+                  email = "paedugar@gmail.com",
+                  role = c("aut", "cre"))
+Description: TODO
+Depends: R (>= 3.2.0)
+Imports:
+    R6
+License: GPL-3
+LazyData: true
+RoxygenNote: 6.0.1
