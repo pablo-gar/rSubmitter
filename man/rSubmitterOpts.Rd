@@ -4,7 +4,7 @@
 \name{rSubmitterOpts}
 \alias{rSubmitterOpts}
 \title{option enviroment}
-\format{An object of class \code{environment} of length 4.}
+\format{An object of class \code{environment} of length 6.}
 \usage{
 rSubmitterOpts
 }

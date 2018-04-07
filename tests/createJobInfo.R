@@ -1,3 +1,2 @@
 testClass <- JobInfo$new()
-
-testClass$printScript()
+testClass$printOptions()

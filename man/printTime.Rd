@@ -4,12 +4,12 @@
 \alias{printTime}
 \title{printTime}
 \usage{
-printTime(x = "", carriageReturn = F)
+printTime(..., carriageReturn = F)
 }
 \arguments{
-\item{x}{String}
-
 \item{carriageReturn}{Logical, if TRUE print a carriage return at the end of line}
+
+\item{x}{String}
 }
 \description{
 Prints to console the current date and time followed by

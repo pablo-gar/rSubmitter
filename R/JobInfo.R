@@ -1,35 +1,329 @@
-#' Class providing a basic plataform to store the options of a SLURM jobs
-#' Other more complex classes like Job and JobArray are children of this class
+#' Parent class of Job and JobArray
+#' 
+#' R6 Class providing an essential platform to process SLURM jobs.
+#' This class should not be explicitly used by the user.
+#' To create, manipulate, and submit SLURM jobs please refer to the Job and Job array classes
+#'
+#' @usage 
+#' x <- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
+#' x$wait(stopIfFailed = F, verbose = T)
+#' x$cancel()
+#' x$getState(simplify = F)
+#' x$clean()
 #'
 #' @docType class
 #' @export
-#' @keywords data
-#' @return Object of \code{\link{R6Class}} with methods for communication with lightning-viz server.
+#'
+#' @section Methods:
+#' \enumerate{
+#'  \item{Initialize}{
+#'      \cr
+#'      \code{x <- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)}
+#'      \cr Parameters:
+#'       \itemize{
+#'          \item{jobName} {: character - Name of job. Equivalent to \code{--job-name} of SLURM sbatch. Most output files use it as a suffix}
+#'          \item{outDir} {: character - writeable path for sabtch script as well as  SLRUM err and out files}
+#'          \item{partition} {: character - Partition to use. Equivalent to \code{--partition} of SLURM sbatch}
+#'          \item{time} {: character - Time requested for job execution, one accepted format is "HH:MM:SS". Equivalent to \code{--time} of SLURM sbatch}
+#'          \item{mem} {: character - Memory requested for job execution, one accepted format is "xG" or "xMB". Equivalent to \code{--mem} of SLURM sbatch}
+#'          \item{proc} {: integer - Number of processors requested per task. Equivalent to \code{--cpus-per-task} of SLURM sbatch}
+#'          \item{totalProc} {: integer - Number of nodes requested for job. Equivalent to \code{--nodes} of SLURM sbatch}
+#'          \item{email} {: character - email address to send info when job is done. Equivalent to \code{--nodes} of SLURM sbatch}
+#'          }
+#'      }
+#'      
+#'  \item{Wait for job(s) to finish}{
+#'      \cr
+#'      \code{x$wait(stopIfFailed = F, verbose = T)}
+#'      \cr Time between each job state check is defined in the entry TIME_WAIT_JOB_STATUS:seconds in the config file located at ~/.rSubmitter
+#'      \cr Parameters:
+#'       \itemize{
+#'          \item{stopIfFailed} {: logical -  if TRUE stops when one job has failed (only useful for JobArray) it then cancels the 
+#'                                  rest of the pending and running jobs. If FALSE and one or more Jobs failed it raises a warning for each failed job}
+#'          \item{verbose} {: logical -  if TRUE prints the job state(s) at every check}
+#'          }
+#'      \cr Return: data.frame - With SLURM states
+#'      }
+#'
+#'  \item{Cancel job(s)}{
+#'      \cr
+#'      \code{x$cancel()}
+#'      }
+#' 
+#'  \item{Get job(s) state}{
+#'      \cr
+#'      \code{x$getState(simplify = F)}
+#'      \cr Parameters:
+#'       \itemize{
+#'          \item{simplify} {: logical - if TRUE returns a freqeuncy data.frame of job states, otherwise returns individual jobs and their associated job names, job ids, and states}
+#'          }
+#'      \cr Return: data.frame - With SLURM states
+#'      }
+#'
+#'  \item{Remove SLURM-associated files}{
+#'      \cr
+#'      \code{x$clean(script = TRUE, out = TRUE, err = TRUE)}
+#'      \cr Parameters:
+#'       \itemize{
+#'          \item{script} {: logical - if TRUE deletes sbatch submission script(s) associated to this object}
+#'          \item{out} {: logical - if TRUE deletes STDOUT file(s) from SLURM associated to this object} 
+#'          \item{err} {: logical - if TRUE deletes STDERR file(s) from SLURM associated to this object}
+#'          }
+#'      }
+#'  }
+#'
+#'
+#' @return \code{\link{R6Class}} with methods and fields for SLURM job manipulation
 #' @format \code{\link{R6Class}} object.
 #' @examples
-#' Lightning$new("http://localhost:3000/")
-#' Lightning$new("http://your-lightning.herokuapp.com/")
-#' @field serveraddress Stores address of your lightning server.
-#' @field sessionid Stores id of your current session on the server.
-#' @field url Stores url of the last visualization created by this object.
-#' @field autoopen Checks if the server is automatically opening the visualizations.
-#' @field notebook Checks if the server is in the jupyter notebook mode.
-#' #' @section Methods:
-#' \describe{
-#'   \item{Documentation}{For full documentation of each method go to https://github.com/lightning-viz/lightining-r/}
-#'   \item{\code{new(serveraddress)}}{This method is used to create object of this class with \code{serveraddress} as address of the server object is connecting to.}
+#' jobInfo <- JobInfo$new()
 #'
-#'   \item{\code{sethost(serveraddress)}}{This method changes server that you are contacting with to \code{serveraddress}.}
+
+# TODO:
+# - Implement finding out the number of pending jobs from an array
 
 JobInfo <- R6::R6Class(classname = "JobInfo",
                        public = list(
                                      #Instances
                                      
                                      #Methods
-                                      #' createScriptVector
-                                      #'
-                                      #' creates a private vector where each element is one line for
-                                      #' a submission script containing the options of the script
+                                     initialize = function(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, 
+                                                           totalProc = NULL, nodes = NULL, email = NULL){
+                                         #Set defaults
+                                         if(is.null(outDir))
+                                             outDir <- getwd()
+                                         if(is.null(jobName))
+                                             jobName <- paste(c("rSubmitter_job_", as.character(sample(0:9, 10, T))), collapse="")
+                                         
+                                         #Validate args
+                                         if(!is.character(jobName))
+                                             stop("jobName argument has to be character")
+                                         if(!is.character(outDir) | !dir.exists(outDir))
+                                             stop("outDir argument has to be character and a valid path")
+                                         if(!is.character(partition) & !is.null(partition))
+                                             stop("partition argument has to be character or NULL")
+                                         if(!is.character(time) & !is.null(time))
+                                             stop("time argument has to be character or NULL")
+                                         if(!is.character(time) & !is.null(time))
+                                             stop("time argument has to be character or NULL")
+                                         if(!is.character(mem) & !is.null(mem))
+                                             stop("mem argument has to be character or NULL")
+                                         if(!is.integer(proc) & !is.null(proc))
+                                             stop("proc argument has to be numeric or NULL")
+                                         if(!is.integer(totalProc) & !is.null(totalProc))
+                                             stop("totalProc argument has to be numeric or NULL")
+                                         if(!is.numeric(nodes) & !is.null(nodes))
+                                             stop("nodes argument has to be numeric or NULL")
+                                         if(!is.character(email) & !is.null(email))
+                                             stop("email argument has to be character or NULL")
+                                         
+                                         
+                                         outDir <- path.expand(outDir)
+                                         
+                                         #Set instances
+                                         private$jobName <- jobName
+                                         private$outDir <- outDir
+                                         private$partition <- partition
+                                         private$time <- time
+                                         private$mem <- mem
+                                         private$proc <- proc
+                                         private$totalProc <- totalProc
+                                         private$nodes <- nodes
+                                         private$email <- email
+                                         private$maxJobs <- as.numeric(rSubmitterOpts$MAX_JOBS_ALLOWED)
+                                         private$timeWaitMaxjobs <- as.numeric(rSubmitterOpts$TIME_WAIT_MAX_JOBS)
+                                         private$username <- rSubmitterOpts$USERNAME
+                                         private$scriptPath <- file.path(outDir, paste0(jobName , ".batch"))
+                                         private$outPath <- file.path(outDir, paste0(jobName , ".out"))
+                                         private$errPath <- file.path(outDir, paste0(jobName , ".err"))
+                                         private$waitForCompletion <- rSubmitterOpts$TIME_WAIT_JOB_STATUS
+                                         
+                                         private$dateCreation <- format(Sys.time() - 1,"%m/%d/%y-%H:%M:%S")
+                                     },
+                                      
+                                     printOptions = function() {
+                                         cat(paste0(private$scriptVector, collapse = "\n"), "\n")
+                                     },
+                                     
+                                     
+                                     # getState (simplify = F)
+                                     # Gets a state table as a data.frame with 3 columns
+                                     # jobId, jobName, and jobState
+                                     #
+                                     # If simplify is TRUE it returns a frequency table of unique
+                                     # state
+                                     #
+                                     # @param simplify - Logical, if true it returns a frequncy table
+                                     # @return data.frame or table object
+                                     getState = function(simplify = F) {
+                                         if(is.null(private$jobId))
+                                             stop("Not job id associated yet, make sure to submit job first, i.e. x$submit()")
+                                         
+                                         jobInfo <- getJobState(private$jobId, dateJob = private$dateCreation)
+                                         
+                                         if(simplify) {
+                                             if(private$isJobArray)
+                                                 jobInfo <- private$expandJobArrayStates(jobInfo)
+                                             jobInfo <- table(jobInfo$jobState)
+                                         }
+                                         
+                                         return(jobInfo)
+                                     }, 
+                                     
+                                     # clean(script = TRUE, out = TRUE, err = TRUE)
+                                     # Eliminate one or more of the job-associated files, i.e. sbatch script, erro and output from SLURM
+                                     # @param script  Logical - if TRUE deletes sbatch submission script 
+                                     # @param out  Logical - if TRUE deletes output from SLURM
+                                     # @param err Logical - if TRUE deletes error file(s) from SLURM
+                                     clean = function(script = TRUE, out = TRUE, err = TRUE) {
+                                         
+                                         if(!private$areAllDone())
+                                             stop("Cannot remove files now because jobs are not finished. Consider doing x$wait() and then x$removeJobFiles()")
+                                         
+                                         if(script) 
+                                             file.remove(private$scriptPath)
+                                         
+                                         if(out) {
+                                             toRemove <- private$outPath
+                                             if(private$isJobArray)
+                                                 toRemove <- gsub("_%A_%a", "*", toRemove)
+                                             file.remove(Sys.glob(toRemove))
+                                         }
+                                         
+                                         if(err) {
+                                             toRemove <- private$errPath
+                                             if(private$isJobArray)
+                                                 toRemove <- gsub("_%A_%a", "*", toRemove)
+                                             file.remove(Sys.glob(toRemove))
+                                         }
+                                         
+                                         return(invisible(self))
+                                     },
+                                     
+                                     # cancel()
+                                     # Cancel a job
+                                     cancel = function() {
+                                         
+                                         if(!private$isSubmitted)
+                                            stop("Can't cancel. Job(s) has not been submitted. Consider doing x$submit()")
+                                         
+                                         stateTable <- self$getState()
+                                         jobsToCancel <- stateTable[stateTable$jobState %in% private$running, "jobId"]
+                                         if(private$isJobArray) {
+                                             nJobs <- sum(private$expandJobArrayStates(stateTable)$jobState %in% private$running)
+                                         } else {
+                                             nJobs <- length(jobsToCancel)
+                                         }
+                                         
+                                         if(length(jobsToCancel) == 0) {
+                                             warning("\nNo jobs to cancel, potential reasons:\n",
+                                                     "   1. Jobs are still in the process of submission\n",
+                                                     "   2. All jobs were completed already\n",
+                                                     "   3. There are no existing jobs\n",
+                                                     "To troubleshoot do x$getState()\n")
+                                         } else {
+                                             printTime("Cancelling ", nJobs, " job(s)\n")
+                                             cancelJob(jobsToCancel)
+                                             printTime("Finished sending cancel signal\n")
+                                         }
+                                         
+                                         return(invisible(self))
+                                     },
+                                     
+                                     # wait(stopIfFailed = F, verbose = T)
+                                     # Waits for the submmited job(s) to be completed
+                                     # Time in between each status check can be set in the config file
+                                     # located at ~/.rSubmitter in the entry TIME_WAIT_JOB_STATUS:seconds
+                                     #
+                                     # @param stopIfFailed Logical - if TRUE stops waiting when one job has failed (only useful for 
+                                     #                        JobArray), it then cancels the rests of the pending and running jobs.
+                                     #                        If FALSE and one or more Jobs failed it raises warnings for each failed
+                                     #                        job.
+                                     # @param verbose Logical - if TRUE prints the job state(s) at every check.
+                                     # @return self
+                                     wait = function(stopIfFailed = F, verbose = T) {
+                                         
+                                          while(TRUE) {
+                                              Sys.sleep(private$waitForCompletion)
+                                              stateTable <- self$getState() 
+                                              
+                                              if(private$isJobArray) 
+                                                  stateTable <- private$expandJobArrayStates(stateTable)
+                                              
+                                              state <- stateTable$jobState
+                                              
+                                              if(verbose) {
+                                                  jobStatesFreq <- table(state)
+                                                  
+                                                  cat("\33[2K")
+                                                  printTime("--- Cluster Status |", carriageReturn = T )
+                                                  for(s in names(jobStatesFreq))
+                                                      cat(" ", s, "=", jobStatesFreq[s], "|")
+                                              }
+                                                  
+                                              if(any(state %in% private$failed)) {
+                                                  failed <- stateTable[state %in% private$failed,]
+                                                  failedPaths <- file.path(dirname(private$errPath), paste0(failed$jobName, "_", failed$jobId, ".[err|out]"))
+                                                  
+                                                  if(stopIfFailed) {
+                                                      if(verbose)
+                                                          cat("\n")
+                                                      self$cancel()
+                                                      stop("\nOne or more jobs failed. All jobs have now been cancelled. Failed jobs SLURM files:\n", paste(failedPaths, collapse = "\n"))
+                                                  }                                                  
+                                                  
+                                              }
+                                              
+                                              if(all(state %in% c(private$completed, private$failed)))
+                                                  break
+                                          }
+                                     
+                                          if(verbose)
+                                              cat("\n")
+                                          
+                                          if(!stopIfFailed & any(state %in% private$failed))
+                                              warning("\nOne or more jobs failed. Failed jobs SLURM files:\n", paste(failedPaths, collapse = "\n"))
+                                          
+                                          return(invisible(self))
+                                      }
+
+                                      
+                                     ),
+                       
+                       private = list(
+                                      
+                                      #Instances
+                                      scriptVector = vector(),
+                                      jobName = NULL,
+                                      isJobArray = FALSE,
+                                      isSubmitted = FALSE,
+                                      outDir = NULL,
+                                      partition = NULL,
+                                      time = NULL,
+                                      mem = NULL,
+                                      proc = NULL,
+                                      totalProc = NULL,
+                                      nodes = NULL,
+                                      email = NULL,
+                                      maxJobs = NULL,
+                                      timeWaitMaxjobs = NULL,
+                                      username = NULL,
+                                      scriptPath = NULL,
+                                      outPath = NULL,
+                                      errPath = NULL,
+                                      jobId = NULL,
+                                      waitForCompletion = NULL,
+                                      dateCreation = NULL,
+                                      completed = "COMPLETED",
+                                      failed = c("FAILED", "TIMEOUT", "CANCELLED", "NODE_FAIL", "BOOT_FAIL", "DEADLINE", "OUT_OF_MEMORY"),
+                                      running = c("CONFIGURING", "PENDING", "RUNNING", "RESIZING", "SUSPENDED", "PREEMPTED", "COMPLETING"),
+                                      notAvail = c("NOTAVAIL"),
+                                      
+                                      #Methods
+                                      # createScriptVector
+                                      #
+                                      # creates a private vector where each element is one line for
+                                      # a submission script containing the options of the script
                                       createScriptVector = function() {
                                           arg <- "#SBATCH "
                                           args <- "#!/bin/bash\n"
@@ -53,292 +347,91 @@ JobInfo <- R6::R6Class(classname = "JobInfo",
                                           if (!is.null(private$totalProc))    
                                               args <- c(args, paste0(arg , "--ntasks=" , as.character(private$totalProc)))
                                           
+                                          
                                           private$scriptVector <- args
                                       },
                                       
-                                      printScript = function() {
-                                          cat(paste0(private$scriptVector, collapse = "\n"), "\n")
+                                      # Logical functions to assess job states
+                                      areAllDone = function() {
+                                          return(all(self$getState()$jobState %in% c(private$completed, private$failed)))
                                       },
                                       
-                                     initialize = function(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, 
-                                                           totalProc = NULL, nodes = NULL, email = NULL, maxJobs = NULL){
-                                         #Set defaults
-                                         if(is.null(outDir))
-                                             outDir <- getwd()
-                                         if(is.null(jobName))
-                                             jobName <- paste(c("rSubmitter_job_", as.character(sample(0:9, 10, T))), collapse="")
-                                         
-                                         #Validate args
-                                         if(!is.character(jobName))
-                                             stop("jobName argument has to be character")
-                                         if(!is.character(outDir) | !dir.exists(outDir))
-                                             stop("outDir argument has to be character and a valid path")
-                                         if(!is.character(partition) & !is.null(partition))
-                                             stop("partition argument has to be character or NULL")
-                                         if(!is.character(time) & !is.null(time))
-                                             stop("time argument has to be character or NULL")
-                                         if(!is.character(time) & !is.null(time))
-                                             stop("time argument has to be character or NULL")
-                                         if(!is.character(mem) & !is.null(mem))
-                                             stop("mem argument has to be character or NULL")
-                                         if(!is.numeric(proc) & !is.null(proc))
-                                             stop("proc argument has to be numeric or NULL")
-                                         if(!is.numeric(totalProc) & !is.null(totalProc))
-                                             stop("totalProc argument has to be numeric or NULL")
-                                         if(!is.numeric(nodes) & !is.null(nodes))
-                                             stop("nodes argument has to be numeric or NULL")
-                                         if(!is.character(email) & !is.null(email))
-                                             stop("email argument has to be character or NULL")
-                                         if(!is.numeric(maxJobs) & !is.null(maxJobs))
-                                             stop("maxJobs argument has to be numeric or NULL")
-                                         
-                                         
-                                         outDir <- path.expand(outDir)
-                                         
-                                         #Set instances
-                                         private$jobName <- jobName
-                                         private$outDir <- outDir
-                                         private$partition <- partition
-                                         private$time <- time
-                                         private$mem <- mem
-                                         private$proc <- proc
-                                         private$totalProc <- totalProc
-                                         private$nodes <- nodes
-                                         private$email <- email
-                                         private$maxJobs <- rSubmitterOpts$MAX_JOBS_ALLOWED
-                                         private$timeWaitMaxjobs <- rSubmitterOpts$TIME_WAIT_MAX_JOBS
-                                         private$username <- rSubmitterOpts$USERNAME
-                                         private$scriptPath <- file.path(outDir, paste0(jobName , ".batch"))
-                                         private$outPath <- file.path(outDir, paste0(jobName , ".out"))
-                                         private$errPath <- file.path(outDir, paste0(jobName , ".err"))
-                                     }
-                                     ),
-                       
-                       private = list(
+                                      areAllCompleted = function() {
+                                          return(all(self$getState()$jobState %in% private$completed))
+                                      },
                                       
-                                      #Instances
-                                      scriptVector = vector(),
-                                      jobName = NULL,
-                                      outDir = NULL,
-                                      partition = NULL,
-                                      time = NULL,
-                                      mem = NULL,
-                                      proc = NULL,
-                                      totalProc = NULL,
-                                      nodes = NULL,
-                                      email = NULL,
-                                      maxJobs = NULL,
-                                      timeWaitMaxjobs = NULL,
-                                      username = NULL,
-                                      scriptPath = NULL,
-                                      outPath = NULL,
-                                      errPath = NULL,
-                                      jobId = NULL,
-                                      waitForCompletion = 10,
-                                      completed = "COMPLETED",
-                                      failed = c("FAILED", "TIMEOUT", "CANCELLED", "NODE_FAIL")
+                                      areAllFailed = function() {
+                                          return(all(self$getState()$jobState %in% private$failed))
+                                      },
                                       
-                                      #Methods
+                                      areAllRunning = function() {
+                                          return(all(self$getState()$jobState %in% private$running))
+                                      },
                                       
+                                      areAllNotAvail = function() {
+                                          return(all(self$getState()$jobState %in% private$notAvail))
+                                      },
+                                      
+                                      
+                                      isCompleted = function () {
+                                          return(any(self$getState()$jobState %in% private$completed))
+                                      }, 
+                                      
+                                      isFailed = function () {
+                                          return(any(self$getState()$jobState %in% private$failed))
+                                      }, 
+                                      
+                                      isRunning = function() {
+                                          return(any(self$getState()$jobState %in% private$running))
+                                      }, 
+                                      
+                                      isNotAvail = function() {
+                                          return(any(self$getState()$jobState %in% private$notAvail))
+                                      },
+                                      
+                                      # Functions to retrieve number of different types of jobs
+                                      nRunning = function() {
+                                          return(sum(self$getState()$jobState %in% private$running))
+                                      },
+                                      
+                                      # expandJobArrayStates
+                                      # from a state table obtain from public$getState()
+                                      # It expands any jobs of the form jobId_[1-100] to multiple rows 
+                                      # of the form jobId_1, jobId_2, ... , jobId_100
+                                      expandJobArrayStates = function(jobStateTable) {
+                                          
+                                          toExpand <- grepl("_\\[", jobStateTable$jobId)
+                                          if(any(toExpand)) {
+                                              toExpandTable <- jobStateTable[toExpand,]
+                                              
+                                              jobIds <-  gsub("(.+)_\\[\\d+-\\d+\\]", "\\1", toExpandTable$jobId)
+                                              fromI <- gsub(".+_\\[(\\d+)-\\d+\\]", "\\1", toExpandTable$jobId)
+                                              toI <-  gsub(".+_\\[\\d+-(\\d+)\\]", "\\1", toExpandTable$jobId)
+                                              
+                                              expanded <- list()
+                                              for (i in 1:nrow(toExpandTable)){
+                                                  expanded[[i]] <- data.frame(jobId = paste0(jobIds[i], "_", seq(fromI[i], toI[i])), 
+                                                                              jobName = toExpandTable[i,"jobName"], 
+                                                                              jobState = toExpandTable[i,"jobState"])
+                                              }
+                                              
+                                              expanded[[i+1]] <- jobStateTable[!toExpand,]
+                                              jobStateTable <- do.call(rbind, expanded)
+                                          }
+                                          
+                                          return(jobStateTable)
+                                      },
+                                      
+                                      errorIfSubmittedRunning = function() {
+                                          if(private$isSubmitted) {
+                                              if(!private$areAllDone()) {
+                                                  stop("Can't submit. There is current job(s) running from this object. Consider doing x$cancel()")
+                                              }
+                                          }
+                                      }
                                       
                                       )
                        
                        )
                        
 
-#Job <- R6::R6Class(classname = "Job",
-#               public = list(
-#                             #Instances
-#                             
-#                             #Methods
-#                             initialize = function(commandList, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL, maxJobs = NULL){
-#                                 
-#                                 #Set defaults
-#                                 if(is.null(outDir))
-#                                     outDir <- getwd()
-#                                 if(is.null(jobName))
-#                                     jobName <- paste(c("rSubmitter_job_", as.character(sample(0:9, 10, T))), collapse="")
-#                                 
-#                                 #Validate args
-#                                 if(!is.character(commandList))
-#                                     stop("commandList argument has to be character")
-#                                 if(!is.character(jobName))
-#                                     stop("jobName argument has to be character")
-#                                 if(!is.character(outDir) | !dir.exists(outDir))
-#                                     stop("outDir argument has to be character and a valid path")
-#                                 if(!is.character(partition) & !is.null(partition))
-#                                     stop("partition argument has to be character or NULL")
-#                                 if(!is.character(time) & !is.null(time))
-#                                     stop("time argument has to be character or NULL")
-#                                 if(!is.character(time) & !is.null(time))
-#                                     stop("time argument has to be character or NULL")
-#                                 if(!is.character(mem) & !is.null(mem))
-#                                     stop("mem argument has to be character or NULL")
-#                                 if(!is.numeric(proc) & !is.null(proc))
-#                                     stop("proc argument has to be numeric or NULL")
-#                                 if(!is.numeric(totalProc) & !is.null(totalProc))
-#                                     stop("totalProc argument has to be numeric or NULL")
-#                                 if(!is.numeric(nodes) & !is.null(nodes))
-#                                     stop("nodes argument has to be numeric or NULL")
-#                                 if(!is.character(email) & !is.null(email))
-#                                     stop("email argument has to be character or NULL")
-#                                 if(!is.numeric(maxJobs) & !is.null(maxJobs))
-#                                     stop("maxJobs argument has to be numeric or NULL")
-#                                 
-#                                 
-#                                 outDir <- path.expand(outDir)
-#                                 
-#                                 #Set instances
-#                                 private$commandList <- commandList
-#                                 private$jobName <- jobName
-#                                 private$outDir <- outDir
-#                                 private$partition <- partition
-#                                 private$time <- time
-#                                 private$mem <- mem
-#                                 private$proc <- proc
-#                                 private$totalProc <- totalProc
-#                                 private$nodes <- nodes
-#                                 private$email <- email
-#                                 private$maxJobs <- rSubmitterOpts$MAX_JOBS_ALLOWED
-#                                 private$timeWaitMaxjobs <- rSubmitterOpts$TIME_WAIT_MAX_JOBS
-#                                 private$username <- rSubmitterOpts$USERNAME
-#                                 private$scriptPath <- file.path(outDir, paste0(jobName , ".batch"))
-#                                 private$outPath <- file.path(outDir, paste0(jobName , ".out"))
-#                                 private$errPath <- file.path(outDir, paste0(jobName , ".err"))
-#
-#                             },
-#                             
-#                             #' submit 
-#                             #'
-#                             #' The central method of the job class. It submits a job to a SLURM cluster
-#                             #' see ?job for details
-#                             #'
-#                             #' @param removeScript Logical - if True the bash script use to submit thorugh sbatch is deleted 
-#                             #'
-#                             #' @return job - returns self invisibly for method concatenation 
-#                             submit = function(removeScript = FALSE) {
-#                                 
-#                                 # Write submission script
-#                                 private$writeSubmissionScript()
-# 
-#                                 # Wait if the number of Jobs allowed has been exceeded
-#                                 if (!is.null(private$maxJobs)) {
-#                                     while(getJobNumber() >= private$maxJobs) {
-#                                         Sys.sleep(private$timeWaitMaxjob)
-#                                     }
-#                                 }
-#                                 
-#                                 # Submitting jobs
-#                                 private$jobId <- systemSubmit(paste("sbatch --parsable", private$scriptPath), wait = rSubmitterOpts$TIME_WAIT_FAILED_CMD, ignore.stdout = F)
-#                                
-#                                 # Delete script if asked for
-#                                 if (removeScript)
-#                                     file.remove(private$scriptPath)
-#                                 
-#                                 return(invisible(self))
-#                             },
-#                             
-#                             #' Gets state of job
-#                             getState = function() {
-#                                 if(is.null(private$jobId))
-#                                     stop("Not job id associated yet, make sure to submit job first, i.e. x$submit()")
-#                                 jobInfo <- getJobState(private$jobId)
-#                                 return(jobInfo)
-#                             },
-#                             
-#                             #' Waits for job to finish
-#                             wait = function() {
-#                                 
-#                                 while(TRUE) {
-#                                     state <- self$getState()
-#                                     if(any(state %in% private$completed) | any(state %in% private$failed))
-#                                         break
-#                                     Sys.sleep(private$waitForCompletion)
-#                                 }
-#                                 
-#                                 return(invisible(self))
-#                             },
-#                             
-#                             getJobId = function() {
-#                                 return(private$jobId)
-#                             },
-#                             
-#                             getJobName = function() {
-#                                 return(private$jobName)
-#                             },
-#                             
-#                             removeSLURMfiles = function() {
-#                                 file.remove(private$scriptPath, private$outPath, private$errPath)
-#                                 return(invisible(self))
-#                             }
-#                             
-#                             
-#                             
-#                             
-#                             ),
-#               
-#               private = list(
-#                              #Instances
-#                              commandList = vector(),
-#                              jobName = NULL,
-#                              outDir = NULL,
-#                              partition = NULL,
-#                              time = NULL,
-#                              mem = NULL,
-#                              proc = NULL,
-#                              totalProc = NULL,
-#                              nodes = NULL,
-#                              email = NULL,
-#                              maxJobs = NULL,
-#                              timeWaitMaxjobs = NULL,
-#                              username = NULL,
-#                              scriptPath = NULL,
-#                              outPath = NULL,
-#                              errPath = NULL,
-#                              jobId = NULL,
-#                              waitForCompletion = 10,
-#                              completed = "COMPLETED",
-#                              failed = c("FAILED", "TIMEOUT", "CANCELLED", "NODE_FAIL"),
-#                              
-#                              # Write submission script
-#                              
-#                              #Methods
-#                              writeSubmissionScript = function() {
-#                                  
-#                                  arg <- "#SBATCH "
-#                                  args <- "#!/bin/bash\n"
-#                                  args <- c(args, paste0(arg , "--job-name=" , private$jobName))
-#                                  args <- c(args, paste0(arg , "--output=" , private$outPath))
-#                                  args <- c(args, paste0(arg , "--error=" , private$errPath))
-#                                  if (!is.null(private$partition)) 
-#                                      args <- c(args, paste0(arg , "--partition=" , private$partition))
-#                                  if (!is.null(private$time)) 
-#                                      args <- c(args, paste0(arg , "--time=" , private$time))
-#                                  if (!is.null(private$nodes)) 
-#                                      args <- c(args, paste0(arg , "--nodes=" , as.character(private$nodes)))
-#                                  if (!is.null(private$mem)) 
-#                                      args <- c(args, paste0(arg , "--mem=" , private$mem))
-#                                  if (!is.null(private$email)){ 
-#                                      args <- c(args, paste0(arg , "--mail-type=END"))
-#                                      args <- c(args, paste0(arg , "--mail-user=" , private$email))
-#                                  }
-#                                  if (!is.null(private$proc)) 
-#                                      args <- c(args, paste0(arg , "--cpus-per-task=" , as.character(private$proc)))
-#                                  if (!is.null(private$totalProc))    
-#                                      args <- c(args, paste0(arg , "--ntasks=" , as.character(private$totalProc)))
-#                                  
-#                                  args <- c(args, private$commandList)
-#                                  
-#                                  
-#                                  # Writing submmision script for sbatch SLURM
-#                                  writeLines(args, private$scriptPath)
-#                                                  
-#                                  return(NULL)
-#                              }
-#                              
-#                              
-#                              )
-#               
-#               
-#               
-#               )

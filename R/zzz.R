@@ -8,15 +8,17 @@ rSubmitterOpts <- new.env(parent = emptyenv())
     
     
     # Numeric options
-    numericOptions <- c("MAX_JOBS_ALLOWED", "TIME_WAIT_MAX_JOBS", "TIME_WAIT_FAILED_CMD")
+    numericOptions <- c("MAX_JOBS_ALLOWED", "TIME_WAIT_MAX_JOBS", "TIME_WAIT_FAILED_CMD", "TIME_WAIT_JOB_STATUS", "MAX_JOB_ARRAY_LENGTH")
     editableOptions <- c(numericOptions) # Add more options here
     
     
     # Get options
     assign("USERNAME", Sys.info()["user"], envir = rSubmitterOpts)
-    assign("MAX_JOBS_ALLOWED", NULL, envir = rSubmitterOpts)
+    assign("MAX_JOBS_ALLOWED", 1999, envir = rSubmitterOpts)
     assign("TIME_WAIT_MAX_JOBS", 60, envir = rSubmitterOpts)
     assign("TIME_WAIT_FAILED_CMD", 5, envir = rSubmitterOpts)
+    assign("TIME_WAIT_JOB_STATUS", 5, envir = rSubmitterOpts)
+    assign("MAX_JOB_ARRAY_LENGTH", getMaxJobArrayLength(), envir = rSubmitterOpts)
     
     # Look for profile file and overwrite options
     profileFile <- path.expand("~/.rSubmitter")
@@ -37,6 +39,14 @@ rSubmitterOpts <- new.env(parent = emptyenv())
                     value <- suppressWarnings(as.numeric(value))
                 if(is.na(value))
                     stop("Invalid value for: ", key)
+                
+                if(key == "MAX_JOB_ARRAY_LENGTH" & value > rSubmitterOpts$MAX_JOB_ARRAY_LENGTH){
+                    cat("\nWARNING!\n", 
+                        "   MAX_JOB_ARRAY_LENGTH specified in ~/.rSubmitter is greater than maximum\n", 
+                        "allowed by your SLURM system(", rSubmitterOpts$MAX_JOB_ARRAY_LENGTH, 
+                        "), this can bring problems for JobArray objects\n", 
+                        "   Strongly consider changing MAX_JOB_ARRAY_LENGTH to ", rSubmitterOpts$MAX_JOB_ARRAY_LENGTH, "\n\n")
+                }
                 assign(key, value, envir = rSubmitterOpts)
             }
             cat("Options updated\n")
@@ -44,4 +54,21 @@ rSubmitterOpts <- new.env(parent = emptyenv())
         }
     }
         
+}
+
+#' getMaxJobArrayLength
+#' Internal function for .onAttach that get the maximum length for a Job array
+#' from the SLURM config file
+getMaxJobArrayLength <- function() {
+    maxArrayLength <- system("scontrol show config | grep MaxArraySize", intern = T)
+    maxArrayLength <- gsub("\\s*", "", maxArrayLength)
+    maxArrayLength <- gsub("\\w+=(\\d+)", "\\1", maxArrayLength)
+    if(nchar(maxArrayLength) > 0) {
+        maxArrayLength <- as.numeric(maxArrayLength) - 1
+    } else {
+        cat("Warning: Could not retrieve MaxArraySize from SLRUM config. Setting MAX_JOB_ARRAY_LENGTH to 500, you can change this value in ~/.rSubmitter")
+        maxArrayLength <- 500
+    }
+    
+    return(maxArrayLength)
 }

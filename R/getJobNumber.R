@@ -7,7 +7,21 @@
 #' @export
 getJobNumber <- function(user = Sys.info()["user"]) {
     
-    jobNumber <- systemSubmit(paste0("squeue -u ", user, " | wc -l"), wait = rSubmitterOpts$TIME_WAIT_FAILED_CMD, intern = TRUE, ignore.stderr = TRUE, ignore.stdout = FALSE)
+    currentJobs <- systemSubmit(paste0("squeue -u ", user), wait = rSubmitterOpts$TIME_WAIT_FAILED_CMD, intern = TRUE, ignore.stderr = TRUE, ignore.stdout = FALSE)
+    jobNumber <- length(currentJobs)
+    
+    # See if there are any job arrays
+    toExpand <- grepl("_\\[", currentJobs)
+    if(any(toExpand)){
+        toExpand <- currentJobs[toExpand]
+        for(row in toExpand) {
+            fromI <- as.numeric(gsub(".+_\\[(\\d+)-\\d+\\].+", "\\1", row))
+            toI <-  as.numeric(gsub(".+_\\[\\d+-(\\d+)\\].+", "\\1", row))
+            
+            jobNumber <- jobNumber + toI - fromI
+        }
+    }
+    
     jobNumber <- as.integer(jobNumber) - 1
     return(jobNumber)
     

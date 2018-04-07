@@ -7,8 +7,9 @@
 #' @param carriageReturn Logical, if TRUE print a carriage return at the end of line
 #' @examples
 #' printTime(": is right now")
-printTime <- function(x = "", carriageReturn = F) {
+printTime <- function(..., carriageReturn = F) {
 	
+    x <- paste0(..., collapse = "")
 	first = ""
 	if(carriageReturn) first = "\r"
 	

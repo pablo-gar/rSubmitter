@@ -1,85 +1,103 @@
-#' Class providing object with methods for communication with lightning-viz server
+#' Job class
+#' 
+#' R6 Class that enables easy submission and manipulations of individual shell jobs to a SLURM cluster.
+#' Concatenation is possible for most methods. 
+#' Submission is achived by creating and executing a sbatch script, for more details on SLURM refer
+#' to \url{https://slurm.schedmd.com/}
+#'
+#' @usage 
+#' x <- Job$new(commandVector, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
+#' x$wait(stopIfFailed = F, verbose = T)
+#' x$cancel()
+#' x$getState(simplify = F)
+#' x$clean()
 #'
 #' @docType class
 #' @export
-#' @keywords data
-#' @return Object of \code{\link{R6Class}} with methods for communication with lightning-viz server.
+#'
+#' @section Methods:
+#' \enumerate{
+#'  \item{Initialize}{
+#'      \cr
+#'      \code{x <- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)}
+#'      \cr Parameters:
+#'       \itemize{
+#'          \item{jobName} {: character - Name of job. Equivalent to \code{--job-name} of SLURM sbatch. Most output files use it as a suffix}
+#'          \item{outDir} {: character - writeable path for sabtch script as well as  SLRUM err and out files}
+#'          \item{partition} {: character - Partition to use. Equivalent to \code{--partition} of SLURM sbatch}
+#'          \item{time} {: character - Time requested for job execution, one accepted format is "HH:MM:SS". Equivalent to \code{--time} of SLURM sbatch}
+#'          \item{mem} {: character - Memory requested for job execution, one accepted format is "xG" or "xMB". Equivalent to \code{--mem} of SLURM sbatch}
+#'          \item{proc} {: integer - Number of processors requested per task. Equivalent to \code{--cpus-per-task} of SLURM sbatch}
+#'          \item{totalProc} {: integer - Number of nodes requested for job. Equivalent to \code{--nodes} of SLURM sbatch}
+#'          \item{email} {: character - email address to send info when job is done. Equivalent to \code{--nodes} of SLURM sbatch}
+#'          }
+#'      }
+#'      
+#'  \item{Wait for job(s) to finish}{
+#'      \cr
+#'      \code{x$wait(stopIfFailed = F, verbose = T)}
+#'      \cr Time between each job state check is defined in the entry TIME_WAIT_JOB_STATUS:seconds in the config file located at ~/.rSubmitter
+#'      \cr Parameters:
+#'       \itemize{
+#'          \item{stopIfFailed} {: logical -  if TRUE stops when one job has failed (only useful for JobArray) it then cancels the 
+#'                                  rest of the pending and running jobs. If FALSE and one or more Jobs failed it raises a warning for each failed job}
+#'          \item{verbose} {: logical -  if TRUE prints the job state(s) at every check}
+#'          }
+#'      \cr Return: data.frame - With SLURM states
+#'      }
+#'  
+#'
+#'  \item{Cancel job(s)}{
+#'      \cr
+#'      \code{x$cancel()}
+#'      }
+#' 
+#'  \item{Get job(s) state}{
+#'      \cr
+#'      \code{x$getState(simplify = F)}
+#'      \cr Parameters:
+#'       \itemize{
+#'          \item{simplify} {: logical - if TRUE returns a freqeuncy data.frame of job states, otherwise returns individual jobs and their associated job names, job ids, and states}
+#'          }
+#'      \cr Return: data.frame - With SLURM states
+#'      }
+#'
+#'  \item{Remove SLURM-associated files}{
+#'      \cr
+#'      \code{x$clean(script = TRUE, out = TRUE, err = TRUE)}
+#'      \cr Parameters:
+#'       \itemize{
+#'          \item{script} {: logical - if TRUE deletes sbatch submission script(s) associated to this object}
+#'          \item{out} {: logical - if TRUE deletes STDOUT file(s) from SLURM associated to this object} 
+#'          \item{err} {: logical - if TRUE deletes STDERR file(s) from SLURM associated to this object}
+#'          }
+#'      }
+#'  }
+#'
+#'
+#' @return \code{\link{R6Class}} with methods and fields for SLURM job manipulation
 #' @format \code{\link{R6Class}} object.
 #' @examples
-#' Lightning$new("http://localhost:3000/")
-#' Lightning$new("http://your-lightning.herokuapp.com/")
-#' @field serveraddress Stores address of your lightning server.
-#' @field sessionid Stores id of your current session on the server.
-#' @field url Stores url of the last visualization created by this object.
-#' @field autoopen Checks if the server is automatically opening the visualizations.
-#' @field notebook Checks if the server is in the jupyter notebook mode.
-#' #' @section Methods:
-#' \describe{
-#'   \item{Documentation}{For full documentation of each method go to https://github.com/lightning-viz/lightining-r/}
-#'   \item{\code{new(serveraddress)}}{This method is used to create object of this class with \code{serveraddress} as address of the server object is connecting to.}
+#' jobInfo <- JobInfo$new()
 #'
-#'   \item{\code{sethost(serveraddress)}}{This method changes server that you are contacting with to \code{serveraddress}.}
 
-Job <- R6::R6Class(classname = "Job",
+
+Job <- R6::R6Class(classname = "Job", inherit = JobInfo,
                public = list(
                              #Instances
                              
                              #Methods
-                             initialize = function(commandList, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL, maxJobs = NULL){
-                                 
-                                 #Set defaults
-                                 if(is.null(outDir))
-                                     outDir <- getwd()
-                                 if(is.null(jobName))
-                                     jobName <- paste(c("rSubmitter_job_", as.character(sample(0:9, 10, T))), collapse="")
+                             initialize = function(commandVector, ...) {
                                  
                                  #Validate args
-                                 if(!is.character(commandList))
-                                     stop("commandList argument has to be character")
-                                 if(!is.character(jobName))
-                                     stop("jobName argument has to be character")
-                                 if(!is.character(outDir) | !dir.exists(outDir))
-                                     stop("outDir argument has to be character and a valid path")
-                                 if(!is.character(partition) & !is.null(partition))
-                                     stop("partition argument has to be character or NULL")
-                                 if(!is.character(time) & !is.null(time))
-                                     stop("time argument has to be character or NULL")
-                                 if(!is.character(time) & !is.null(time))
-                                     stop("time argument has to be character or NULL")
-                                 if(!is.character(mem) & !is.null(mem))
-                                     stop("mem argument has to be character or NULL")
-                                 if(!is.numeric(proc) & !is.null(proc))
-                                     stop("proc argument has to be numeric or NULL")
-                                 if(!is.numeric(totalProc) & !is.null(totalProc))
-                                     stop("totalProc argument has to be numeric or NULL")
-                                 if(!is.numeric(nodes) & !is.null(nodes))
-                                     stop("nodes argument has to be numeric or NULL")
-                                 if(!is.character(email) & !is.null(email))
-                                     stop("email argument has to be character or NULL")
-                                 if(!is.numeric(maxJobs) & !is.null(maxJobs))
-                                     stop("maxJobs argument has to be numeric or NULL")
-                                 
-                                 
-                                 outDir <- path.expand(outDir)
+                                 if(!is.character(commandVector))
+                                     stop("commandVector argument has to be character")
                                  
                                  #Set instances
-                                 private$commandList <- commandList
-                                 private$jobName <- jobName
-                                 private$outDir <- outDir
-                                 private$partition <- partition
-                                 private$time <- time
-                                 private$mem <- mem
-                                 private$proc <- proc
-                                 private$totalProc <- totalProc
-                                 private$nodes <- nodes
-                                 private$email <- email
-                                 private$maxJobs <- rSubmitterOpts$MAX_JOBS_ALLOWED
-                                 private$timeWaitMaxjobs <- rSubmitterOpts$TIME_WAIT_MAX_JOBS
-                                 private$username <- rSubmitterOpts$USERNAME
-                                 private$scriptPath <- file.path(outDir, paste0(jobName , ".batch"))
-                                 private$outPath <- file.path(outDir, paste0(jobName , ".out"))
-                                 private$errPath <- file.path(outDir, paste0(jobName , ".err"))
-
+                                 private$commandVector <- commandVector
+                                 
+                                 super$initialize(...)
+                                 
                              },
                              
                              #' submit 
@@ -94,125 +112,51 @@ Job <- R6::R6Class(classname = "Job",
                                  
                                  # Write submission script
                                  private$writeSubmissionScript()
- 
+                                 
                                  # Wait if the number of Jobs allowed has been exceeded
                                  if (!is.null(private$maxJobs)) {
                                      while(getJobNumber() >= private$maxJobs) {
-                                         Sys.sleep(private$timeWaitMaxjob)
+                                         printTime(" Exceeded max number of jobs on queue, waiting ", private$timeWaitMaxjobs, " seconds")
+                                         Sys.sleep(private$timeWaitMaxjobs)
                                      }
                                  }
                                  
+                                 # Check if submmitted and running; throw an error in that case
+                                 private$errorIfSubmittedRunning()
+                                 
                                  # Submitting jobs
                                  private$jobId <- systemSubmit(paste("sbatch --parsable", private$scriptPath), wait = rSubmitterOpts$TIME_WAIT_FAILED_CMD, ignore.stdout = F)
+                                 
+                                 private$isSubmitted<- T
                                 
                                  # Delete script if asked for
                                  if (removeScript)
                                      file.remove(private$scriptPath)
                                  
                                  return(invisible(self))
-                             },
-                             
-                             #' Gets state of job
-                             getState = function() {
-                                 if(is.null(private$jobId))
-                                     stop("Not job id associated yet, make sure to submit job first, i.e. x$submit()")
-                                 jobInfo <- getJobState(private$jobId)
-                                 return(jobInfo)
-                             },
-                             
-                             #' Waits for job to finish
-                             wait = function() {
-                                 
-                                 while(TRUE) {
-                                     state <- self$getState()
-                                     if(any(state %in% private$completed) | any(state %in% private$failed))
-                                         break
-                                     Sys.sleep(private$waitForCompletion)
-                                 }
-                                 
-                                 return(invisible(self))
-                             },
-                             
-                             getJobId = function() {
-                                 return(private$jobId)
-                             },
-                             
-                             getJobName = function() {
-                                 return(private$jobName)
-                             },
-                             
-                             removeSLURMfiles = function() {
-                                 file.remove(private$scriptPath, private$outPath, private$errPath)
-                                 return(invisible(self))
                              }
-                             
-                             
-                             
-                             
                              ),
                
                private = list(
                               #Instances
-                              commandList = vector(),
-                              jobName = NULL,
-                              outDir = NULL,
-                              partition = NULL,
-                              time = NULL,
-                              mem = NULL,
-                              proc = NULL,
-                              totalProc = NULL,
-                              nodes = NULL,
-                              email = NULL,
-                              maxJobs = NULL,
-                              timeWaitMaxjobs = NULL,
-                              username = NULL,
-                              scriptPath = NULL,
-                              outPath = NULL,
-                              errPath = NULL,
-                              jobId = NULL,
-                              waitForCompletion = 10,
-                              completed = "COMPLETED",
-                              failed = c("FAILED", "TIMEOUT", "CANCELLED", "NODE_FAIL"),
+                              commandVector = vector(),
                               
                               # Write submission script
                               
                               #Methods
                               writeSubmissionScript = function() {
                                   
-                                  arg <- "#SBATCH "
-                                  args <- "#!/bin/bash\n"
-                                  args <- c(args, paste0(arg , "--job-name=" , private$jobName))
-                                  args <- c(args, paste0(arg , "--output=" , private$outPath))
-                                  args <- c(args, paste0(arg , "--error=" , private$errPath))
-                                  if (!is.null(private$partition)) 
-                                      args <- c(args, paste0(arg , "--partition=" , private$partition))
-                                  if (!is.null(private$time)) 
-                                      args <- c(args, paste0(arg , "--time=" , private$time))
-                                  if (!is.null(private$nodes)) 
-                                      args <- c(args, paste0(arg , "--nodes=" , as.character(private$nodes)))
-                                  if (!is.null(private$mem)) 
-                                      args <- c(args, paste0(arg , "--mem=" , private$mem))
-                                  if (!is.null(private$email)){ 
-                                      args <- c(args, paste0(arg , "--mail-type=END"))
-                                      args <- c(args, paste0(arg , "--mail-user=" , private$email))
-                                  }
-                                  if (!is.null(private$proc)) 
-                                      args <- c(args, paste0(arg , "--cpus-per-task=" , as.character(private$proc)))
-                                  if (!is.null(private$totalProc))    
-                                      args <- c(args, paste0(arg , "--ntasks=" , as.character(private$totalProc)))
+                                  private$createScriptVector()
+                                  secureLabels <- "set -euo pipefail"
+                                  args <- c(private$scriptVector, secureLabels, private$commandVector)
                                   
-                                  args <- c(args, private$commandList)
-                                  
-                                  
-                                  # Writing submmision script for sbatch SLURM
                                   writeLines(args, private$scriptPath)
                                                   
                                   return(NULL)
                               }
                               
-                              
-                              )
                
                
                
+               )
                )

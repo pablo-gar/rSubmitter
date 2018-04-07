@@ -3,33 +3,85 @@
 \docType{class}
 \name{JobInfo}
 \alias{JobInfo}
-\title{Class providing a basic plataform to store the options of a SLURM jobs
-Other more complex classes like Job and JobArray are children of this class}
+\title{Parent class of Job and JobArray}
 \format{\code{\link{R6Class}} object.}
 \usage{
-JobInfo
+x <- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
+x$wait(stopIfFailed = F, verbose = T)
+x$cancel()
+x$getState(simplify = F)
+x$clean()
 }
 \value{
-Object of \code{\link{R6Class}} with methods for communication with lightning-viz server.
+\code{\link{R6Class}} with methods and fields for SLURM job manipulation
 }
 \description{
-Class providing a basic plataform to store the options of a SLURM jobs
-Other more complex classes like Job and JobArray are children of this class
+R6 Class providing an essential platform to process SLURM jobs.
+This class should not be explicitly used by the user.
+To create, manipulate, and submit SLURM jobs please refer to the Job and Job array classes
 }
-\section{Fields}{
+\section{Methods}{
 
-\describe{
-\item{\code{serveraddress}}{Stores address of your lightning server.}
+\enumerate{
+ \item{Initialize}{
+     \cr
+     \code{x <- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)}
+     \cr Parameters:
+      \itemize{
+         \item{jobName} {: character - Name of job. Equivalent to \code{--job-name} of SLURM sbatch. Most output files use it as a suffix}
+         \item{outDir} {: character - writeable path for sabtch script as well as  SLRUM err and out files}
+         \item{partition} {: character - Partition to use. Equivalent to \code{--partition} of SLURM sbatch}
+         \item{time} {: character - Time requested for job execution, one accepted format is "HH:MM:SS". Equivalent to \code{--time} of SLURM sbatch}
+         \item{mem} {: character - Memory requested for job execution, one accepted format is "xG" or "xMB". Equivalent to \code{--mem} of SLURM sbatch}
+         \item{proc} {: integer - Number of processors requested per task. Equivalent to \code{--cpus-per-task} of SLURM sbatch}
+         \item{totalProc} {: integer - Number of nodes requested for job. Equivalent to \code{--nodes} of SLURM sbatch}
+         \item{email} {: character - email address to send info when job is done. Equivalent to \code{--nodes} of SLURM sbatch}
+         }
+     }
+     
+ \item{Wait for job(s) to finish}{
+     \cr
+     \code{x$wait(stopIfFailed = F, verbose = T)}
+     \cr Time between each job state check is defined in the entry TIME_WAIT_JOB_STATUS:seconds in the config file located at ~/.rSubmitter
+     \cr Parameters:
+      \itemize{
+         \item{stopIfFailed} {: logical -  if TRUE stops when one job has failed (only useful for JobArray) it then cancels the 
+                                 rest of the pending and running jobs. If FALSE and one or more Jobs failed it raises a warning for each failed job}
+         \item{verbose} {: logical -  if TRUE prints the job state(s) at every check}
+         }
+     \cr Return: data.frame - With SLURM states
+     }
+ }
 
-\item{\code{sessionid}}{Stores id of your current session on the server.}
+ \item{Cancel job(s)}{
+     \cr
+     \code{x$cancel()}
+     }
 
-\item{\code{url}}{Stores url of the last visualization created by this object.}
+ \item{Get job(s) state}{
+     \cr
+     \code{x$getState(simplify = F)}
+     \cr Parameters:
+      \itemize{
+         \item{simplify} {: logical - if TRUE returns a freqeuncy data.frame of job states, otherwise returns individual jobs and their associated job names, job ids, and states}
+         }
+     \cr Return: data.frame - With SLURM states
+     }
 
-\item{\code{autoopen}}{Checks if the server is automatically opening the visualizations.}
-}}
+ \item{Remove SLURM-associated files}{
+     \cr
+     \code{x$clean(script = TRUE, out = TRUE, err = TRUE)}
+     \cr Parameters:
+      \itemize{
+         \item{script} {: logical - if TRUE deletes sbatch submission script(s) associated to this object}
+         \item{out} {: logical - if TRUE deletes STDOUT file(s) from SLURM associated to this object} 
+         \item{err} {: logical - if TRUE deletes STDERR file(s) from SLURM associated to this object}
+         }
+     }
+}
 
 \examples{
-Lightning$new("http://localhost:3000/")
-Lightning$new("http://your-lightning.herokuapp.com/")
+jobInfo <- JobInfo$new()
+
 }
-\keyword{data}
+\keyword{datasets}
