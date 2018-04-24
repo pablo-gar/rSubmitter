@@ -7,7 +7,7 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-## Quick start guide {quick_start}
+## Quick start guide {#quick_start}
 
 rSubmmiter is a package that allows simple communication between R and a SLURM cluster to achieve three main tasks:
 
