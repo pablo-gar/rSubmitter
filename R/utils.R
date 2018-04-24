@@ -17,6 +17,16 @@ printTime <- function(..., carriageReturn = F) {
 	cat(first, as.character(Sys.time()), x)
 }
 
+#' isWriteable
+#'
+#' Returns TRUE if the path is writeable
+#' @param x String - Path
+isWriteable <- function(x){
+    tryCatch({
+        suppressWarnings(write.table(1, x))
+    }, error=function(e) FALSE)
+}
+
 #' parseArg
 #' 
 #' Takes a string an creates a vector using sep as the separator
@@ -83,4 +93,34 @@ grepTempFile <- function(x, pattern, tempLocation = "."){
 
 	return(outFile)
 
+}
+
+#' getMaxJobArrayLength
+#' Internal function for .onAttach that gets the maximum length for a Job array
+#' from the SLURM config file
+getMaxJobArrayLength <- function() {
+    maxArrayLength <- systemSubmit("scontrol show config | grep MaxArraySize", ignore.stdout = F, ignore.stderr = T)
+    maxArrayLength <- gsub("\\s*", "", maxArrayLength)
+    maxArrayLength <- gsub("\\w+=(\\d+)", "\\1", maxArrayLength)
+    if(nchar(maxArrayLength) > 0) {
+        maxArrayLength <- as.numeric(maxArrayLength) - 1 
+    } else {
+        cat("Warning: Could not retrieve MaxArraySize from SLRUM config. Setting MAX_JOB_ARRAY_LENGTH to 500, you can change this value in ~/.rSubmitter")
+        maxArrayLength <- 500 
+    }   
+
+    return(maxArrayLength)
+}
+
+#' shellCmdExists 
+#' Internal function for .onAttach Check if shell command exists
+shellCmdExists <- function(cmd) {
+    
+    exitStatus <- system(paste("type", cmd), ignore.stdout = T, ignore.stderr = T)
+    
+    if(exitStatus == 0) {
+        return (TRUE)
+    } else {
+        return(FALSE)
+    }
 }

@@ -12,24 +12,27 @@
 #' x$clean()
 #'
 #' @docType class
+#' @format R6 class
 #' @export
 #'
-#' @section Methods:
+#' @section Method description:
 #' \enumerate{
 #'  \item{Initialize}{
 #'      \cr
 #'      \code{x <- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)}
 #'      \cr Parameters:
 #'       \itemize{
-#'          \item{jobName} {: character - Name of job. Equivalent to \code{--job-name} of SLURM sbatch. Most output files use it as a suffix}
-#'          \item{outDir} {: character - writeable path for sabtch script as well as  SLRUM err and out files}
+#'          \item{jobName} {: character - Name of job, if NULL one will be generated of the form rSubmitter_job_[random_alphanumeric]. Equivalent to \code{--job-name} of SLURM sbatch. Most output files use it as a suffix}
+#'          \item{outDir} {: character - writeable path for sabtch script as well as  SLRUM err and out files. If NULL the current working directory will be used}
 #'          \item{partition} {: character - Partition to use. Equivalent to \code{--partition} of SLURM sbatch}
 #'          \item{time} {: character - Time requested for job execution, one accepted format is "HH:MM:SS". Equivalent to \code{--time} of SLURM sbatch}
 #'          \item{mem} {: character - Memory requested for job execution, one accepted format is "xG" or "xMB". Equivalent to \code{--mem} of SLURM sbatch}
 #'          \item{proc} {: integer - Number of processors requested per task. Equivalent to \code{--cpus-per-task} of SLURM sbatch}
-#'          \item{totalProc} {: integer - Number of nodes requested for job. Equivalent to \code{--nodes} of SLURM sbatch}
+#'          \item{totalProc} {: integer - Number of tasks requested for job. Equivalent to \code{--ntasks} of SLURM sbatch}
+#'          \item{nodes} {: integer - Number of nodes requested for job. Equivalent to \code{--nodes} of SLURM sbatch}
 #'          \item{email} {: character - email address to send info when job is done. Equivalent to \code{--nodes} of SLURM sbatch}
 #'          }
+#'      \cr Return: \cr object of class \code{Job}
 #'      }
 #'      
 #'  \item{Wait for job(s) to finish}{
@@ -42,12 +45,13 @@
 #'                                  rest of the pending and running jobs. If FALSE and one or more Jobs failed it raises a warning for each failed job}
 #'          \item{verbose} {: logical -  if TRUE prints the job state(s) at every check}
 #'          }
-#'      \cr Return: data.frame - With SLURM states
+#'      \cr Return: \cr self - for method concatenation
 #'      }
 #'
 #'  \item{Cancel job(s)}{
 #'      \cr
 #'      \code{x$cancel()}
+#'      \cr Return: \cr self - for method concatenation
 #'      }
 #' 
 #'  \item{Get job(s) state}{
@@ -57,7 +61,7 @@
 #'       \itemize{
 #'          \item{simplify} {: logical - if TRUE returns a freqeuncy data.frame of job states, otherwise returns individual jobs and their associated job names, job ids, and states}
 #'          }
-#'      \cr Return: data.frame - With SLURM states
+#'      \cr Return: \cr data.frame - With SLURM states
 #'      }
 #'
 #'  \item{Remove SLURM-associated files}{
@@ -69,12 +73,12 @@
 #'          \item{out} {: logical - if TRUE deletes STDOUT file(s) from SLURM associated to this object} 
 #'          \item{err} {: logical - if TRUE deletes STDERR file(s) from SLURM associated to this object}
 #'          }
+#'      \cr Return: \cr self - for method concatenation
 #'      }
 #'  }
 #'
 #'
 #' @return \code{\link{R6Class}} with methods and fields for SLURM job manipulation
-#' @format \code{\link{R6Class}} object.
 #' @examples
 #' jobInfo <- JobInfo$new()
 #'
@@ -108,9 +112,9 @@ JobInfo <- R6::R6Class(classname = "JobInfo",
                                              stop("time argument has to be character or NULL")
                                          if(!is.character(mem) & !is.null(mem))
                                              stop("mem argument has to be character or NULL")
-                                         if(!is.integer(proc) & !is.null(proc))
+                                         if(!is.numeric(proc) & !is.null(proc))
                                              stop("proc argument has to be numeric or NULL")
-                                         if(!is.integer(totalProc) & !is.null(totalProc))
+                                         if(!is.numeric(totalProc) & !is.null(totalProc))
                                              stop("totalProc argument has to be numeric or NULL")
                                          if(!is.numeric(nodes) & !is.null(nodes))
                                              stop("nodes argument has to be numeric or NULL")
@@ -243,48 +247,66 @@ JobInfo <- R6::R6Class(classname = "JobInfo",
                                      # @return self
                                      wait = function(stopIfFailed = F, verbose = T) {
                                          
-                                          while(TRUE) {
-                                              Sys.sleep(private$waitForCompletion)
-                                              stateTable <- self$getState() 
-                                              
-                                              if(private$isJobArray) 
-                                                  stateTable <- private$expandJobArrayStates(stateTable)
-                                              
-                                              state <- stateTable$jobState
-                                              
-                                              if(verbose) {
-                                                  jobStatesFreq <- table(state)
-                                                  
-                                                  cat("\33[2K")
-                                                  printTime("--- Cluster Status |", carriageReturn = T )
-                                                  for(s in names(jobStatesFreq))
-                                                      cat(" ", s, "=", jobStatesFreq[s], "|")
-                                              }
-                                                  
-                                              if(any(state %in% private$failed)) {
-                                                  failed <- stateTable[state %in% private$failed,]
-                                                  failedPaths <- file.path(dirname(private$errPath), paste0(failed$jobName, "_", failed$jobId, ".[err|out]"))
-                                                  
-                                                  if(stopIfFailed) {
-                                                      if(verbose)
-                                                          cat("\n")
-                                                      self$cancel()
-                                                      stop("\nOne or more jobs failed. All jobs have now been cancelled. Failed jobs SLURM files:\n", paste(failedPaths, collapse = "\n"))
-                                                  }                                                  
-                                                  
-                                              }
-                                              
-                                              if(all(state %in% c(private$completed, private$failed)))
-                                                  break
-                                          }
+                                         nodeFailedTrials = 5
+                                         
+                                         while(TRUE) {
+                                             Sys.sleep(private$waitForCompletion)
+                                             stateTable <- self$getState() 
+                                             
+                                             if(private$isJobArray) 
+                                                 stateTable <- private$expandJobArrayStates(stateTable)
+                                             
+                                             state <- stateTable$jobState
+                                             
+                                             if(verbose) {
+                                                 jobStatesFreq <- table(state)
+                                                 
+                                                 cat("\33[2K")
+                                                 printTime("--- Cluster Status |", carriageReturn = T )
+                                                 for(s in names(jobStatesFreq))
+                                                     cat(" ", s, "=", jobStatesFreq[s], "|")
+                                                 
+                                             }
+                                                 
+                                             if(any(state %in% private$failed)) {
+                                                 
+                                                 if(any(state %in% private$nodeFailed) & nodeFailedTrials > 0 ) {
+                                                     
+                                                     cat("\n")
+                                                     printTime("Failed to communicate with node, trying again (", nodeFailedTrials, ")\n")
+                                                     
+                                                     nodeFailedTrials = nodeFailedTrials - 1
+                                                     next
+                                                 }
+                                                 
+                                                 failed <- stateTable[state %in% private$failed,]
+                                                 if(private$isJobArray) {
+                                                     failedPaths <- file.path(dirname(private$errPath), paste0(failed$jobName, "_", failed$jobId, ".[err|out]"))
+                                                 } else {
+                                                     failedPaths <- file.path(dirname(private$errPath), paste0(failed$jobName, ".[err|out]"))
+                                                 }
+                                                     
+                                                 
+                                                 if(stopIfFailed) {
+                                                     if(verbose)
+                                                         cat("\n")
+                                                     self$cancel()
+                                                     stop("\nOne or more jobs failed. All jobs have now been cancelled. Failed jobs SLURM files:\n", paste(failedPaths, collapse = "\n"))
+                                                 }                                                  
+                                                 
+                                             }
+                                             
+                                             if(all(state %in% c(private$completed, private$failed)))
+                                                 break
+                                         }
                                      
-                                          if(verbose)
-                                              cat("\n")
-                                          
-                                          if(!stopIfFailed & any(state %in% private$failed))
-                                              warning("\nOne or more jobs failed. Failed jobs SLURM files:\n", paste(failedPaths, collapse = "\n"))
-                                          
-                                          return(invisible(self))
+                                         if(verbose)
+                                             cat("\n")
+                                         
+                                         if(!stopIfFailed & any(state %in% private$failed))
+                                             warning("\nOne or more jobs failed. Failed jobs SLURM files:\n", paste(failedPaths, collapse = "\n"))
+                                         
+                                         return(invisible(self))
                                       }
 
                                       
@@ -316,6 +338,7 @@ JobInfo <- R6::R6Class(classname = "JobInfo",
                                       dateCreation = NULL,
                                       completed = "COMPLETED",
                                       failed = c("FAILED", "TIMEOUT", "CANCELLED", "NODE_FAIL", "BOOT_FAIL", "DEADLINE", "OUT_OF_MEMORY"),
+                                      nodeFailed = "NODE_FAIL",
                                       running = c("CONFIGURING", "PENDING", "RUNNING", "RESIZING", "SUSPENDED", "PREEMPTED", "COMPLETING"),
                                       notAvail = c("NOTAVAIL"),
                                       
@@ -400,7 +423,7 @@ JobInfo <- R6::R6Class(classname = "JobInfo",
                                       # of the form jobId_1, jobId_2, ... , jobId_100
                                       expandJobArrayStates = function(jobStateTable) {
                                           
-                                          toExpand <- grepl("_\\[", jobStateTable$jobId)
+                                          toExpand <- grepl("_\\[\\d+-\\d+\\]", jobStateTable$jobId)
                                           if(any(toExpand)) {
                                               toExpandTable <- jobStateTable[toExpand,]
                                               

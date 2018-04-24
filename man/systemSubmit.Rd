@@ -4,8 +4,9 @@
 \alias{systemSubmit}
 \title{systemSubmit}
 \usage{
-systemSubmit(command, n = 12, wait = 5, ignore.stdout = TRUE,
-  ignore.stderr = F, intern = TRUE, ...)
+systemSubmit(command, n = 5, wait = 5, ignore.stdout = TRUE,
+  ignore.stderr = F, intern = TRUE, stopIfFailed = TRUE, verbose = F,
+  ...)
 }
 \arguments{
 \item{command}{Character - system command to execute}
@@ -17,6 +18,10 @@ systemSubmit(command, n = 12, wait = 5, ignore.stdout = TRUE,
 \item{ignore.stdout}{Logical - if TRUE it won't return the standard output of execution}
 
 \item{ignore.stderr}{Logical - if TRUE it won't return the standard error of execution}
+
+\item{intern}{Logical - see ?system}
+
+\item{stopIfFailed}{Logical, if TRUE throws error after all tries have failed, else throws a warning}
 
 \item{...}{to be passed to system()}
 }

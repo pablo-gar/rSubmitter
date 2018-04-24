@@ -6,15 +6,23 @@ rSubmitterOpts <- new.env(parent = emptyenv())
 #' Series of steps needed to initialize rSubmitter
 .onAttach <- function(libname, pkgname) {
     
+    # Checking that slurm and their commands exist
+    if(!shellCmdExists("scontrol"))
+        stop("`scontrol` command is not installed in this system. Are you sure SLURM is installed?")
+    if(!shellCmdExists("sacct"))
+        stop("`sacct` command is not installed in this system. Are you sure SLURM is installed?")
+    if(!shellCmdExists("sbatch"))
+        stop("`sbatch` command is not installed in this system. Are you sure SLURM is installed?")
     
     # Numeric options
     numericOptions <- c("MAX_JOBS_ALLOWED", "TIME_WAIT_MAX_JOBS", "TIME_WAIT_FAILED_CMD", "TIME_WAIT_JOB_STATUS", "MAX_JOB_ARRAY_LENGTH")
     editableOptions <- c(numericOptions) # Add more options here
+    systemSubmit("echo hola")
     
     
     # Get options
     assign("USERNAME", Sys.info()["user"], envir = rSubmitterOpts)
-    assign("MAX_JOBS_ALLOWED", 1999, envir = rSubmitterOpts)
+    assign("MAX_JOBS_ALLOWED", 500, envir = rSubmitterOpts)
     assign("TIME_WAIT_MAX_JOBS", 60, envir = rSubmitterOpts)
     assign("TIME_WAIT_FAILED_CMD", 5, envir = rSubmitterOpts)
     assign("TIME_WAIT_JOB_STATUS", 5, envir = rSubmitterOpts)
@@ -54,21 +62,4 @@ rSubmitterOpts <- new.env(parent = emptyenv())
         }
     }
         
-}
-
-#' getMaxJobArrayLength
-#' Internal function for .onAttach that get the maximum length for a Job array
-#' from the SLURM config file
-getMaxJobArrayLength <- function() {
-    maxArrayLength <- system("scontrol show config | grep MaxArraySize", intern = T)
-    maxArrayLength <- gsub("\\s*", "", maxArrayLength)
-    maxArrayLength <- gsub("\\w+=(\\d+)", "\\1", maxArrayLength)
-    if(nchar(maxArrayLength) > 0) {
-        maxArrayLength <- as.numeric(maxArrayLength) - 1
-    } else {
-        cat("Warning: Could not retrieve MaxArraySize from SLRUM config. Setting MAX_JOB_ARRAY_LENGTH to 500, you can change this value in ~/.rSubmitter")
-        maxArrayLength <- 500
-    }
-    
-    return(maxArrayLength)
 }

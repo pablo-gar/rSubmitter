@@ -4,7 +4,7 @@
 \name{JobInfo}
 \alias{JobInfo}
 \title{Parent class of Job and JobArray}
-\format{\code{\link{R6Class}} object.}
+\format{R6 class}
 \usage{
 x <- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
 x$wait(stopIfFailed = F, verbose = T)
@@ -20,7 +20,7 @@ R6 Class providing an essential platform to process SLURM jobs.
 This class should not be explicitly used by the user.
 To create, manipulate, and submit SLURM jobs please refer to the Job and Job array classes
 }
-\section{Methods}{
+\section{Method description}{
 
 \enumerate{
  \item{Initialize}{
@@ -28,15 +28,17 @@ To create, manipulate, and submit SLURM jobs please refer to the Job and Job arr
      \code{x <- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)}
      \cr Parameters:
       \itemize{
-         \item{jobName} {: character - Name of job. Equivalent to \code{--job-name} of SLURM sbatch. Most output files use it as a suffix}
-         \item{outDir} {: character - writeable path for sabtch script as well as  SLRUM err and out files}
+         \item{jobName} {: character - Name of job, if NULL one will be generated of the form rSubmitter_job_[random_alphanumeric]. Equivalent to \code{--job-name} of SLURM sbatch. Most output files use it as a suffix}
+         \item{outDir} {: character - writeable path for sabtch script as well as  SLRUM err and out files. If NULL the current working directory will be used}
          \item{partition} {: character - Partition to use. Equivalent to \code{--partition} of SLURM sbatch}
          \item{time} {: character - Time requested for job execution, one accepted format is "HH:MM:SS". Equivalent to \code{--time} of SLURM sbatch}
          \item{mem} {: character - Memory requested for job execution, one accepted format is "xG" or "xMB". Equivalent to \code{--mem} of SLURM sbatch}
          \item{proc} {: integer - Number of processors requested per task. Equivalent to \code{--cpus-per-task} of SLURM sbatch}
-         \item{totalProc} {: integer - Number of nodes requested for job. Equivalent to \code{--nodes} of SLURM sbatch}
+         \item{totalProc} {: integer - Number of tasks requested for job. Equivalent to \code{--ntasks} of SLURM sbatch}
+         \item{nodes} {: integer - Number of nodes requested for job. Equivalent to \code{--nodes} of SLURM sbatch}
          \item{email} {: character - email address to send info when job is done. Equivalent to \code{--nodes} of SLURM sbatch}
          }
+     \cr Return: \cr object of class \code{Job}
      }
      
  \item{Wait for job(s) to finish}{
@@ -49,13 +51,13 @@ To create, manipulate, and submit SLURM jobs please refer to the Job and Job arr
                                  rest of the pending and running jobs. If FALSE and one or more Jobs failed it raises a warning for each failed job}
          \item{verbose} {: logical -  if TRUE prints the job state(s) at every check}
          }
-     \cr Return: data.frame - With SLURM states
+     \cr Return: \cr self - for method concatenation
      }
- }
 
  \item{Cancel job(s)}{
      \cr
      \code{x$cancel()}
+     \cr Return: \cr self - for method concatenation
      }
 
  \item{Get job(s) state}{
@@ -65,7 +67,7 @@ To create, manipulate, and submit SLURM jobs please refer to the Job and Job arr
       \itemize{
          \item{simplify} {: logical - if TRUE returns a freqeuncy data.frame of job states, otherwise returns individual jobs and their associated job names, job ids, and states}
          }
-     \cr Return: data.frame - With SLURM states
+     \cr Return: \cr data.frame - With SLURM states
      }
 
  \item{Remove SLURM-associated files}{
@@ -77,7 +79,9 @@ To create, manipulate, and submit SLURM jobs please refer to the Job and Job arr
          \item{out} {: logical - if TRUE deletes STDOUT file(s) from SLURM associated to this object} 
          \item{err} {: logical - if TRUE deletes STDERR file(s) from SLURM associated to this object}
          }
+     \cr Return: \cr self - for method concatenation
      }
+ }
 }
 
 \examples{

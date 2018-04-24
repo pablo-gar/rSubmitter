@@ -2,18 +2,59 @@
 % Please edit documentation in R/superApply.R
 \name{superApply}
 \alias{superApply}
-\title{supperApply, it mimics the functionality of lapply but implemented
-in a way that each iteration of the apply is submmitted as an individual
-job to a SLURM cluster. Hence emulating a parellel behaivor in apply}
+\title{Parallel lapply}
 \usage{
 superApply(x, FUN, ..., tasks = 1, workingDir, packages = NULL,
   sources = NULL, extraBashLines = "", extraScriptLines = "", clean = F,
-  partition = NULL, time = NULL, mem = NULL)
+  partition = NULL, time = NULL, mem = NULL, proc = NULL,
+  totalProc = NULL, nodes = NULL, email = NULL)
+}
+\arguments{
+\item{x}{vector/list - FUN will be applied to the elements of this}
+
+\item{FUN}{function - function to be applied to each element of x}
+
+\item{...}{further arguments of FUN}
+
+\item{tasks}{integer - number of individual parallel jobs to execute}
+
+\item{workingDir}{string - path to folder that will contain all the temporary files needed for submission, execution, and compilation of inidivudal jobs}
+
+\item{packages}{character vector}
+
+\item{sources}{character vector}
+
+\item{extraBashLines}{character vector}
+
+\item{extraScriptLines}{character vector}
+
+\item{clean}{logical}
+
+\item{partition}{character - Partition to use. Equivalent to \code{--partition} of SLURM sbatch}
+
+\item{time}{character - Time requested for job execution, one accepted format is "HH:MM:SS". Equivalent to \code{--time} of SLURM sbatch}
+
+\item{mem}{character - Memory requested for job execution, one accepted format is "xG" or "xMB". Equivalent to \code{--mem} of SLURM sbatch}
+
+\item{proc}{integer - Number of processors requested per task. Equivalent to \code{--cpus-per-task} of SLURM sbatch}
+
+\item{totalProc}{integer - Number of tasks requested for job. Equivalent to \code{--ntasks} of SLURM sbatch}
+
+\item{nodes}{integer - Number of nodes requested for job. Equivalent to \code{--nodes} of SLURM sbatch}
+
+\item{email}{character - email address to send info when job is done. Equivalent to \code{--nodes} of SLURM sbatch}
+}
+\value{
+list - results of FUN applied to each element in x
 }
 \description{
+An easy-to-use form of lapply that emulates parallelization using a SLURM cluster.
+}
+\details{
+Mimics the functionality of lapply but implemented
+in a way that iterations can be submmitted as one or more individual
+jobs to a SLURM cluster. 
 Each job batch, err, out, and script files are stored in a temporary folder. Once
-all jobs have been submmitted, the function waits for them to finish. Once the jobs
-are done it compiles all the results into list and returns them, therefore fully
-mimicking the apply behaivor.
-Author: Pablo Garcia
+all jobs have been submmitted, the function waits for them to finish. When they
+are done executing, all results from individual jobs will be compiled into a single list.
 }

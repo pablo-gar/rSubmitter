@@ -1,49 +1,53 @@
-#' supperApply, it mimics the functionality of lapply but implemented
-#' in a way that each iteration of the apply is submmitted as an individual
-#' job to a SLURM cluster. Hence emulating a parellel behaivor in apply
+#' Parallel lapply
 #'
+#' An easy-to-use form of lapply that emulates parallelization using a SLURM cluster.
+#'
+#' Mimics the functionality of lapply but implemented
+#' in a way that iterations can be submmitted as one or more individual
+#' jobs to a SLURM cluster. 
 #' Each job batch, err, out, and script files are stored in a temporary folder. Once
-#' all jobs have been submmitted, the function waits for them to finish. Once the jobs
-#' are done it compiles all the results into list and returns them, therefore fully
-#' mimicking the apply behaivor.
-#' Author: Pablo Garcia
+#' all jobs have been submmitted, the function waits for them to finish. When they
+#' are done executing, all results from individual jobs will be compiled into a single list.
 #' 
+#' @param x  vector/list - FUN will be applied to the elements of this
+#' @param FUN  function - function to be applied to each element of x
+#' @param ...  further arguments of FUN
+#' @param tasks  integer - number of individual parallel jobs to execute
+#' @param workingDir  string - path to folder that will contain all the temporary files needed for submission, execution, and compilation of inidivudal jobs
+#' @param packages character vector
+#' @param sources character vector
+#' @param extraBashLines character vector
+#' @param extraScriptLines character vector
+#' @param clean logical
+#' @param partition character - Partition to use. Equivalent to \code{--partition} of SLURM sbatch
+#' @param time character - Time requested for job execution, one accepted format is "HH:MM:SS". Equivalent to \code{--time} of SLURM sbatch
+#' @param mem character - Memory requested for job execution, one accepted format is "xG" or "xMB". Equivalent to \code{--mem} of SLURM sbatch
+#' @param proc integer - Number of processors requested per task. Equivalent to \code{--cpus-per-task} of SLURM sbatch
+#' @param totalProc integer - Number of tasks requested for job. Equivalent to \code{--ntasks} of SLURM sbatch
+#' @param nodes integer - Number of nodes requested for job. Equivalent to \code{--nodes} of SLURM sbatch
+#' @param email character - email address to send info when job is done. Equivalent to \code{--nodes} of SLURM sbatch
+#'
+#' @return list - results of FUN applied to each element in x
 #' @export
-# TODO
-# - Wrap JobArray arguents into a list for better addition of future arguments
 
+superApply <- function(x, FUN, ..., tasks = 1, workingDir, packages = NULL, sources = NULL, extraBashLines = "", extraScriptLines = "", clean = F, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL){
+    
+    if(!is.list(x) & !is.vector(x))
+        stop("x hast to be a list of a vector")
+    
+    if(!is.numeric(tasks))
+        stop("tasks has to be numerical")
+    if(length(tasks) > 1)
+        stop("tasks has to be of length 1")
+    #if()
+    #    stop("")
+    #if()
+    #    stop("")
+    #if()
+    #    stop("")
+    #if()
+    #    stop("")
 
-superApply <- function(x, FUN, ..., tasks = 1, workingDir, packages = NULL, sources = NULL, extraBashLines = "", extraScriptLines = "", clean = F, partition = NULL, time = NULL, mem = NULL){
-
-    # Main function that emulates apply but with parallel processing behaivor.
-    # It first divides elements of x into buckets of length(x)/tasks, then
-    # uses each bucket as individual elements where apply() will be used with FUN 
-    # as individual SLURM submissions.
-    # The submission process goes as follow for each bucket:
-    #   - Saves each bucket data as and RData file with an associated id name
-    #   - Creates an R script that will load the bucket RData and execute apply() and FUN. 
-    #     It will save the results as separate result RData file
-    #   - Creates a batch script that submmits the R script
-    #   - Submmits the job using the same id
-    # 
-    # Oncer all Jobs have been submmitted and finished it will compile all the result RData files
-    # from the inidividual jobs into a single list.
-    # This is the list to be returned
-    #
-    # ARGS:
-    # x - vector/list - FUN will be applied to the elements of this. If x is and integer of length one, FUN will be executed x times with pars "..."
-    # FUN - function - function to be applied to each element of x. 
-    # ... - further arguments of FUN
-    # tasks - integer - number of individual parallel jobs to execute
-    # workingDir - string - path to folder that will contain all the temporary files needed for submission, execution,
-    #                       and compilation of inidivudal jobs
-    # extraScriptLines - string - extra code to be added to all of the individual parallel jobs
-    #                             IMPORTANT: if FUN requires any library they have to be included here (e.g. extraScriptLines = "library(reshape); library(GenomicRanges)"
-    # time - string - time allocated to each individual job, format "hh:mm:ss"
-    # qos - string - SLURM qos
-    # mem - string - memory allocated to each individual job, e.g. "10G", "10000"
-    #
-    # Return - list - results of FUN applied to each element in x
     
     SAP_PREFIX <- "sAp_"
     
@@ -51,7 +55,7 @@ superApply <- function(x, FUN, ..., tasks = 1, workingDir, packages = NULL, sour
     FUN <- match.fun(FUN)
     
     # Organizing JobArray parameters
-    JobArrayPars <- list(outDir = workingDir, partition = partition, time = time, mem = mem)
+    JobArrayPars <- list(outDir = workingDir, partition = partition, time = time, mem = mem, proc = proc, totalProc = totalProc, nodes = nodes, email = email)
     
     # Getting indeces to partition X into different tasks (i.e. individual jobs)
     partitionIndeces<- getPartitionIndeces(x, tasks = tasks)
@@ -84,15 +88,14 @@ superApply <- function(x, FUN, ..., tasks = 1, workingDir, packages = NULL, sour
 }
 
 
-
+#' Helper of superApply
+#' Creates a list  with slots, containing the start and end indeces 
+#' corresponding to the partitions of x required to run the number of parallel tasks
+#'
+#' Parsing x, is it vector, list? or is it number of repetitions (i.e. x is just a number)?
+#' This just to calculate the number of times the FUN has to be executed
 getPartitionIndeces <- function(x, tasks = tasks) {
     
-    # Helper of superApply
-    # Creates a list  with slots, containing the start and end indeces 
-    # corresponding to the partitions of x required to run the number of parallel tasks
-    #
-    # Parsing x, is it vector, list? or is it number of repetitions (i.e. x is just a number)?
-    # This just to calculate the number of times the FUN has to be executed
     if(!is.vector(x)){
         x <- as.list(x)
         times <- length(x)
@@ -118,16 +121,17 @@ getPartitionIndeces <- function(x, tasks = tasks) {
 
 }   
 
+#' Helper of superApply
+#' Submits multiple jobs from the partions of x created in get Partition Indeces
+#'
+#' @param x list/vector - data to be partition
+#' @param FUN function - function to be applied to each element of x
+#' @param ... - further arguments of FUN
+#' @param idPrefix character - prefix for job names
+#' @param partitionIndeces list - output of getPartitionIndeces()
+#' @return a JobArray object
 getJobArray<- function(x, FUN, ..., idPrefix, partitionIndeces, workingDir, extraScriptLines, extraBashLines, JobArrayPars, packages, sources) {
     
-    # Helper of superApply
-    # Submits multiple jobs from the partions of x created in get Partition Indeces
-    #
-    # x - list/vector - data to be partition
-    # FUN - function - function to be applied to each element of x
-    # partitionIndeces - list - output of getPartitionIndeces()
-    #
-    # RETURNS a data.frame of two columns, jobName and jobId
     
     
     # Cleaning and or creating workind dir for submission
@@ -148,19 +152,16 @@ getJobArray<- function(x, FUN, ..., idPrefix, partitionIndeces, workingDir, extr
     return(jobArray)
 }
 
-#' creatJobScriptsData
 #' Helper of superApply
-#' Takes a vector/list x, a function FUN and extra paramaters (...) and submits an Rscript
-#' that executes lappy in x using FUN, saves the scripts, results and slurm fil;e in workingDir  
+#' Takes a vector/list x, a function FUN and extra paramaters (...) and creates a Rscript
+#' that executes lappy in x using FUN. Scripts are saved in workingDir
 #' 
-#' x - vector/list - data to which lapply will be executed
-#' FUN - function - function to be applied to x
-#' ... - extra paramaters passed to FUN
-#' extraScriptLines - string - lines to be added at the beginning of the Rscript before lapply (useful to load packages)
-#' partition - string - partition in SLURM for job submission
-#' time - string - estimated time for lapply to finish, format "hh:mm:ss"
-#' qos - string - SLURM qos
-#' mem - string - estimated memory requiered by lapply execution, format e.g "10G"
+#' @param x - vector/list - data to which lapply will be executed
+#' @param FUN - function - function to be applied to x
+#' @param ... - extra paramaters passed to FUN
+#' @param idPrefix character - prefix for job names
+#' @param iStart numeric vector - start indeces where partitions were done on x
+#' @param iEnd numeric vector - end indeces where partitions were done on x
 
 createJobScriptsData <- function(x, FUN, ..., idPrefix, iStart, iEnd, workingDir, extraScriptLines = "", extraBashLines = "", packages = NULL, sources = NULL) {
     
@@ -224,6 +225,11 @@ createJobScriptsData <- function(x, FUN, ..., idPrefix, iStart, iEnd, workingDir
     
 }
 
+#' Helper of superApply
+#' merges the result of independ jobs after completion of parallel lapply executions
+#' @param character vector - files to be merged
+#' @param character vector - varnames associated to each file to be merged
+#' @param character - working directory
 mergeListDir <- function(files, varNames, workingDir){
     
     finishedFiles <- files %in% list.files(workingDir)
@@ -241,10 +247,22 @@ mergeListDir <- function(files, varNames, workingDir){
     return(finalF)
 }
 
+checkFiles <- function (x, workingDir){
+    
+    applyFiles <- list.files(workingDir)[grep(SAP_PREFIX, list.files(workingDir))]
+    remaining <- sum( !x %in% applyFiles) 
+    
+    finished <- ifelse(remaining == 0, TRUE, FALSE)
+    total <- length(x)
+    
+    
+    return(list(finished = finished, remaining = remaining, total = total))
+}
+
 #' getUserFunctions
 #' Helper of superApply
 #'
-#' Retunrs a character vector with the names of the functions
+#' Returns a character vector with the names of the functions
 #' in the global enviroment
 
 getUserFunctions <- function() {
@@ -289,31 +307,4 @@ createStringFunction <- function(fun, inside = NULL) {
     return(paste0(fun, inside))
 }
 
-#mergeListDir <- function(files){
-#   finalF <- list()
-#   for (i in 1:length(files)){
-#       flush.console()
-#       cat(i, "\n")
-#       load(file.path(files[i]))
-#       varName <- paste0("output", "_", gsub(".outRData", "", files[i]))
-#       #aaa <- lapply(eval(parse(text = varName)), function(x) x$all$eqtls[,c("snps", "pvalue")])
-#       finalF <- c(finalF, aaa)
-#       rm(list = c(varName, "aaa"))
-#       gc()
-#   }
-#   return(finalF)
-#}
-
-
-checkFiles <- function (x,workingDir){
-    
-    applyFiles <- list.files(workingDir)[grep(SAP_PREFIX, list.files(workingDir))]
-    remaining <- sum( !x %in% applyFiles) 
-    
-    finished <- ifelse(remaining == 0, TRUE, FALSE)
-    total <- length(x)
-    
-    
-    return(list(finished = finished, remaining = remaining, total = total))
-}
 

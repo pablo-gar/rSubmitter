@@ -8,6 +8,6 @@ Helper of superApply}
 getUserFunctions()
 }
 \description{
-Retunrs a character vector with the names of the functions
+Returns a character vector with the names of the functions
 in the global enviroment
 }

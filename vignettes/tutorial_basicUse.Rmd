@@ -1,0 +1,18 @@
+---
+title: "Tutorial: SLURM job management and easy parallelization from R using rSubmmiter"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Tutorial: SLURM job management and easy parallelization from R using rSubmmiter}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+## Quick start guide
+
+rSubmmiter is a package that allows simple communication between R and a SLURM cluster to achieve three different
+tasks
+
+1. Easy submission, monitoring and management of individual jobs.
+2. Easy and fast submission of many jobs, using SLURM arrays.
+3. Seamlessly parallelization of lapply. 
+

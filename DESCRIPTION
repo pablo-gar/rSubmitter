@@ -1,7 +1,7 @@
 Package: rSubmitter
 Title: A plataform to submit jobs to a High Performance Computing Cluster managed by SLURM
 Version: 0.1
-Authors@R: person("Pablo", "Garcia-Nieto", "Eduardo",
+Authors@R: person("Pablo E.", "Garcia-Nieto",
                   email = "paedugar@gmail.com",
                   role = c("aut", "cre"))
 Description: TODO
@@ -11,3 +11,5 @@ Imports:
 License: GPL-3
 LazyData: true
 RoxygenNote: 6.0.1
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr

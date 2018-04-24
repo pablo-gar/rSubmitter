@@ -2,22 +2,29 @@
 % Please edit documentation in R/superApply.R
 \name{createJobScriptsData}
 \alias{createJobScriptsData}
-\title{creatJobScriptsData
-Helper of superApply
-Takes a vector/list x, a function FUN and extra paramaters (...) and submits an Rscript
-that executes lappy in x using FUN, saves the scripts, results and slurm fil;e in workingDir}
+\title{Helper of superApply
+Takes a vector/list x, a function FUN and extra paramaters (...) and creates a Rscript
+that executes lappy in x using FUN. Scripts are saved in workingDir}
 \usage{
 createJobScriptsData(x, FUN, ..., idPrefix, iStart, iEnd, workingDir,
   extraScriptLines = "", extraBashLines = "", packages = NULL,
   sources = NULL)
 }
+\arguments{
+\item{x}{- vector/list - data to which lapply will be executed}
+
+\item{FUN}{- function - function to be applied to x}
+
+\item{...}{- extra paramaters passed to FUN}
+
+\item{idPrefix}{character - prefix for job names}
+
+\item{iStart}{numeric vector - start indeces where partitions were done on x}
+
+\item{iEnd}{numeric vector - end indeces where partitions were done on x}
+}
 \description{
-x - vector/list - data to which lapply will be executed
-FUN - function - function to be applied to x
-... - extra paramaters passed to FUN
-extraScriptLines - string - lines to be added at the beginning of the Rscript before lapply (useful to load packages)
-partition - string - partition in SLURM for job submission
-time - string - estimated time for lapply to finish, format "hh:mm:ss"
-qos - string - SLURM qos
-mem - string - estimated memory requiered by lapply execution, format e.g "10G"
+Helper of superApply
+Takes a vector/list x, a function FUN and extra paramaters (...) and creates a Rscript
+that executes lappy in x using FUN. Scripts are saved in workingDir
 }

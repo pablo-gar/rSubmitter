@@ -11,7 +11,7 @@ getJobNumber <- function(user = Sys.info()["user"]) {
     jobNumber <- length(currentJobs)
     
     # See if there are any job arrays
-    toExpand <- grepl("_\\[", currentJobs)
+    toExpand <- grepl("_\\[(\\d+)-\\d+\\]", currentJobs)
     if(any(toExpand)){
         toExpand <- currentJobs[toExpand]
         for(row in toExpand) {
