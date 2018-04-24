@@ -7,7 +7,7 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-## Quick start guide {#quick_start}
+## Quick start guide 
 
 rSubmmiter is a package that allows simple communication between R and a SLURM cluster to achieve three main tasks:
 
@@ -17,5 +17,25 @@ rSubmmiter is a package that allows simple communication between R and a SLURM c
 
 This section demonstrates the simplest way to implement these tasks
 
-### 
+### Single job sumbssion
 
+The creation, management and submission of individual jobs is achieved by the use of the `Job` class.
+The first step is to create and object with the `Job` class by using the `new` method. On its simplest form the creation of the a `Job` object looks like this.
+
+```{r eval=FALSE}
+library("rSubmmiter")
+myJob <- Job$new(commandVector = c("echo hola world!", "sleep 30"))
+```
+
+The first and only required parameter is a character vector, where each element is an independet shell command.
+
+Then the job can be submitted to the SLURM cluster using the `$submit()` method of the `Job` object. And the `$wait()` method
+can be used to wait until the job is completed of failed.
+
+```{r eval=FALSE}
+myJob$submit()
+myJob$wait()
+ 2018-04-23 18:22:35 --- Cluster Status |  PENDING = 1 |
+ 2018-04-23 18:22:40 --- Cluster Status |  RUNNING = 1 |
+ 2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
+```
