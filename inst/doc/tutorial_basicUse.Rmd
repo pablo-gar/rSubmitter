@@ -7,12 +7,15 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-## Quick start guide
+## Quick start guide {quick_start}
 
-rSubmmiter is a package that allows simple communication between R and a SLURM cluster to achieve three different
-tasks
+rSubmmiter is a package that allows simple communication between R and a SLURM cluster to achieve three main tasks:
 
-1. Easy submission, monitoring and management of individual jobs.
-2. Easy and fast submission of many jobs, using SLURM arrays.
+1. Easy submission, monitoring and management of individual cluster jobs.
+2. Easy and fast submission of many cluster jobs, by implementing SLURM arrays.
 3. Seamlessly parallelization of lapply. 
+
+This section demonstrates the simplest way to implement these tasks
+
+### 
 
