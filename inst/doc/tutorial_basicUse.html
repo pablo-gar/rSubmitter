@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<title>Quick start guide</title>
+<title>Quick-start guide</title>
 
 <script type="text/javascript">
 window.onload = function() {
@@ -201,7 +201,7 @@ hr {
 </head>
 
 <body>
-<h2>Quick start guide</h2>
+<h2>Quick-start guide</h2>
 
 <p>rSubmmiter is a package that allows simple communication between R and a SLURM cluster to achieve three main tasks:</p>
 
@@ -216,22 +216,40 @@ hr {
 <h3>Single job sumbssion</h3>
 
 <p>The creation, management and submission of individual jobs is achieved by the use of the <code>Job</code> class.
-The first step is to create and object with the <code>Job</code> class by using the <code>new</code> method. On its simplest form the creation of the a <code>Job</code> object looks like this.</p>
+The first step is to create and object with the <code>Job</code> class by using the <code>$new()</code> constructor method. On its simplest form the creation of a <code>Job</code> object looks like this.</p>
 
 <pre><code class="r">library(&quot;rSubmmiter&quot;)
 myJob &lt;- Job$new(commandVector = c(&quot;echo hola world!&quot;, &quot;sleep 30&quot;))
 </code></pre>
 
-<p>The first and only required parameter is a character vector, where each element is an independet shell command.</p>
-
-<p>Then the job can be submitted to the SLURM cluster using the <code>$submit()</code> method of the <code>Job</code> object. And the <code>$wait()</code> method
-can be used to wait until the job is completed of failed.</p>
+<p>The first and only required parameter is a character vector, where each element is an independet shell command.
+Then you can submit the job to the SLURM cluster using the <code>$submit()</code> method of a <code>Job</code> object. And you can use the <code>$wait()</code> method to wait until a job is completed or failed.</p>
 
 <pre><code class="r">myJob$submit()
 myJob$wait()
- 2018-04-23 18:22:35 --- Cluster Status |  PENDING = 1 |
- 2018-04-23 18:22:40 --- Cluster Status |  RUNNING = 1 |
- 2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
+  2018-04-23 18:22:35 --- Cluster Status |  PENDING = 1 |
+  2018-04-23 18:22:40 --- Cluster Status |  RUNNING = 1 |
+  2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
+</code></pre>
+
+<p>For convinence you can concatenate methods in a job object.</p>
+
+<pre><code class="r">myJob$submit()$wait()
+</code></pre>
+
+<p>If at any point you wish to cancel a submitted job you can use the <code>$cancel</code> method.</p>
+
+<pre><code class="r">myJob$submit()
+myJob$cancel()
+  2018-04-23 19:17:30 Cancelling 1 job(s)
+  2018-04-23 19:17:32 Finished sending cancel signal
+</code></pre>
+
+<p>When you submit a job, rSubmmiter creates a bash script and submits it via <code>sbacth</code>. This also creates and error and output files from SLURM. The default output folder where these files are saved is current working directory. This can be changed in the outDir paramater of the <code>$new()</code> constructor method. The prefix of these files is the job name associated to the job, you can also specify it in <code>$new()</code>, the default is a randomly generated id of the form  rSubmitter<em>job</em>###. You can also remove these files at any point using the <code>$clean()</code> method of a job object.</p>
+
+<pre><code class="r">myJob &lt;- Job$new(commandVector = c(&quot;echo hola world!&quot;, &quot;sleep 30&quot;), jobName = &quot;testJob&quot;, outDir = &quot;/tmp/&quot;)
+myJob$submit()$wait()
+myJob$clean()
 </code></pre>
 
 </body>
