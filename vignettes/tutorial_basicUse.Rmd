@@ -7,7 +7,7 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-## Quick start guide 
+## Quick-start guide 
 
 rSubmmiter is a package that allows simple communication between R and a SLURM cluster to achieve three main tasks:
 
@@ -20,22 +20,41 @@ This section demonstrates the simplest way to implement these tasks
 ### Single job sumbssion
 
 The creation, management and submission of individual jobs is achieved by the use of the `Job` class.
-The first step is to create and object with the `Job` class by using the `new` method. On its simplest form the creation of the a `Job` object looks like this.
-
+The first step is to create and object with the `Job` class by using the `$new()` constructor method. On its simplest form the creation of a `Job` object looks like this.
 ```{r eval=FALSE}
 library("rSubmmiter")
 myJob <- Job$new(commandVector = c("echo hola world!", "sleep 30"))
 ```
 
+
+
 The first and only required parameter is a character vector, where each element is an independet shell command.
-
-Then the job can be submitted to the SLURM cluster using the `$submit()` method of the `Job` object. And the `$wait()` method
-can be used to wait until the job is completed of failed.
-
+Then you can submit the job to the SLURM cluster using the `$submit()` method of a `Job` object. And you can use the `$wait()` method to wait until a job is completed or failed.
 ```{r eval=FALSE}
 myJob$submit()
 myJob$wait()
- 2018-04-23 18:22:35 --- Cluster Status |  PENDING = 1 |
- 2018-04-23 18:22:40 --- Cluster Status |  RUNNING = 1 |
- 2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
+  2018-04-23 18:22:35 --- Cluster Status |  PENDING = 1 |
+  2018-04-23 18:22:40 --- Cluster Status |  RUNNING = 1 |
+  2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
+```
+For convinence you can concatenate methods in a job object.
+```{r eval=FALSE}
+myJob$submit()$wait()
+```
+
+
+If at any point you wish to cancel a submitted job you can use the `$cancel` method.
+```{r eval=FALSE}
+myJob$submit()
+myJob$cancel()
+  2018-04-23 19:17:30 Cancelling 1 job(s)
+  2018-04-23 19:17:32 Finished sending cancel signal
+```
+
+
+When you submit a job, rSubmmiter creates a bash script and submits it via `sbacth`. This also creates and error and output files from SLURM. The default output folder where these files are saved is current working directory. This can be changed in the outDir paramater of the `$new()` constructor method. The prefix of these files is the job name associated to the job, you can also specify it in `$new()`, the default is a randomly generated id of the form  rSubmitter_job_###. You can also remove these files at any point using the `$clean()` method of a job object.
+```{r eval=FALSE}
+myJob <- Job$new(commandVector = c("echo hola world!", "sleep 30"), jobName = "testJob", outDir = "/tmp/")
+myJob$submit()$wait()
+myJob$clean()
 ```
