@@ -19,7 +19,7 @@
 #                   )
 #                 )
 #  
-#  jobArray <- JobArray$new(commands)
+#  jobArray <- JobArray$new(commandList = commands)
 #  jobArray$submit()
 #  jobArray$wait()
 #  #   2018-04-25 17:49:30 --- Cluster Status |  PENDING = 2 |

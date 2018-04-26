@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<title>Quick-start guide</title>
+<title>rSubmitter quick-start guide</title>
 
 <script type="text/javascript">
 window.onload = function() {
@@ -201,7 +201,7 @@ hr {
 </head>
 
 <body>
-<h2>Quick-start guide</h2>
+<h2>rSubmitter quick-start guide</h2>
 
 <p>rSubmmiter is a package that allows simple communication between R and a SLURM cluster to achieve three main tasks:</p>
 
@@ -216,7 +216,7 @@ hr {
 <h3>Single job sumbssion</h3>
 
 <p>The creation, management and submission of individual jobs is achieved by the use of the <code>Job</code> class.
-The first step is to create and object with the <code>Job</code> class by using the <code>$new()</code> constructor method. The only required argument is a character vector, where each element is an independet shell command.
+The first step is to create an object of the <code>Job</code> class by using the <code>Job$new()</code> constructor method. The only required argument is a character vector, where each element is an independet shell command.
 Then you can submit the job to the SLURM cluster using the <code>$submit()</code> method of a <code>Job</code> object. And you can use the <code>$wait()</code> method to wait until a job is completed or failed.</p>
 
 <p>On its simplest form the submission of a job looks like this</p>
@@ -230,13 +230,13 @@ myJob$wait()
 #  2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
 </code></pre>
 
-<p>The STDERR and STDOUT are streamed to files of the form &ldquo;rSubmitter<em>job</em>[randomNumber].[err|out]&rdquo; in the working directory.
+<p>The STDERR and STDOUT are streamed to files of the form <code>rSubmitter\_job\_[randomNumber].[err|out]</code> in the working directory.
 Refer to the advanced section if you wish to select the destination and names of these files, as well as to set the system requirements of memory, time, cpus, nodes, etc.</p>
 
 <h3>Efficient multiple job sumbssion</h3>
 
 <p>To submit many jobs at once in an efficient way you can use the <code>JobArray</code> class that implments the SLURM arrays. Similar to the <code>Job</code> class, you first create a JobArray object with the <code>$new</code> constructor method. The difference is that you have to pass a list of character vectors, where each element of the list is a vector of commands which wil be submmitted as independent jobs. All jobs in the array will have the same system requirements of memory, cpus, etc.
-Identically to the <code>Job</code> class, you can submit the array using the <code>$submit()</code> method, and you can use the <code>$wait()</code> method to wait until all jobs are completed or one more fail.</p>
+Identically to the <code>Job</code> class, you can submit the array using the <code>$submit()</code> method, and you can use the <code>$wait()</code> method to wait until all jobs are completed or one or more fail.</p>
 
 <pre><code class="r">library(&quot;rSubmitter&quot;)
 commands &lt;- list(c( # First Job
@@ -249,7 +249,7 @@ commands &lt;- list(c( # First Job
                  )
                )
 
-jobArray &lt;- JobArray$new(commands)
+jobArray &lt;- JobArray$new(commandList = commands)
 jobArray$submit()
 jobArray$wait()
 #   2018-04-25 17:49:30 --- Cluster Status |  PENDING = 2 |
