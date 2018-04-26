@@ -290,6 +290,7 @@ JobArray <- R6::R6Class(
                            case <- c(case, paste0("      ", ";;"))
                        }
                        case <- c(case, "esac")
+                       case <- c(case,  "exit 0")
                        
                        # Concatenates SBATCH option to case statement
                        args <- c(args, case)

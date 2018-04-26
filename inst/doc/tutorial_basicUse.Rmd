@@ -20,12 +20,44 @@ This section demonstrates the simplest way to implement these tasks
 ### Single job sumbssion
 
 The creation, management and submission of individual jobs is achieved by the use of the `Job` class.
-The first step is to create and object with the `Job` class by using the `$new()` constructor method. On its simplest form the creation of a `Job` object looks like this.
+The first step is to create and object with the `Job` class by using the `$new()` constructor method. The only required argument is a character vector, where each element is an independet shell command.
+Then you can submit the job to the SLURM cluster using the `$submit()` method of a `Job` object. And you can use the `$wait()` method to wait until a job is completed or failed.
+
+ On its simplest form the submission of a job looks like this
+
 ```{r eval=FALSE}
 library("rSubmmiter")
 myJob <- Job$new(commandVector = c("echo hola world!", "sleep 30"))
+myJob$submit()
+myJob$wait()
+  2018-04-23 18:22:35 --- Cluster Status |  PENDING = 1 |
+  2018-04-23 18:22:40 --- Cluster Status |  RUNNING = 1 |
+  2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
 ```
 
+The STDERR and STDOUT are streamed to files of the form "rSubmitter_job_[randomNumber].[err|out]" in the working directory.
+Refer to the advanced section if you wish to select the destination and names of these files, as well as to set the system requirements of memory, time, cpus, nodes, etc.
+
+### Fast multiple job sumbssion
+
+To submit many jobs at once in an efficient way you can use the `JobArray` class that implments the SLURM arrays. Similar to the `Job` class, you first create a JobArray object with the `$new` constructor method. The difference is that you have to pass a list of character vectors, where each element of the list is a vector of commands which wil be submmitted as independent jobs. All jobs in the array will have the same system requirements of memory, cpus, etc.
+Identically to the `Job` class, you can submit the array using the `$submit()` method, and you can use the `$wait()` method to wait until all jobs are completed or one more fail.
+```{r eval=FALSE}
+library("rSubmmiter")
+commands <- list(c( # First Job
+                    "echo hola",
+                    "sleep 20"
+                   ),
+                 c( # Second Job
+                   "echo adios",
+                   "sleep 60"
+                 )
+               )
+    
+jobArray <- JobArray$new(commands)
+jobArray$submit()
+jobArray$wait()
+```
 
 
 The first and only required parameter is a character vector, where each element is an independet shell command.
@@ -37,13 +69,13 @@ myJob$wait()
   2018-04-23 18:22:40 --- Cluster Status |  RUNNING = 1 |
   2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
 ```
-For convinence you can concatenate methods in a job object.
+For convinence you can concatenate methods in a Job object.
 ```{r eval=FALSE}
 myJob$submit()$wait()
 ```
 
 
-If at any point you wish to cancel a submitted job you can use the `$cancel` method.
+If at any point you wish to cancel a submitted job you can use the `$cancel()` method.
 ```{r eval=FALSE}
 myJob$submit()
 myJob$cancel()
