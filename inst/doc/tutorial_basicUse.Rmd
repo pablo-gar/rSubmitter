@@ -26,24 +26,24 @@ Then you can submit the job to the SLURM cluster using the `$submit()` method of
  On its simplest form the submission of a job looks like this
 
 ```{r eval=FALSE}
-library("rSubmmiter")
+library("rSubmitter")
 myJob <- Job$new(commandVector = c("echo hola world!", "sleep 30"))
 myJob$submit()
 myJob$wait()
-  2018-04-23 18:22:35 --- Cluster Status |  PENDING = 1 |
-  2018-04-23 18:22:40 --- Cluster Status |  RUNNING = 1 |
-  2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
+#  2018-04-23 18:22:35 --- Cluster Status |  PENDING = 1 |
+#  2018-04-23 18:22:40 --- Cluster Status |  RUNNING = 1 |
+#  2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
 ```
 
 The STDERR and STDOUT are streamed to files of the form "rSubmitter_job_[randomNumber].[err|out]" in the working directory.
 Refer to the advanced section if you wish to select the destination and names of these files, as well as to set the system requirements of memory, time, cpus, nodes, etc.
 
-### Fast multiple job sumbssion
+### Efficient multiple job sumbssion
 
 To submit many jobs at once in an efficient way you can use the `JobArray` class that implments the SLURM arrays. Similar to the `Job` class, you first create a JobArray object with the `$new` constructor method. The difference is that you have to pass a list of character vectors, where each element of the list is a vector of commands which wil be submmitted as independent jobs. All jobs in the array will have the same system requirements of memory, cpus, etc.
 Identically to the `Job` class, you can submit the array using the `$submit()` method, and you can use the `$wait()` method to wait until all jobs are completed or one more fail.
 ```{r eval=FALSE}
-library("rSubmmiter")
+library("rSubmitter")
 commands <- list(c( # First Job
                     "echo hola",
                     "sleep 20"
@@ -57,6 +57,9 @@ commands <- list(c( # First Job
 jobArray <- JobArray$new(commands)
 jobArray$submit()
 jobArray$wait()
+#   2018-04-25 17:49:30 --- Cluster Status |  PENDING = 2 |
+#   2018-04-25 17:49:45 --- Cluster Status |  RUNNING = 2 |
+#   2018-04-25 17:50:50 --- Cluster Status |  COMPLETED = 2 |
 ```
 
 

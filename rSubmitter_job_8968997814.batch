@@ -1,0 +1,20 @@
+#!/bin/bash
+
+#SBATCH --job-name=rSubmitter_job_8968997814
+#SBATCH --output=/home/users/paedugar/scripts/rSLURM/rSubmitter_job_8968997814_%A_%a.out
+#SBATCH --error=/home/users/paedugar/scripts/rSLURM/rSubmitter_job_8968997814_%A_%a.err
+#SBATCH --time=5:00
+#SBATCH --array=1-2
+case $SLURM_ARRAY_TASK_ID in
+   1 )
+      set -euo pipefail
+      echo hola
+      sleep 20
+      ;;
+   2 )
+      set -euo pipefail
+      echo adios
+      sleep 60
+      ;;
+esac
+exit 0

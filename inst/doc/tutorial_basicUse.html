@@ -221,24 +221,24 @@ Then you can submit the job to the SLURM cluster using the <code>$submit()</code
 
 <p>On its simplest form the submission of a job looks like this</p>
 
-<pre><code class="r">library(&quot;rSubmmiter&quot;)
+<pre><code class="r">library(&quot;rSubmitter&quot;)
 myJob &lt;- Job$new(commandVector = c(&quot;echo hola world!&quot;, &quot;sleep 30&quot;))
 myJob$submit()
 myJob$wait()
-  2018-04-23 18:22:35 --- Cluster Status |  PENDING = 1 |
-  2018-04-23 18:22:40 --- Cluster Status |  RUNNING = 1 |
-  2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
+#  2018-04-23 18:22:35 --- Cluster Status |  PENDING = 1 |
+#  2018-04-23 18:22:40 --- Cluster Status |  RUNNING = 1 |
+#  2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
 </code></pre>
 
 <p>The STDERR and STDOUT are streamed to files of the form &ldquo;rSubmitter<em>job</em>[randomNumber].[err|out]&rdquo; in the working directory.
 Refer to the advanced section if you wish to select the destination and names of these files, as well as to set the system requirements of memory, time, cpus, nodes, etc.</p>
 
-<h3>Fast multiple job sumbssion</h3>
+<h3>Efficient multiple job sumbssion</h3>
 
 <p>To submit many jobs at once in an efficient way you can use the <code>JobArray</code> class that implments the SLURM arrays. Similar to the <code>Job</code> class, you first create a JobArray object with the <code>$new</code> constructor method. The difference is that you have to pass a list of character vectors, where each element of the list is a vector of commands which wil be submmitted as independent jobs. All jobs in the array will have the same system requirements of memory, cpus, etc.
 Identically to the <code>Job</code> class, you can submit the array using the <code>$submit()</code> method, and you can use the <code>$wait()</code> method to wait until all jobs are completed or one more fail.</p>
 
-<pre><code class="r">library(&quot;rSubmmiter&quot;)
+<pre><code class="r">library(&quot;rSubmitter&quot;)
 commands &lt;- list(c( # First Job
                     &quot;echo hola&quot;,
                     &quot;sleep 20&quot;
@@ -252,6 +252,9 @@ commands &lt;- list(c( # First Job
 jobArray &lt;- JobArray$new(commands)
 jobArray$submit()
 jobArray$wait()
+#   2018-04-25 17:49:30 --- Cluster Status |  PENDING = 2 |
+#   2018-04-25 17:49:45 --- Cluster Status |  RUNNING = 2 |
+#   2018-04-25 17:50:50 --- Cluster Status |  COMPLETED = 2 |
 </code></pre>
 
 <p>The first and only required parameter is a character vector, where each element is an independet shell command.
