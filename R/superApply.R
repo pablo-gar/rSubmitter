@@ -29,8 +29,7 @@
 #'
 #' @return list - results of FUN applied to each element in x
 #' @export
-
-superApply <- function(x, FUN, ..., tasks = 1, workingDir, packages = NULL, sources = NULL, extraBashLines = "", extraScriptLines = "", clean = T, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL){
+superApply <- function(x, FUN, ..., tasks = 1, workingDir = getwd(), packages = NULL, sources = NULL, extraBashLines = "", extraScriptLines = "", clean = T, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL){
     
     if(!is.list(x) & !is.vector(x))
         stop("x hast to be a list of a vector")
@@ -39,6 +38,7 @@ superApply <- function(x, FUN, ..., tasks = 1, workingDir, packages = NULL, sour
         stop("tasks has to be numerical")
     if(length(tasks) > 1)
         stop("tasks has to be of length 1")
+    
     #if()
     #    stop("")
     #if()
@@ -50,7 +50,7 @@ superApply <- function(x, FUN, ..., tasks = 1, workingDir, packages = NULL, sour
 
     
     SAP_PREFIX <- "sAp_"
-    idPrefix <- paste0(c(idPrefix, sample(letters, size=3), sample(0:9,size=1)), collapse = "")
+    idPrefix <- paste0(c(SAP_PREFIX, sample(letters, size=3), sample(0:9,size=1)), collapse = "")
     
     workingDir <- path.expand(workingDir)
     FUN <- match.fun(FUN)
@@ -62,7 +62,7 @@ superApply <- function(x, FUN, ..., tasks = 1, workingDir, packages = NULL, sour
     partitionIndeces<- getPartitionIndeces(x, tasks = tasks)
     
     # Constructiong paralleleJobs
-    printTime("Constructing parallel Jobs\n")
+    printTime("Partitioning function calls\n")
     jobArray <- getJobArray(x, FUN, ..., partitionIndeces = partitionIndeces, idPrefix = idPrefix, workingDir = workingDir, extraScriptLines = extraScriptLines, extraBashLines = extraBashLines, JobArrayPars = JobArrayPars, packages = packages, sources = sources)
     
     # Submmiting and waitng for jobs
@@ -81,8 +81,11 @@ superApply <- function(x, FUN, ..., tasks = 1, workingDir, packages = NULL, sour
     printTime("Merge done\n")
     
     # Removing jobs files if desired
-    if(clean)
-        system(paste0("rm ", file.path(workingDir, paste0(idPrefix, "*"))), ignore.stdout = T, ignore.stderr = T, wait = F)   
+    if(clean) {
+        printTime("Cleaning partitioned data\n")
+        system(paste0("rm ", file.path(workingDir, paste0(idPrefix, "*"))), ignore.stdout = T, ignore.stderr = T, wait = F)
+        printTime("Cleaning done\n")
+    }
     
     return(supperApplyResults)
         
