@@ -8,6 +8,9 @@
 #  #  2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
 
 ## ----eval=FALSE----------------------------------------------------------
+#  ?Job
+
+## ----eval=FALSE----------------------------------------------------------
 #  library("rSubmitter")
 #  commands <- list(c( # First Job
 #                      "echo hola",
@@ -27,6 +30,9 @@
 #  #   2018-04-25 17:50:50 --- Cluster Status |  COMPLETED = 2 |
 
 ## ----eval=FALSE----------------------------------------------------------
+#  ?JobArray
+
+## ----eval=FALSE----------------------------------------------------------
 #  x <- lapply(1:4, as.character)
 
 ## ----eval=FALSE----------------------------------------------------------
@@ -39,7 +45,7 @@
 #      return(rep(x, 3))
 #  }
 #  
-#  dir.create("~/testSap")
+#  library("rSubmitter")
 #  x <- superApply(1:100, myFun, tasks = 4)
 #  #   2018-05-04 15:29:34 Partitioning function calls
 #  #   2018-05-04 15:29:35 Submmiting parallel Jobs
@@ -49,6 +55,12 @@
 #  #   2018-05-04 15:29:45 Merge done
 #  #   2018-05-04 15:29:46 Cleaning partitioned data
 #  #   2018-05-04 15:29:47 Cleaning done
+
+## ----eval=FALSE----------------------------------------------------------
+#  x <- superApply(1:100, myFun, tasks = 4, extraBashLines = "module load R")
+
+## ----eval=FALSE----------------------------------------------------------
+#  ?superApply
 
 ## ----eval=FALSE----------------------------------------------------------
 #  myJob$submit()
