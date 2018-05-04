@@ -12,8 +12,8 @@ vignette: >
 rSubmmiter is a package that allows simple communication between R and a SLURM cluster to achieve three main tasks:
 
 1. Easy submission, monitoring and management of individual cluster jobs.
-2. Easy and fast submission of many cluster jobs, by implementing SLURM arrays.
-3. Seamlessly parallelization of lapply. 
+2. Easy and fast submission of many jobs, by implementing SLURM arrays.
+3. Seamlessly loop (lapply) parallelization. 
 
 This section demonstrates the simplest way to implement these tasks
 
@@ -35,12 +35,12 @@ myJob$wait()
 #  2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
 ```
 
-The STDERR and STDOUT are streamed to files of the form `rSubmitter_job_[randomNumber].[err|out]` in the working directory.
+The STDERR and STDOUT are streamed to files of the form `rSubmitter_job_[randomNumber].[err|out]` in the current working directory.
 Refer to the advanced section if you wish to select the destination and names of these files, as well as to set the system requirements of memory, time, cpus, nodes, etc.
 
 ### Efficient multiple job sumbssion
 
-To submit many jobs at once in an efficient way you can use the `JobArray` class that implments the SLURM arrays. Similar to the `Job` class, you first create a JobArray object with the `$new` constructor method. The difference is that you have to pass a list of character vectors, where each element of the list is a vector of commands which wil be submmitted as independent jobs. All jobs in the array will have the same system requirements of memory, cpus, etc.
+To submit many jobs at once in an efficient way you can use the `JobArray` class that implments the SLURM arrays. Similar to the `Job` class, you first create a JobArray object with the `JobArray$new()` constructor method. The difference is that you have to pass a list of character vectors, where each element of the list is a vector of commands which wil be submmitted as independent jobs. All jobs in the array will have the same system requirements of memory, cpus, etc.
 Identically to the `Job` class, you can submit the array using the `$submit()` method, and you can use the `$wait()` method to wait until all jobs are completed or one or more fail.
 ```{r eval=FALSE}
 library("rSubmitter")
@@ -62,10 +62,45 @@ jobArray$wait()
 #   2018-04-25 17:50:50 --- Cluster Status |  COMPLETED = 2 |
 ```
 
-The STDERR and STDOUT are streamed to files of the form `rSubmitter_job_[randomNumber]_[jobNumber].[err|out]` in the working directory.
+The STDERR and STDOUT are streamed to files of the form `rSubmitter_job_[randomNumber]_[jobNumber].[err|out]` in the current working directory.
 Refer to the advanced section if you wish to select the destination and names of these files, as well as to set the system requirements of memory, time, cpus, nodes, etc.
 
 
+### Lapply parallelization
+
+lapply is an R-base function that applies a function `FUN` to each element of a list or vector (similar to `map()` in python). It's one of the R ways of performing loops.
+For example this:
+```{r eval=FALSE}
+x <- lapply(1:4, as.character)
+```
+
+Is equivalent to:
+```{r eval=FALSE}
+x <- list()
+for(i in 1:4)
+    x[[i]] <- as.character(i)
+```
+
+rSubmitter comes with an implementation of lapply `superApply` that enables parallelization of the function calls using a SLURM cluster. Under the hood, it implements the JobArray class (described above) along with some complicated file management to partition one lapply call into many indepent ones that are parallely executed, then when they are all done the results of indivudal calls are compiled and returned to the user. The number of parallel tasks is defined in the `tasks` argument of `superApply`, on its simplest form a parallel lapply call looks like this:
+
+```{r eval=FALSE}
+myFun <- function(x) {
+    return(rep(x, 3)) 
+}
+
+dir.create("~/testSap")
+x <- superApply(1:100, myFun, tasks = 4)
+#   2018-05-04 15:29:34 Partitioning function calls 
+#   2018-05-04 15:29:35 Submmiting parallel Jobs
+#   2018-05-04 15:29:40 --- Cluster Status |  PENDING = 4 |
+#   2018-05-04 15:29:45 --- Cluster Status |  COMPLETED = 4 |
+#   2018-05-04 15:29:45 Merging parellel results
+#   2018-05-04 15:29:45 Merge done
+#   2018-05-04 15:29:46 Cleaning partitioned data
+#   2018-05-04 15:29:47 Cleaning done
+```
+
+This will partition the lapply call into 4, each having an equally distributed elements from x (1:100), this partition will be submitted as independents jobs. 
 
 
 

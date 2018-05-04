@@ -207,8 +207,8 @@ hr {
 
 <ol>
 <li>Easy submission, monitoring and management of individual cluster jobs.</li>
-<li>Easy and fast submission of many cluster jobs, by implementing SLURM arrays.</li>
-<li>Seamlessly parallelization of lapply. </li>
+<li>Easy and fast submission of many jobs, by implementing SLURM arrays.</li>
+<li>Seamlessly loop (lapply) parallelization. </li>
 </ol>
 
 <p>This section demonstrates the simplest way to implement these tasks</p>
@@ -230,12 +230,12 @@ myJob$wait()
 #  2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
 </code></pre>
 
-<p>The STDERR and STDOUT are streamed to files of the form <code>rSubmitter_job_[randomNumber].[err|out]</code> in the working directory.
+<p>The STDERR and STDOUT are streamed to files of the form <code>rSubmitter_job_[randomNumber].[err|out]</code> in the current working directory.
 Refer to the advanced section if you wish to select the destination and names of these files, as well as to set the system requirements of memory, time, cpus, nodes, etc.</p>
 
 <h3>Efficient multiple job sumbssion</h3>
 
-<p>To submit many jobs at once in an efficient way you can use the <code>JobArray</code> class that implments the SLURM arrays. Similar to the <code>Job</code> class, you first create a JobArray object with the <code>$new</code> constructor method. The difference is that you have to pass a list of character vectors, where each element of the list is a vector of commands which wil be submmitted as independent jobs. All jobs in the array will have the same system requirements of memory, cpus, etc.
+<p>To submit many jobs at once in an efficient way you can use the <code>JobArray</code> class that implments the SLURM arrays. Similar to the <code>Job</code> class, you first create a JobArray object with the <code>JobArray$new()</code> constructor method. The difference is that you have to pass a list of character vectors, where each element of the list is a vector of commands which wil be submmitted as independent jobs. All jobs in the array will have the same system requirements of memory, cpus, etc.
 Identically to the <code>Job</code> class, you can submit the array using the <code>$submit()</code> method, and you can use the <code>$wait()</code> method to wait until all jobs are completed or one or more fail.</p>
 
 <pre><code class="r">library(&quot;rSubmitter&quot;)
@@ -257,8 +257,43 @@ jobArray$wait()
 #   2018-04-25 17:50:50 --- Cluster Status |  COMPLETED = 2 |
 </code></pre>
 
-<p>The STDERR and STDOUT are streamed to files of the form <code>rSubmitter_job_[randomNumber]_[jobNumber].[err|out]</code> in the working directory.
+<p>The STDERR and STDOUT are streamed to files of the form <code>rSubmitter_job_[randomNumber]_[jobNumber].[err|out]</code> in the current working directory.
 Refer to the advanced section if you wish to select the destination and names of these files, as well as to set the system requirements of memory, time, cpus, nodes, etc.</p>
+
+<h3>Lapply parallelization</h3>
+
+<p>lapply is an R-base function that applies a function <code>FUN</code> to each element of a list or vector (similar to <code>map()</code> in python). It&#39;s one of the R ways of performing loops.
+For example this:</p>
+
+<pre><code class="r">x &lt;- lapply(1:4, as.character)
+</code></pre>
+
+<p>Is equivalent to:</p>
+
+<pre><code class="r">x &lt;- list()
+for(i in 1:4)
+    x[[i]] &lt;- as.character(i)
+</code></pre>
+
+<p>rSubmitter comes with an implementation of lapply <code>superApply</code> that enables parallelization of the function calls using a SLURM cluster. Under the hood, it implements the JobArray class (described above) along with some complicated file management to partition one lapply call into many indepent ones that are parallely executed, then when they are all done the results of indivudal calls are compiled and returned to the user. The number of parallel tasks is defined in the <code>tasks</code> argument of <code>superApply</code>, on its simplest form a parallel lapply call looks like this:</p>
+
+<pre><code class="r">myFun &lt;- function(x) {
+    return(rep(x, 3)) 
+}
+
+dir.create(&quot;~/testSap&quot;)
+x &lt;- superApply(1:100, myFun, tasks = 4)
+#   2018-05-04 15:29:34 Partitioning function calls 
+#   2018-05-04 15:29:35 Submmiting parallel Jobs
+#   2018-05-04 15:29:40 --- Cluster Status |  PENDING = 4 |
+#   2018-05-04 15:29:45 --- Cluster Status |  COMPLETED = 4 |
+#   2018-05-04 15:29:45 Merging parellel results
+#   2018-05-04 15:29:45 Merge done
+#   2018-05-04 15:29:46 Cleaning partitioned data
+#   2018-05-04 15:29:47 Cleaning done
+</code></pre>
+
+<p>This will partition the lapply call into 4, each having an equally distributed elements from x (1:100), this partition will be submitted as independents jobs. </p>
 
 <h4>Scratch</h4>
 
