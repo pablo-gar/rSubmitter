@@ -15,9 +15,12 @@ install_github("pablo-gar/rSubmitter")
 ```
 
 ### Usage
-Online documentation can be found [here], or you can find a quick-start guide [here](https://pablo-gar.github.io/rSubmitter/inst/doc/tutorial_basicUse.html)
+Online documentation can be found [here], or you can find a **quick-start** guide [here](https://pablo-gar.github.io/rSubmitter/inst/doc/tutorial_basicUse.html)
 
-You can access the full documention of the main rSubmitter functions from R:
+You can also access the full documention of the main `rSubmitter` functions from R:
 ```r
 library("rSubmitter")
+?Job
+?JobArray
+?superApply
 ```
