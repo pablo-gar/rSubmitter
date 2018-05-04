@@ -3,7 +3,7 @@
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
 
-<title>rSubmitter quick-start guide</title>
+<title>Scratch</title>
 
 <script type="text/javascript">
 window.onload = function() {
@@ -201,129 +201,36 @@ hr {
 </head>
 
 <body>
-<h2>rSubmitter quick-start guide</h2>
+<h4>Scratch</h4>
 
-<p>rSubmmiter is a package that allows simple communication between R and a SLURM cluster to achieve three main tasks:</p>
-
-<ol>
-<li>Easy submission, monitoring and management of individual cluster jobs.</li>
-<li>Easy and fast submission of many jobs, by implementing SLURM arrays.</li>
-<li>Seamlessly lapply (loop) parallelization. </li>
-</ol>
-
-<p>This section demonstrates the simplest way to implement these tasks.</p>
-
-<h3>Single job sumbssion</h3>
-
-<p>The creation, management and submission of individual jobs is achieved by the use of the <code>Job</code> class.
-The first step is to create an object of the <code>Job</code> class by using the <code>Job$new()</code> constructor method. The only required argument is a character vector, where each element is an independet shell command.
+<p>The first and only required parameter is a character vector, where each element is an independet shell command.
 Then you can submit the job to the SLURM cluster using the <code>$submit()</code> method of a <code>Job</code> object. And you can use the <code>$wait()</code> method to wait until a job is completed or failed.</p>
 
-<p>On its simplest form the submission of a job looks like this</p>
-
-<pre><code class="r">library(&quot;rSubmitter&quot;)
-myJob &lt;- Job$new(commandVector = c(&quot;echo hola world!&quot;, &quot;sleep 30&quot;))
-myJob$submit()
+<pre><code class="r">myJob$submit()
 myJob$wait()
-#  2018-04-23 18:22:35 --- Cluster Status |  PENDING = 1 |
-#  2018-04-23 18:22:40 --- Cluster Status |  RUNNING = 1 |
-#  2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
+  2018-04-23 18:22:35 --- Cluster Status |  PENDING = 1 |
+  2018-04-23 18:22:40 --- Cluster Status |  RUNNING = 1 |
+  2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
 </code></pre>
 
-<p>The STDERR and STDOUT are streamed to files of the form <code>rSubmitter_job_[randomNumber].[err|out]</code> in the current working directory.
-Refer to the advanced section if you wish to select the destination and names of these files, as well as to set the system requirements of memory, time, cpus, nodes, etc.</p>
+<p>For convinence you can concatenate methods in a Job object.</p>
 
-<p>You can also access the full documentation of the Job class from R:</p>
-
-<pre><code class="r">?Job
+<pre><code class="r">myJob$submit()$wait()
 </code></pre>
 
-<h3>Efficient multiple job sumbssion</h3>
+<p>If at any point you wish to cancel a submitted job you can use the <code>$cancel()</code> method.</p>
 
-<p>To submit many jobs at once in an efficient way you can use the <code>JobArray</code> class that implments the SLURM arrays. Similar to the <code>Job</code> class, you first create a JobArray object with the <code>JobArray$new()</code> constructor method. The difference is that you have to pass a list of character vectors, where each element of the list is a vector of commands which wil be submmitted as independent jobs. All jobs in the array will have the same system requirements of memory, cpus, etc.
-Identically to the <code>Job</code> class, you can submit the array using the <code>$submit()</code> method, and you can use the <code>$wait()</code> method to wait until all jobs are completed or one or more fail.</p>
-
-<pre><code class="r">library(&quot;rSubmitter&quot;)
-commands &lt;- list(c( # First Job
-                    &quot;echo hola&quot;,
-                    &quot;sleep 20&quot;
-                   ),
-                 c( # Second Job
-                   &quot;echo adios&quot;,
-                   &quot;sleep 60&quot;
-                 )
-               )
-
-jobArray &lt;- JobArray$new(commandList = commands)
-jobArray$submit()
-jobArray$wait()
-#   2018-04-25 17:49:30 --- Cluster Status |  PENDING = 2 |
-#   2018-04-25 17:49:45 --- Cluster Status |  RUNNING = 2 |
-#   2018-04-25 17:50:50 --- Cluster Status |  COMPLETED = 2 |
+<pre><code class="r">myJob$submit()
+myJob$cancel()
+  2018-04-23 19:17:30 Cancelling 1 job(s)
+  2018-04-23 19:17:32 Finished sending cancel signal
 </code></pre>
 
-<p>The STDERR and STDOUT are streamed to files of the form <code>rSubmitter_job_[randomNumber]_[jobNumber].[err|out]</code> in the current working directory.
-Refer to the advanced section if you wish to select the destination and names of these files, as well as to set the system requirements of memory, time, cpus, nodes, etc.</p>
+<p>When you submit a job, rSubmmiter creates a bash script and submits it via <code>sbacth</code>. This also creates and error and output files from SLURM. The default output folder where these files are saved is current working directory. This can be changed in the outDir paramater of the <code>$new()</code> constructor method. The prefix of these files is the job name associated to the job, you can also specify it in <code>$new()</code>, the default is a randomly generated id of the form  rSubmitter<em>job</em>###. You can also remove these files at any point using the <code>$clean()</code> method of a job object.</p>
 
-<p>You can also access the full documentation of the JobArray class from R:</p>
-
-<pre><code class="r">?JobArray
-</code></pre>
-
-<h3>Lapply parallelization (loop parallelization)</h3>
-
-<p>lapply is an R-base function that applies a function <code>FUN</code> to each element of a list or vector (similar to <code>map()</code> in python). It&#39;s one of the R ways of performing loops.</p>
-
-<p>For example this:</p>
-
-<pre><code class="r">x &lt;- lapply(1:4, as.character)
-</code></pre>
-
-<p>Is equivalent to:</p>
-
-<pre><code class="r">x &lt;- list()
-for(i in 1:4)
-    x[[i]] &lt;- as.character(i)
-</code></pre>
-
-<p>rSubmitter comes with an implementation of lapply, <code>superApply</code>, that enables parallelization of lapply function calls using a SLURM cluster. Under the hood, it implements the JobArray class (described above) along with some complicated file management to partition one lapply call into many indepent ones that are parallely executed, then when they are all done the results of indivudal calls are compiled and returned to the user. </p>
-
-<p>The number of parallel tasks is defined in the <code>tasks</code> argument of <code>superApply</code>, on its simplest form a parallel lapply call looks like this:</p>
-
-<pre><code class="r">myFun &lt;- function(x) {
-    return(rep(x, 3)) 
-}
-
-library(&quot;rSubmitter&quot;)
-x &lt;- superApply(1:100, myFun, tasks = 4)
-#   2018-05-04 15:29:34 Partitioning function calls 
-#   2018-05-04 15:29:35 Submmiting parallel Jobs
-#   2018-05-04 15:29:40 --- Cluster Status |  PENDING = 4 |
-#   2018-05-04 15:29:45 --- Cluster Status |  COMPLETED = 4 |
-#   2018-05-04 15:29:45 Merging parellel results
-#   2018-05-04 15:29:45 Merge done
-#   2018-05-04 15:29:46 Cleaning partitioned data
-#   2018-05-04 15:29:47 Cleaning done
-</code></pre>
-
-<p>This will partition the lapply call into 4 different ones, each having an equally distributed elements of <code>1:100</code>, this partitions will be submitted as independents jobs, the results will be compiled and returned without the need of doing anything else.</p>
-
-<p>It is important to note that not all systems come with an out-of-the-box R executable, and since superApply performs independent R calls in the SLURM cluster then you have to make sure that these R calls can be executed. If you have to execute any commands from your shell enviroment to be able to execute R, then you have to include those commands in the <code>extraBashLines</code> argument of <code>superApply</code></p>
-
-<p>For example, if in order to execute R in your system you have to do the following:</p>
-
-<pre><code class="bash">$ module load R
-$ R
-</code></pre>
-
-<p>Then you have to execute superApply like this:</p>
-
-<pre><code class="r">x &lt;- superApply(1:100, myFun, tasks = 4, extraBashLines = &quot;module load R&quot;)
-</code></pre>
-
-<p>You the full documentation of superApply from R:</p>
-
-<pre><code class="r">?superApply
+<pre><code class="r">myJob &lt;- Job$new(commandVector = c(&quot;echo hola world!&quot;, &quot;sleep 30&quot;), jobName = &quot;testJob&quot;, outDir = &quot;/tmp/&quot;)
+myJob$submit()$wait()
+myJob$clean()
 </code></pre>
 
 </body>
