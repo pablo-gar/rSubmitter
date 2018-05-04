@@ -116,9 +116,9 @@ x <- superApply(1:100, myFun, tasks = 4)
 
 This will partition the lapply call into 4 different ones, each having an equally distributed elements of `1:100`, this partitions will be submitted as independents jobs, the results will be compiled and returned without the need of doing anything else.
 
-It is important to note that not all systems come with an out-of-the-box R executable, and since superApply performs independent R calls in the SLURM cluster then you have to make sure that these R calls can be executed. If you have to execute any commands from your shell enviroment to be able to execute R, then you have to include those commands in the `extraBashLines` argument of `superApply`
+It is important to note that not all systems come with an out-of-the-box R executable, and since superApply performs independent R calls in the SLURM cluster then you have to make sure that these R calls can be executed. If you have to execute any commands from your shell enviroment to be able to open the R interpreter, then you have to include those commands in the `extraBashLines` argument of `superApply`
 
-For example, if in order to execute R in your system you have to do the following:
+For example, if in order to execute R in your system you usally do:
 ```{r, engine = 'bash', eval = FALSE}
 $ module load R
 $ R
@@ -130,7 +130,7 @@ x <- superApply(1:100, myFun, tasks = 4, extraBashLines = "module load R")
 ```
 
 
-You the full documentation of superApply from R:
+You can see the full documentation of superApply from R:
 ```{r eval=FALSE}
 ?superApply
 ```
