@@ -5,7 +5,7 @@
 \title{Parallel lapply}
 \usage{
 superApply(x, FUN, ..., tasks = 1, workingDir, packages = NULL,
-  sources = NULL, extraBashLines = "", extraScriptLines = "", clean = F,
+  sources = NULL, extraBashLines = "", extraScriptLines = "", clean = T,
   partition = NULL, time = NULL, mem = NULL, proc = NULL,
   totalProc = NULL, nodes = NULL, email = NULL)
 }
@@ -20,15 +20,15 @@ superApply(x, FUN, ..., tasks = 1, workingDir, packages = NULL,
 
 \item{workingDir}{string - path to folder that will contain all the temporary files needed for submission, execution, and compilation of inidivudal jobs}
 
-\item{packages}{character vector}
+\item{packages}{character vector - package names to be loaded in individual tasks}
 
-\item{sources}{character vector}
+\item{sources}{character vector - paths to R code to be loaded in individual tasks}
 
-\item{extraBashLines}{character vector}
+\item{extraBashLines}{character vector - each element will be added as a line to the inidividual task execution bash script before R gets executed. For instance, here you may want to load R if is not in your system by default}
 
-\item{extraScriptLines}{character vector}
+\item{extraScriptLines}{character vector - each element will be added as a line to the individual task execution R script before starting lapply}
 
-\item{clean}{logical}
+\item{clean}{logical - if TRUE all files created in workingDir will be deleted}
 
 \item{partition}{character - Partition to use. Equivalent to \code{--partition} of SLURM sbatch}
 

@@ -35,7 +35,7 @@ myJob$wait()
 #  2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |
 ```
 
-The STDERR and STDOUT are streamed to files of the form `rSubmitter\_job\_[randomNumber].[err|out]` in the working directory.
+The STDERR and STDOUT are streamed to files of the form `rSubmitter_job_[randomNumber].[err|out]` in the working directory.
 Refer to the advanced section if you wish to select the destination and names of these files, as well as to set the system requirements of memory, time, cpus, nodes, etc.
 
 ### Efficient multiple job sumbssion
@@ -62,7 +62,14 @@ jobArray$wait()
 #   2018-04-25 17:50:50 --- Cluster Status |  COMPLETED = 2 |
 ```
 
+The STDERR and STDOUT are streamed to files of the form `rSubmitter_job_[randomNumber]_[jobNumber].[err|out]` in the working directory.
+Refer to the advanced section if you wish to select the destination and names of these files, as well as to set the system requirements of memory, time, cpus, nodes, etc.
 
+
+
+
+
+#### Scratch 
 The first and only required parameter is a character vector, where each element is an independet shell command.
 Then you can submit the job to the SLURM cluster using the `$submit()` method of a `Job` object. And you can use the `$wait()` method to wait until a job is completed or failed.
 ```{r eval=FALSE}

@@ -34,7 +34,7 @@ Concatenation is possible for most methods.
       \itemize{
          \item{commandVector} {: character vector - Each element should be an independent shell command to be included in the current job. This is the only required argument}
          \item{jobName} {: character - Name of job, if NULL one will be generated of the form rSubmitter_job_[random_alphanumeric]. Equivalent to \code{--job-name} of SLURM sbatch. Most output files use it as a suffix}
-         \item{outDir} {: character - writeable path for sabtch script as well as  SLRUM err and out files. If NULL the current working directory will be used}
+         \item{outDir} {: character - writeable path for the sabtch script as well as the SLRUM STDERR and STDOUT files. If NULL the current working directory will be used}
          \item{partition} {: character - Partition to use. Equivalent to \code{--partition} of SLURM sbatch}
          \item{time} {: character - Time requested for job execution, one accepted format is "HH:MM:SS". Equivalent to \code{--time} of SLURM sbatch}
          \item{mem} {: character - Memory requested for job execution, one accepted format is "xG" or "xMB". Equivalent to \code{--mem} of SLURM sbatch}
@@ -124,7 +124,7 @@ job$cancel()
 job <- Job$new("echo this is too much memory!", mem = "16G")
 job$submit()
 
-# Create and submit a requesting multiple processors
+# Create and submit requesting multiple processors
 job <- Job$new(c("echo this is multi-processing", "nproc"), proc = 8)
 job$submit()
 

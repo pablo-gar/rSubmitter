@@ -14,11 +14,11 @@
 #' @param ...  further arguments of FUN
 #' @param tasks  integer - number of individual parallel jobs to execute
 #' @param workingDir  string - path to folder that will contain all the temporary files needed for submission, execution, and compilation of inidivudal jobs
-#' @param packages character vector
-#' @param sources character vector
-#' @param extraBashLines character vector
-#' @param extraScriptLines character vector
-#' @param clean logical
+#' @param packages character vector - package names to be loaded in individual tasks
+#' @param sources character vector - paths to R code to be loaded in individual tasks
+#' @param extraBashLines character vector - each element will be added as a line to the inidividual task execution bash script before R gets executed. For instance, here you may want to load R if is not in your system by default
+#' @param extraScriptLines character vector - each element will be added as a line to the individual task execution R script before starting lapply
+#' @param clean logical - if TRUE all files created in workingDir will be deleted
 #' @param partition character - Partition to use. Equivalent to \code{--partition} of SLURM sbatch
 #' @param time character - Time requested for job execution, one accepted format is "HH:MM:SS". Equivalent to \code{--time} of SLURM sbatch
 #' @param mem character - Memory requested for job execution, one accepted format is "xG" or "xMB". Equivalent to \code{--mem} of SLURM sbatch
@@ -30,7 +30,7 @@
 #' @return list - results of FUN applied to each element in x
 #' @export
 
-superApply <- function(x, FUN, ..., tasks = 1, workingDir, packages = NULL, sources = NULL, extraBashLines = "", extraScriptLines = "", clean = F, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL){
+superApply <- function(x, FUN, ..., tasks = 1, workingDir, packages = NULL, sources = NULL, extraBashLines = "", extraScriptLines = "", clean = T, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL){
     
     if(!is.list(x) & !is.vector(x))
         stop("x hast to be a list of a vector")
@@ -50,6 +50,7 @@ superApply <- function(x, FUN, ..., tasks = 1, workingDir, packages = NULL, sour
 
     
     SAP_PREFIX <- "sAp_"
+    idPrefix <- paste0(c(idPrefix, sample(letters, size=3), sample(0:9,size=1)), collapse = "")
     
     workingDir <- path.expand(workingDir)
     FUN <- match.fun(FUN)
@@ -62,7 +63,7 @@ superApply <- function(x, FUN, ..., tasks = 1, workingDir, packages = NULL, sour
     
     # Constructiong paralleleJobs
     printTime("Constructing parallel Jobs\n")
-    jobArray <- getJobArray(x, FUN, ..., partitionIndeces = partitionIndeces, idPrefix = SAP_PREFIX, workingDir = workingDir, extraScriptLines = extraScriptLines, extraBashLines = extraBashLines, JobArrayPars = JobArrayPars, packages = packages, sources = sources)
+    jobArray <- getJobArray(x, FUN, ..., partitionIndeces = partitionIndeces, idPrefix = idPrefix, workingDir = workingDir, extraScriptLines = extraScriptLines, extraBashLines = extraBashLines, JobArrayPars = JobArrayPars, packages = packages, sources = sources)
     
     # Submmiting and waitng for jobs
     printTime("Submmiting parallel Jobs\n")
@@ -81,7 +82,7 @@ superApply <- function(x, FUN, ..., tasks = 1, workingDir, packages = NULL, sour
     
     # Removing jobs files if desired
     if(clean)
-        system(paste0("rm ", file.path(workingDir, "*")))   
+        system(paste0("rm ", file.path(workingDir, paste0(idPrefix, "*"))), ignore.stdout = T, ignore.stderr = T, wait = F)   
     
     return(supperApplyResults)
         

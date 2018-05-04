@@ -29,7 +29,7 @@ To create, manipulate, and submit SLURM jobs please refer to the Job and Job arr
      \cr Parameters:
       \itemize{
          \item{jobName} {: character - Name of job, if NULL one will be generated of the form rSubmitter_job_[random_alphanumeric]. Equivalent to \code{--job-name} of SLURM sbatch. Most output files use it as a suffix}
-         \item{outDir} {: character - writeable path for sabtch script as well as  SLRUM err and out files. If NULL the current working directory will be used}
+         \item{outDir} {: character - writeable path for the sabtch script as well as the SLRUM STDERR and STDOUT files. If NULL the current working directory will be used}
          \item{partition} {: character - Partition to use. Equivalent to \code{--partition} of SLURM sbatch}
          \item{time} {: character - Time requested for job execution, one accepted format is "HH:MM:SS". Equivalent to \code{--time} of SLURM sbatch}
          \item{mem} {: character - Memory requested for job execution, one accepted format is "xG" or "xMB". Equivalent to \code{--mem} of SLURM sbatch}

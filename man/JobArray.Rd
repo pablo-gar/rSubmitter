@@ -9,28 +9,30 @@
 x <- JobArray$new(commandList, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
 x$submit()
 x$wait(stopIfFailed = F, verbose = T)
+x$length()
 x$cancel()
 x$getState(simplify = F)
 x$getJobNames()
 x$clean()
 }
 \value{
-\code{\link{R6Class}} with methods and fields for SLURM job manipulation
+\code{\link{R6Class}} with methods and fields for SLURM job array manipulation
 }
 \description{
 R6 Class that enables easy submission and manipulation of SLURM job arrays.
 }
 \details{
 Job arrays are quickly genearated and submitted allowing for efficient creation and execution
-of many shell jobs in a SLURM cluster. This allows parallelization to be fast. This class allows the user
-to not worry about the nuances of a SLURM job array.
+of many shell jobs in a SLURM cluster, thus facilitating parallelization when needed. This class eliminates the cumbersome task of
+manually creating SLURM arrays, in its simplest form two lines of code are sufficient for a job array submmission.
+Additionally, there is an added functionallity to monitor and wait for all jobs in an array once they have been submitted.
 
 All jobs in an job array share the same execution requirements.
-Each element in a command list will be submitted as an individual job in the array. Elements in the commad list are
+Each element in `commandList` will be submitted as an individual jobs in the array. Elements of `commandList` should be
 vectors of shell commands.
 
 Submission is achived by creating and executing an sbatch script, for more details on SLURM refer
-to \url{https://slurm.schedmd.com/}. For job arrays refer to \url{https://slurm.schedmd.com/job_array.html}
+to https://slurm.schedmd.com/. For job arrays refer to https://slurm.schedmd.com/job_array.html
 Concatenation is possible for most methods.
 }
 \section{Method description}{
@@ -41,9 +43,9 @@ Concatenation is possible for most methods.
      \code{x <- JobInfo$new(commandList, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)}
      \cr Parameters:
       \itemize{
-         \item{commandList} {: list of character vectors - Each element of the list should a vector of shell commands. Each element of the list corresponds to a different job in the array.}
+         \item{commandList} {: list of character vectors - Each element of the list should be a vector of shell commands. Each element of the list corresponds to a different job in the array.}
          \item{jobName} {: character - Name of job, if NULL one will be generated of the form rSubmitter_job_[random_alphanumeric]. Equivalent to \code{--job-name} of SLURM sbatch. Most output files use it as a suffix}
-         \item{outDir} {: character - writeable path for sabtch script as well as  SLRUM err and out files. If NULL the current working directory will be used}
+         \item{outDir} {: character - writeable path for the sabtch script as well as the SLRUM STDERR and STDOUT files. If NULL the current working directory will be used}
          \item{partition} {: character - Partition to use. Equivalent to \code{--partition} of SLURM sbatch}
          \item{time} {: character - Time requested for job execution, one accepted format is "HH:MM:SS". Equivalent to \code{--time} of SLURM sbatch}
          \item{mem} {: character - Memory requested for job execution, one accepted format is "xG" or "xMB". Equivalent to \code{--mem} of SLURM sbatch}
@@ -62,11 +64,6 @@ Concatenation is possible for most methods.
      \cr Return: \cr self - for method concatenation
      }
  
- \item{Get length of array}{
-     \cr
-     \code{x$length()}
-     \cr Return: \cr numeric - number of individual jobs in array
-     }
  \item{Wait for job(s) to finish}{
      \cr
      \code{x$wait(stopIfFailed = F, verbose = T)}
@@ -80,6 +77,11 @@ Concatenation is possible for most methods.
      \cr Return: \cr self - for method concatenation
      }
  
+ \item{Get length of array}{
+     \cr
+     \code{x$length()}
+     \cr Return: \cr numeric - number of individual jobs in array
+     }
 
  \item{Cancel job(s)}{
      \cr
@@ -154,10 +156,5 @@ job$submit()
 
 # Removes script, err and output files
 job$clean()
-Submit all jobs
-Writes the submission script specific to Job arrays
-Creates job ids of the form masterId_1 ... masterId_n
-Creates job names of the form jobName_1 ... jobName_n
-Throws error if i is out of bounds in job list
 }
 \keyword{datasets}
