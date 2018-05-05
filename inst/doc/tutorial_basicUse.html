@@ -296,7 +296,7 @@ for(i in 1:4)
 
 <p>rSubmitter comes with an implementation of lapply, <code>superApply</code>, that enables parallelization of lapply function calls using a SLURM cluster. Under the hood, it implements the JobArray class (described above) along with some complicated file management to partition one lapply call into many indepent ones that are parallely executed, then when they are all done the results of indivudal calls are compiled and returned to the user. </p>
 
-<p>The number of parallel tasks is defined in the <code>tasks</code> argument of <code>superApply</code>, on its simplest form a parallel lapply call looks like this:</p>
+<p>The number of parallel tasks is defined in the <code>tasks</code> argument of <code>superApply</code>, <strong>on its simplest form a parallel lapply call looks like this:</strong></p>
 
 <pre><code class="r">myFun &lt;- function(x) {
     return(rep(x, 3)) 
