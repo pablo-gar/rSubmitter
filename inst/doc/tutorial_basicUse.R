@@ -1,4 +1,8 @@
 ## ----eval=FALSE----------------------------------------------------------
+#  library("devtools")
+#  install_github("pablo-gar/rSubmitter")
+
+## ----eval=FALSE----------------------------------------------------------
 #  library("rSubmitter")
 #  myJob <- Job$new(commandVector = c("echo hola world!", "sleep 30"))
 #  myJob$submit()

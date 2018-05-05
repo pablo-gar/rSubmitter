@@ -17,6 +17,13 @@ rSubmmiter is a package that allows simple communication between R and a SLURM c
 
 This section demonstrates the simplest way to implement these tasks.
 
+### Installation
+Currently rSubmitter can only be installed via the R devtools package:
+```{r eval=FALSE}
+library("devtools")
+install_github("pablo-gar/rSubmitter")
+```
+
 ### Single job sumbssion
 
 The creation, management and submission of individual jobs is achieved by the use of the `Job` class.
