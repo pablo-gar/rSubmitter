@@ -1,10 +1,13 @@
 Package: rSubmitter
-Title: A plataform to submit jobs to a High Performance Computing Cluster managed by SLURM
+Title: An interface between R and a SLURM cluster
 Version: 0.1
 Authors@R: person("Pablo E.", "Garcia-Nieto",
                   email = "paedugar@gmail.com",
                   role = c("aut", "cre"))
-Description: TODO
+Description: rSubmmiter is a package that allows simple communication between R and a SLURM cluster to achieve three main tasks
+  Easy submission, monitoring and management of individual cluster jobs.
+  Easy and fast submission of many jobs, by implementing SLURM arrays.
+  Seamlessly lapply (loop) parallelization.
 Depends: R (>= 3.2.0)
 Imports:
     R6
@@ -13,3 +16,5 @@ LazyData: true
 RoxygenNote: 6.0.1
 Suggests: knitr, rmarkdown
 VignetteBuilder: knitr
+BugReports: https://github.com/pablo-gar/rSubmitter/issues
+URL: https://github.com/pablo-gar/rSubmitter/
