@@ -2,12 +2,13 @@
 % Please edit documentation in R/superApply.R
 \name{getUserFunctions}
 \alias{getUserFunctions}
-\title{getUserFunctions
-Helper of superApply}
+\title{Helper of superApply}
 \usage{
 getUserFunctions()
 }
+\value{
+a character vector with the names of the functions in the global enviroment
+}
 \description{
-Returns a character vector with the names of the functions
-in the global enviroment
+Helper of superApply
 }

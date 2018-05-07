@@ -82,10 +82,6 @@
 #' @examples
 #' jobInfo <- JobInfo$new()
 #'
-
-# TODO:
-# - Implement finding out the number of pending jobs from an array
-
 JobInfo <- R6::R6Class(classname = "JobInfo",
                        public = list(
                                      #Instances

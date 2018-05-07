@@ -128,8 +128,6 @@
 #'
 #' # Removes script, err and output files
 #' job$clean()
-
-
 Job <- R6::R6Class(classname = "Job", inherit = JobInfo,
                public = list(
                              #Instances

@@ -1,3 +1,5 @@
+#' Cancels a SLURM job
+#' @param x character vector - the SLURM ids
 cancelJob <- function(x) {
     
     x <- as.character(x)

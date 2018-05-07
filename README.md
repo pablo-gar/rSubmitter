@@ -1,4 +1,3 @@
-
 # rSubmitter 
 ### An interface between R and a SLURM cluster
 

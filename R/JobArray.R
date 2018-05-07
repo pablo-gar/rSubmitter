@@ -151,7 +151,6 @@
 #'
 #' # Removes script, err and output files
 #' job$clean()
-
 JobArray <- R6::R6Class(
                        
     classname = "JobArray", inherit = JobInfo,

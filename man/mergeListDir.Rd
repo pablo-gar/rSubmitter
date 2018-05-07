@@ -8,11 +8,11 @@ merges the result of independ jobs after completion of parallel lapply execution
 mergeListDir(files, varNames, workingDir)
 }
 \arguments{
-\item{character}{vector - files to be merged}
+\item{files}{character vector - files to be merged}
 
-\item{character}{vector - varnames associated to each file to be merged}
+\item{varNames}{character vector - varnames associated to each file to be merged}
 
-\item{character}{- working directory}
+\item{workingDir}{character - working directory}
 }
 \description{
 Helper of superApply

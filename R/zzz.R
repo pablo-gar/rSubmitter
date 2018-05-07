@@ -1,4 +1,4 @@
-#' option enviroment
+# option enviroment
 rSubmitterOpts <- new.env(parent = emptyenv())
 
 #' .onLoad - rSubmitter

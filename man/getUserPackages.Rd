@@ -2,12 +2,13 @@
 % Please edit documentation in R/superApply.R
 \name{getUserPackages}
 \alias{getUserPackages}
-\title{getUserPackages
-Helper of superApply}
+\title{Helper of superApply}
 \usage{
 getUserPackages()
 }
+\value{
+Returns a character vector with the names of the packages in the global enviroment
+}
 \description{
-Returns a character vector with the names of the functions
-in the global enviroment
+Helper of superApply
 }

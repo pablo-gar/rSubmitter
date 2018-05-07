@@ -166,7 +166,6 @@ getJobArray<- function(x, FUN, ..., idPrefix, partitionIndeces, workingDir, extr
 #' @param idPrefix character - prefix for job names
 #' @param iStart numeric vector - start indeces where partitions were done on x
 #' @param iEnd numeric vector - end indeces where partitions were done on x
-
 createJobScriptsData <- function(x, FUN, ..., idPrefix, iStart, iEnd, workingDir, extraScriptLines = "", extraBashLines = "", packages = NULL, sources = NULL) {
     
     cmds <- list()
@@ -231,9 +230,9 @@ createJobScriptsData <- function(x, FUN, ..., idPrefix, iStart, iEnd, workingDir
 
 #' Helper of superApply
 #' merges the result of independ jobs after completion of parallel lapply executions
-#' @param character vector - files to be merged
-#' @param character vector - varnames associated to each file to be merged
-#' @param character - working directory
+#' @param files character vector - files to be merged
+#' @param varNames character vector - varnames associated to each file to be merged
+#' @param workingDir character - working directory
 mergeListDir <- function(files, varNames, workingDir){
     
     finishedFiles <- files %in% list.files(workingDir)
@@ -251,34 +250,16 @@ mergeListDir <- function(files, varNames, workingDir){
     return(finalF)
 }
 
-checkFiles <- function (x, workingDir){
-    
-    applyFiles <- list.files(workingDir)[grep(SAP_PREFIX, list.files(workingDir))]
-    remaining <- sum( !x %in% applyFiles) 
-    
-    finished <- ifelse(remaining == 0, TRUE, FALSE)
-    total <- length(x)
-    
-    
-    return(list(finished = finished, remaining = remaining, total = total))
-}
-
-#' getUserFunctions
 #' Helper of superApply
 #'
-#' Returns a character vector with the names of the functions
-#' in the global enviroment
-
+#' @return a character vector with the names of the functions in the global enviroment
 getUserFunctions <- function() {
     return(c(lsf.str(globalenv())))
 }
 
-#' getUserPackages
 #' Helper of superApply
 #'
-#' Returns a character vector with the names of the functions
-#' in the global enviroment
-
+#' @return Returns a character vector with the names of the packages in the global enviroment
 getUserPackages <- function() {
     return(names(sessionInfo()$otherPkgs))
 }
@@ -300,7 +281,6 @@ getUserPackages <- function() {
 #'
 #' createStringFunction("library") 
 #' #[1] ""
-
 createStringFunction <- function(fun, inside = NULL) {
     
     if(is.null(inside))
