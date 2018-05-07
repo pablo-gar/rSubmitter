@@ -1,13 +1,13 @@
 ---
-title: "Tutorial: SLURM job management and easy parallelization from R using rSubmmiter"
+title: "1. Quick-start guide"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Tutorial: SLURM job management and easy parallelization from R using rSubmmiter}
+  %\VignetteIndexEntry{1. Quick-start guide}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
 
-## rSubmitter quick-start guide 
+## Intro
 
 rSubmmiter is a package that allows simple communication between R and a SLURM cluster to achieve three main tasks:
 
@@ -17,14 +17,14 @@ rSubmmiter is a package that allows simple communication between R and a SLURM c
 
 This section demonstrates the simplest way to implement these tasks.
 
-### Installation
+## Installation
 Currently rSubmitter can only be installed via the R devtools package:
 ```{r eval=FALSE}
 library("devtools")
 install_github("pablo-gar/rSubmitter")
 ```
 
-### Single job sumbssion
+## Single job sumbssion
 
 The creation, management and submission of individual jobs is achieved by the use of the `Job` class.
 The first step is to create an object of the `Job` class by using the `Job$new()` constructor method. The only required argument is a character vector, where each element is an independet shell command.
@@ -51,7 +51,7 @@ You can also access the full documentation of the Job class from R:
 ```
 
 
-### Efficient multiple job sumbssion
+## Efficient multiple job sumbssion
 
 To submit many jobs at once in an efficient way you can use the `JobArray` class that implments the SLURM arrays. Similar to the `Job` class, you first create a JobArray object with the `JobArray$new()` constructor method. The difference is that you have to pass a list of character vectors, where each element of the list is a vector of commands which wil be submmitted as independent jobs. All jobs in the array will have the same system requirements of memory, cpus, etc.
 Identically to the `Job` class, you can submit the array using the `$submit()` method, and you can use the `$wait()` method to wait until all jobs are completed or one or more fail.
@@ -84,7 +84,7 @@ You can also access the full documentation of the JobArray class from R:
 ```
 
 
-### Lapply parallelization (loop parallelization)
+## Lapply parallelization (loop parallelization)
 
 lapply is an R-base function that applies a function `FUN` to each element of a list or vector (similar to `map()` in python). It's one of the R ways of performing loops.
 

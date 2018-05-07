@@ -1,8 +1,8 @@
 ---
-title: "Scratch space"
+title: "In construction"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Scratch space}
+  %\VignetteIndexEntry{In construction}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---

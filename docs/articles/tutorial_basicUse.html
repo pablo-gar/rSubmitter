@@ -5,11 +5,11 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tutorial: SLURM job management and easy parallelization from R using rSubmmiter • rSubmitter</title>
+<title>1. Quick-start guide • rSubmitter</title>
 <!-- jquery --><script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script><!-- Bootstrap --><link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script><!-- Font Awesome icons --><link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
 <!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/1.7.1/clipboard.min.js" integrity="sha384-cV+rhyOuRHc9Ub/91rihWcGmMmCXDeksTtCihMupQHSsi8GIIRDG0ThDc3HGQFJ3" crossorigin="anonymous"></script><!-- pkgdown --><link href="../pkgdown.css" rel="stylesheet">
-<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><meta property="og:title" content="Tutorial: SLURM job management and easy parallelization from R using rSubmmiter">
+<script src="../jquery.sticky-kit.min.js"></script><script src="../pkgdown.js"></script><meta property="og:title" content="1. Quick-start guide">
 <meta property="og:description" content="">
 <meta name="twitter:card" content="summary">
 <!-- mathjax --><script src="https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script><!--[if lt IE 9]>
@@ -52,10 +52,10 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/scratch.html">Scratch space</a>
+      <a href="../articles/scratch.html">In construction</a>
     </li>
     <li>
-      <a href="../articles/tutorial_basicUse.html">Tutorial: SLURM job management and easy parallelization from R using rSubmmiter</a>
+      <a href="../articles/tutorial_basicUse.html">1. Quick-start guide</a>
     </li>
   </ul>
 </li>
@@ -72,7 +72,7 @@
       </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1>Tutorial: SLURM job management and easy parallelization from R using rSubmmiter</h1>
+      <h1>1. Quick-start guide</h1>
             
       
       
@@ -82,9 +82,9 @@
 
     
     
-<div id="rsubmitter-quick-start-guide" class="section level2">
+<div id="intro" class="section level2">
 <h2 class="hasAnchor">
-<a href="#rsubmitter-quick-start-guide" class="anchor"></a>rSubmitter quick-start guide</h2>
+<a href="#intro" class="anchor"></a>Intro</h2>
 <p>rSubmmiter is a package that allows simple communication between R and a SLURM cluster to achieve three main tasks:</p>
 <ol style="list-style-type: decimal">
 <li>Easy submission, monitoring and management of individual cluster jobs.</li>
@@ -92,16 +92,17 @@
 <li>Seamlessly lapply (loop) parallelization.</li>
 </ol>
 <p>This section demonstrates the simplest way to implement these tasks.</p>
-<div id="installation" class="section level3">
-<h3 class="hasAnchor">
-<a href="#installation" class="anchor"></a>Installation</h3>
+</div>
+<div id="installation" class="section level2">
+<h2 class="hasAnchor">
+<a href="#installation" class="anchor"></a>Installation</h2>
 <p>Currently rSubmitter can only be installed via the R devtools package:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(<span class="st">"devtools"</span>)</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"pablo-gar/rSubmitter"</span>)</a></code></pre></div>
 </div>
-<div id="single-job-sumbssion" class="section level3">
-<h3 class="hasAnchor">
-<a href="#single-job-sumbssion" class="anchor"></a>Single job sumbssion</h3>
+<div id="single-job-sumbssion" class="section level2">
+<h2 class="hasAnchor">
+<a href="#single-job-sumbssion" class="anchor"></a>Single job sumbssion</h2>
 <p>The creation, management and submission of individual jobs is achieved by the use of the <code>Job</code> class. The first step is to create an object of the <code>Job</code> class by using the <code>Job$new()</code> constructor method. The only required argument is a character vector, where each element is an independet shell command. Then you can submit the job to the SLURM cluster using the <code>$submit()</code> method of a <code>Job</code> object. And you can use the <code>$wait()</code> method to wait until a job is completed or failed.</p>
 <p>On its simplest form the submission of a job looks like this</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)</a>
@@ -115,9 +116,9 @@
 <p>You can also access the full documentation of the Job class from R:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">?Job</a></code></pre></div>
 </div>
-<div id="efficient-multiple-job-sumbssion" class="section level3">
-<h3 class="hasAnchor">
-<a href="#efficient-multiple-job-sumbssion" class="anchor"></a>Efficient multiple job sumbssion</h3>
+<div id="efficient-multiple-job-sumbssion" class="section level2">
+<h2 class="hasAnchor">
+<a href="#efficient-multiple-job-sumbssion" class="anchor"></a>Efficient multiple job sumbssion</h2>
 <p>To submit many jobs at once in an efficient way you can use the <code>JobArray</code> class that implments the SLURM arrays. Similar to the <code>Job</code> class, you first create a JobArray object with the <code>JobArray$new()</code> constructor method. The difference is that you have to pass a list of character vectors, where each element of the list is a vector of commands which wil be submmitted as independent jobs. All jobs in the array will have the same system requirements of memory, cpus, etc. Identically to the <code>Job</code> class, you can submit the array using the <code>$submit()</code> method, and you can use the <code>$wait()</code> method to wait until all jobs are completed or one or more fail.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)</a>
 <a class="sourceLine" id="cb4-2" data-line-number="2">commands &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">c</span>( <span class="co"># First Job</span></a>
@@ -140,9 +141,9 @@
 <p>You can also access the full documentation of the JobArray class from R:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">?JobArray</a></code></pre></div>
 </div>
-<div id="lapply-parallelization-loop-parallelization" class="section level3">
-<h3 class="hasAnchor">
-<a href="#lapply-parallelization-loop-parallelization" class="anchor"></a>Lapply parallelization (loop parallelization)</h3>
+<div id="lapply-parallelization-loop-parallelization" class="section level2">
+<h2 class="hasAnchor">
+<a href="#lapply-parallelization-loop-parallelization" class="anchor"></a>Lapply parallelization (loop parallelization)</h2>
 <p>lapply is an R-base function that applies a function <code>FUN</code> to each element of a list or vector (similar to <code>map()</code> in python). It’s one of the R ways of performing loops.</p>
 <p>For example this:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, as.character)</a></code></pre></div>
@@ -176,7 +177,6 @@
 <p>You can see the full documentation of superApply from R:</p>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">?superApply</a></code></pre></div>
 </div>
-</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -184,7 +184,11 @@
       <h2 class="hasAnchor">
 <a href="#tocnav" class="anchor"></a>Contents</h2>
       <ul class="nav nav-pills nav-stacked">
-<li><a href="#rsubmitter-quick-start-guide">rSubmitter quick-start guide</a></li>
+<li><a href="#intro">Intro</a></li>
+      <li><a href="#installation">Installation</a></li>
+      <li><a href="#single-job-sumbssion">Single job sumbssion</a></li>
+      <li><a href="#efficient-multiple-job-sumbssion">Efficient multiple job sumbssion</a></li>
+      <li><a href="#lapply-parallelization-loop-parallelization">Lapply parallelization (loop parallelization)</a></li>
       </ul>
 </div>
       </div>
