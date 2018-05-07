@@ -120,6 +120,7 @@ Concatenation is possible for most methods.
 }
 
 \examples{
+\dontrun{
 # Create and submit dummy job with random job name
 job <- Job$new("echo hola world!")
 job$submit()
@@ -156,5 +157,6 @@ job$submit()
 
 # Removes script, err and output files
 job$clean()
+}
 }
 \keyword{datasets}

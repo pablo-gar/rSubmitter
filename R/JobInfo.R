@@ -80,8 +80,9 @@
 #'
 #' @return \code{\link{R6Class}} with methods and fields for SLURM job manipulation
 #' @examples
+#' \dontrun{
 #' jobInfo <- JobInfo$new()
-#'
+#' }
 JobInfo <- R6::R6Class(classname = "JobInfo",
                        public = list(
                                      #Instances

@@ -85,7 +85,8 @@ To create, manipulate, and submit SLURM jobs please refer to the Job and Job arr
 }
 
 \examples{
+\dontrun{
 jobInfo <- JobInfo$new()
-
+}
 }
 \keyword{datasets}

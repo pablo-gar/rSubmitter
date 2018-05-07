@@ -92,6 +92,7 @@
 #'
 #' @return \code{\link{R6Class}} with methods and fields for SLURM job manipulation
 #' @examples
+#' \dontrun{
 #' # Create and submit dummy job with random job name
 #' job <- Job$new("echo hola world!")
 #' job$submit()
@@ -128,6 +129,7 @@
 #'
 #' # Removes script, err and output files
 #' job$clean()
+#' }
 Job <- R6::R6Class(classname = "Job", inherit = JobInfo,
                public = list(
                              #Instances

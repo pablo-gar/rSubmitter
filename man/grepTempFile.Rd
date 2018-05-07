@@ -17,5 +17,7 @@ the specified pattern(s)
 WARNING: uses unix grep
 }
 \examples{
+\dontrun{
 grepTempFile("path/to/file", c("patternA", "patternB"))
+}
 }

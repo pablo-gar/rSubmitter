@@ -82,7 +82,9 @@ trim <- function(x) {
 #' @param x String - path to file
 #' @param pattern Character vector - patterns to select in file
 #' @examples
+#' \dontrun{
 #' grepTempFile("path/to/file", c("patternA", "patternB"))
+#' }
 grepTempFile <- function(x, pattern, tempLocation = "."){
 	        
 

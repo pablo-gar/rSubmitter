@@ -115,6 +115,7 @@
 #'
 #' @return \code{\link{R6Class}} with methods and fields for SLURM job array manipulation
 #' @examples
+#' \dontrun{
 #' # Create and submit dummy job with random job name
 #' job <- Job$new("echo hola world!")
 #' job$submit()
@@ -151,6 +152,7 @@
 #'
 #' # Removes script, err and output files
 #' job$clean()
+#' }
 JobArray <- R6::R6Class(
                        
     classname = "JobArray", inherit = JobInfo,
