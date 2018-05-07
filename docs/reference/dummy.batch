@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#SBATCH --job-name=dummy
+#SBATCH --output=/home/users/paedugar/scripts/rSLURM/docs/reference/dummy.out
+#SBATCH --error=/home/users/paedugar/scripts/rSLURM/docs/reference/dummy.err
+set -euo pipefail
+echo hola world!

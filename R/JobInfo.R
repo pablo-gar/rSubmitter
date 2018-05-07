@@ -5,11 +5,11 @@
 #' To create, manipulate, and submit SLURM jobs please refer to the Job and Job array classes
 #'
 #' @usage 
-#' x <- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
-#' x$wait(stopIfFailed = F, verbose = T)
-#' x$cancel()
-#' x$getState(simplify = F)
-#' x$clean()
+#' # x <- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
+#' # x$wait(stopIfFailed = F, verbose = T)
+#' # x$cancel()
+#' # x$getState(simplify = F)
+#' # x$clean()
 #'
 #' @docType class
 #' @format R6 class

@@ -6,14 +6,14 @@
 \title{JobArray class - inherits from JobInfo class}
 \format{R6 class}
 \usage{
-x <- JobArray$new(commandList, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
-x$submit()
-x$wait(stopIfFailed = F, verbose = T)
-x$length()
-x$cancel()
-x$getState(simplify = F)
-x$getJobNames()
-x$clean()
+# x <- JobArray$new(commandList, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
+# x$submit()
+# x$wait(stopIfFailed = F, verbose = T)
+# x$length()
+# x$cancel()
+# x$getState(simplify = F)
+# x$getJobNames()
+# x$clean()
 }
 \value{
 \code{\link{R6Class}} with methods and fields for SLURM job array manipulation

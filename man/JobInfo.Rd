@@ -6,11 +6,11 @@
 \title{Parent class of Job and JobArray}
 \format{R6 class}
 \usage{
-x <- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
-x$wait(stopIfFailed = F, verbose = T)
-x$cancel()
-x$getState(simplify = F)
-x$clean()
+# x <- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
+# x$wait(stopIfFailed = F, verbose = T)
+# x$cancel()
+# x$getState(simplify = F)
+# x$clean()
 }
 \value{
 \code{\link{R6Class}} with methods and fields for SLURM job manipulation

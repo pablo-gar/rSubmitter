@@ -6,13 +6,13 @@
 #' to \url{https://slurm.schedmd.com/}
 #' Concatenation is possible for most methods.
 #'
-#' @usage 
-#' x <- Job$new(commandVector, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
-#' x$submit()
-#' x$wait(stopIfFailed = F, verbose = T)
-#' x$cancel()
-#' x$getState(simplify = F)
-#' x$clean()
+#' @usage
+#' # x <- Job$new(commandVector, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
+#' # x$submit()
+#' # x$wait(stopIfFailed = F, verbose = T)
+#' # x$cancel()
+#' # x$getState(simplify = F)
+#' # x$clean()
 #'
 #' @docType class
 #' @format R6 class

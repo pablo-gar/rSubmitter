@@ -1,0 +1,7 @@
+#!/bin/bash
+
+#SBATCH --job-name=rSubmitter_job_0861044277
+#SBATCH --output=/home/users/paedugar/scripts/rSLURM/docs/reference/rSubmitter_job_0861044277.out
+#SBATCH --error=/home/users/paedugar/scripts/rSLURM/docs/reference/rSubmitter_job_0861044277.err
+set -euo pipefail
+echo hola world!

@@ -1,0 +1,7 @@
+pandoc: '2.2'
+pkgdown: 1.0.0
+pkgdown_sha: ~
+articles:
+  scratch: scratch.html
+  tutorial_basicUse: tutorial_basicUse.html
+

@@ -16,14 +16,14 @@
 #' Concatenation is possible for most methods.
 #'
 #' @usage 
-#' x <- JobArray$new(commandList, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
-#' x$submit()
-#' x$wait(stopIfFailed = F, verbose = T)
-#' x$length()
-#' x$cancel()
-#' x$getState(simplify = F)
-#' x$getJobNames()
-#' x$clean()
+#' # x <- JobArray$new(commandList, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
+#' # x$submit()
+#' # x$wait(stopIfFailed = F, verbose = T)
+#' # x$length()
+#' # x$cancel()
+#' # x$getState(simplify = F)
+#' # x$getJobNames()
+#' # x$clean()
 #'
 #' @docType class
 #' @format R6 class
