@@ -288,7 +288,7 @@ JobArray <- R6::R6Class(
                        case <- "case $SLURM_ARRAY_TASK_ID in"
                        for (i in 1:self$length()) {
                            case <- c(case, paste0("   ", i, " )"))
-                           #case <- c(case,  "      set -euo pipefail")
+                           case <- c(case,  "      set -euo pipefail")
                            case <- c(case, paste0("      ", private$commandList[[i]]))
                            case <- c(case, paste0("      ", ";;"))
                        }
