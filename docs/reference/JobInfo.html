@@ -32,7 +32,7 @@
 
 <meta property="og:description" content="R6 Class providing an essential platform to process SLURM jobs.
 This class should not be explicitly used by the user.
-To create, manipulate, and submit SLURM jobs please refer to the Job and Job array classes" />
+To create, manipulate, and submit SLURM jobs please refer to the Job and JobArray classes" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -120,15 +120,11 @@ To create, manipulate, and submit SLURM jobs please refer to the Job and Job arr
     
     <p>R6 Class providing an essential platform to process SLURM jobs.
 This class should not be explicitly used by the user.
-To create, manipulate, and submit SLURM jobs please refer to the Job and Job array classes</p>
+To create, manipulate, and submit SLURM jobs please refer to the Job and JobArray classes</p>
     
     </div>
 
-    <pre class="usage"># x <- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
-# x$wait(stopIfFailed = F, verbose = T)
-# x$cancel()
-# x$getState(simplify = F)
-# x$clean()</pre>
+    <pre class="usage"><span class='no'>JobInfo</span></pre>
         
     <h2 class="hasAnchor" id="format"><a class="anchor" href="#format"></a>Format</h2>
 
@@ -137,6 +133,15 @@ To create, manipulate, and submit SLURM jobs please refer to the Job and Job arr
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
     <p><code>R6Class</code> with methods and fields for SLURM job manipulation</p>
+    
+    <h2 class="hasAnchor" id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
+
+    
+    <p># x &lt;- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
+# x$wait(stopIfFailed = F, verbose = T)
+# x$cancel()
+# x$getState(simplify = F)
+# x$clean()</p>
     
     <h2 class="hasAnchor" id="method-description"><a class="anchor" href="#method-description"></a>Method description</h2>
 
@@ -206,6 +211,8 @@ To create, manipulate, and submit SLURM jobs please refer to the Job and Job arr
       <li><a href="#format">Format</a></li>
 
       <li><a href="#value">Value</a></li>
+
+      <li><a href="#usage">Usage</a></li>
 
       <li><a href="#method-description">Method description</a></li>
       

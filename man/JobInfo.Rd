@@ -6,11 +6,7 @@
 \title{Parent class of Job and JobArray}
 \format{R6 class}
 \usage{
-# x <- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
-# x$wait(stopIfFailed = F, verbose = T)
-# x$cancel()
-# x$getState(simplify = F)
-# x$clean()
+JobInfo
 }
 \value{
 \code{\link{R6Class}} with methods and fields for SLURM job manipulation
@@ -18,8 +14,17 @@
 \description{
 R6 Class providing an essential platform to process SLURM jobs.
 This class should not be explicitly used by the user.
-To create, manipulate, and submit SLURM jobs please refer to the Job and Job array classes
+To create, manipulate, and submit SLURM jobs please refer to the Job and JobArray classes
 }
+\section{Usage}{
+
+# x <- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
+# x$wait(stopIfFailed = F, verbose = T)
+# x$cancel()
+# x$getState(simplify = F)
+# x$clean()
+}
+
 \section{Method description}{
 
 \enumerate{
