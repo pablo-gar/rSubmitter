@@ -2,9 +2,9 @@
 #' 
 #' R6 Class providing an essential platform to process SLURM jobs.
 #' This class should not be explicitly used by the user.
-#' To create, manipulate, and submit SLURM jobs please refer to the Job and Job array classes
+#' To create, manipulate, and submit SLURM jobs please refer to the Job and JobArray classes
 #'
-#' @usage 
+#' @section Usage:
 #' # x <- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
 #' # x$wait(stopIfFailed = F, verbose = T)
 #' # x$cancel()
