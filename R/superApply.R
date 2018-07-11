@@ -29,13 +29,17 @@
 #'
 #' @return list - results of FUN applied to each element in x
 #' @export
-superApply <- function(x, FUN, ..., tasks = 1, workingDir = getwd(), packages = NULL, sources = NULL, extraBashLines = "", extraScriptLines = "", clean = T, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL){
+superApply <- function(x, FUN, ..., tasks = 1, workingDir = getwd(), packages = NULL, sources = NULL, extraBashLines = NULL, extraScriptLines = "", clean = T, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL){
     
     if(!is.list(x) & !is.vector(x))
         stop("x hast to be a list of a vector")
     
     if(!is.numeric(tasks))
         stop("tasks has to be numerical")
+    
+    if(!is.null(extraBashLines) & !is.character(extraBashLines))
+        stop("extraBashLines has to be character or NULL")
+    
     if(length(tasks) > 1)
         stop("tasks has to be of length 1")
     
@@ -175,6 +179,8 @@ createJobScriptsData <- function(x, FUN, ..., idPrefix, iStart, iEnd, workingDir
     # Checking if I need to load current packages or if user-defined packages can be loaded
     if(is.null(packages)) {
         packages <- createStringFunction ("library", getUserPackages())
+    } else if (packages == "") {
+        packages <- packages
     } else {
         packages <- createStringFunction ("library", packages)
         eval(parse(text = paste(packages, collapse = ";")))
@@ -221,7 +227,12 @@ createJobScriptsData <- function(x, FUN, ..., idPrefix, iStart, iEnd, workingDir
         writeLines (tempScript, RscriptFile)
         
         # Submitting job
-        cmds <- c(cmds, list(c(extraBashLines, paste0("Rscript --vanilla ", RscriptFile))))
+        if(!is.null(extraBashLines)) {
+            cmds <- c(cmds, list(c(extraBashLines, paste0("Rscript --vanilla ", RscriptFile))))
+        } else {
+            cmds <- c(cmds, list(c(paste0("Rscript --vanilla ", RscriptFile))))
+        }
+            
     }
     
     return(cmds)

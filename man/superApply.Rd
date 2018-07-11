@@ -5,8 +5,8 @@
 \title{Parallel lapply}
 \usage{
 superApply(x, FUN, ..., tasks = 1, workingDir = getwd(), packages = NULL,
-  sources = NULL, extraBashLines = "", extraScriptLines = "", clean = T,
-  partition = NULL, time = NULL, mem = NULL, proc = NULL,
+  sources = NULL, extraBashLines = NULL, extraScriptLines = "",
+  clean = T, partition = NULL, time = NULL, mem = NULL, proc = NULL,
   totalProc = NULL, nodes = NULL, email = NULL)
 }
 \arguments{
