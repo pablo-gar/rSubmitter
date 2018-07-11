@@ -137,11 +137,13 @@ To create, manipulate, and submit SLURM jobs please refer to the Job and JobArra
     <h2 class="hasAnchor" id="usage"><a class="anchor" href="#usage"></a>Usage</h2>
 
     
-    <p># x &lt;- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
-# x$wait(stopIfFailed = F, verbose = T)
-# x$cancel()
-# x$getState(simplify = F)
-# x$clean()</p>
+    <p><code>
+x &lt;- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL) <br />
+x$wait(stopIfFailed = F, verbose = T) <br />
+x$cancel() <br />
+x$getState(simplify = F) <br />
+x$clean() <br />
+</code></p>
     
     <h2 class="hasAnchor" id="method-description"><a class="anchor" href="#method-description"></a>Method description</h2>
 
