@@ -30,7 +30,7 @@ x$clean() \cr
 \section{Method description}{
 
 \enumerate{
- \item{Initialize}{
+ \item{**Initialize**}{
      \cr
      \code{x <- JobInfo$new(jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)}
      \cr Parameters:
