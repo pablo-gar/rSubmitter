@@ -1,0 +1,39 @@
+reference:
+- title: "Main functions"
+  desc: >
+      Functions and classes to communicate, submit jobs, 
+      and parallelize task using a SLURM cluster
+  contents:
+  - '`Job`'
+  - '`JobArray`'
+  - '`superApply`'
+    
+- title: "Side fucntions"
+  desc: >
+      Functions to do simple operations in a SLURM cluster
+  contents:
+  - '`cancelJob`'
+  - '`getJobState`'
+  - '`getJobNumber`'
+  - '`getMaxJobArrayLength`'
+    
+- title: "Helper functions"
+  desc: >
+      Internally used functions and classes
+  contents:
+  - '`JobInfo`'
+  - '`createJobScriptsData`'
+  - '`createStringFunction`'
+  - '`getJobArray`'
+  - '`getPartitionIndeces`'
+  - '`getUserFunctions`'
+  - '`getUserPackages`'
+  - '`grepTempFile`'
+  - '`isWriteable`'
+  - '`mergeListDir`'
+  - '`parseArg`'
+  - '`printTime`'
+  - '`shellCmdExists`'
+  - '`systemSubmit`'
+  - '`trim`'
+

@@ -119,8 +119,8 @@
     <tbody>
       <tr>
         <th colspan="2">
-          <h2 id="section-all-functions" class="hasAnchor"><a href="#section-all-functions" class="anchor"></a>All functions</h2>
-          <p class="section-desc"></p>
+          <h2 id="section-main-functions" class="hasAnchor"><a href="#section-main-functions" class="anchor"></a>Main functions</h2>
+          <p class="section-desc"><p>Functions and classes to communicate, submit jobs, and parallelize task using a SLURM cluster</p></p>
         </th>
       </tr>
       <tr>
@@ -138,15 +138,57 @@
       </tr><tr>
         <!--  -->
         <td>
-          <p><code><a href="JobInfo.html">JobInfo</a></code> </p>
+          <p><code><a href="superApply.html">superApply()</a></code> </p>
         </td>
-        <td><p>Parent class of Job and JobArray</p></td>
-      </tr><tr>
+        <td><p>Parallel lapply</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-side-fucntions" class="hasAnchor"><a href="#section-side-fucntions" class="anchor"></a>Side fucntions</h2>
+          <p class="section-desc"><p>Functions to do simple operations in a SLURM cluster</p></p>
+        </th>
+      </tr>
+      <tr>
         <!--  -->
         <td>
           <p><code><a href="cancelJob.html">cancelJob()</a></code> </p>
         </td>
         <td><p>Cancels a SLURM job</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="getJobState.html">getJobState()</a></code> </p>
+        </td>
+        <td><p>Gets the job state(s) of or more SLURM jobs</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="getJobNumber.html">getJobNumber()</a></code> </p>
+        </td>
+        <td><p>getJobNumber</p></td>
+      </tr><tr>
+        <!--  -->
+        <td>
+          <p><code><a href="getMaxJobArrayLength.html">getMaxJobArrayLength()</a></code> </p>
+        </td>
+        <td><p>getMaxJobArrayLength
+Internal function for .onAttach that gets the maximum length for a Job array
+from the SLURM config file</p></td>
+      </tr>
+    </tbody><tbody>
+      <tr>
+        <th colspan="2">
+          <h2 id="section-helper-functions" class="hasAnchor"><a href="#section-helper-functions" class="anchor"></a>Helper functions</h2>
+          <p class="section-desc"><p>Internally used functions and classes</p></p>
+        </th>
+      </tr>
+      <tr>
+        <!--  -->
+        <td>
+          <p><code><a href="JobInfo.html">JobInfo</a></code> </p>
+        </td>
+        <td><p>Parent class of Job and JobArray</p></td>
       </tr><tr>
         <!--  -->
         <td>
@@ -168,26 +210,6 @@ that executes lappy in x using FUN. Scripts are saved in workingDir</p></td>
         </td>
         <td><p>Helper of superApply
 Submits multiple jobs from the partions of x created in get Partition Indeces</p></td>
-      </tr><tr>
-        <!--  -->
-        <td>
-          <p><code><a href="getJobNumber.html">getJobNumber()</a></code> </p>
-        </td>
-        <td><p>getJobNumber</p></td>
-      </tr><tr>
-        <!--  -->
-        <td>
-          <p><code><a href="getJobState.html">getJobState()</a></code> </p>
-        </td>
-        <td><p>Gets the job state(s) of or more SLURM jobs</p></td>
-      </tr><tr>
-        <!--  -->
-        <td>
-          <p><code><a href="getMaxJobArrayLength.html">getMaxJobArrayLength()</a></code> </p>
-        </td>
-        <td><p>getMaxJobArrayLength
-Internal function for .onAttach that gets the maximum length for a Job array
-from the SLURM config file</p></td>
       </tr><tr>
         <!--  -->
         <td>
@@ -249,12 +271,6 @@ Internal function for .onAttach Check if shell command exists</p></td>
       </tr><tr>
         <!--  -->
         <td>
-          <p><code><a href="superApply.html">superApply()</a></code> </p>
-        </td>
-        <td><p>Parallel lapply</p></td>
-      </tr><tr>
-        <!--  -->
-        <td>
           <p><code><a href="systemSubmit.html">systemSubmit()</a></code> </p>
         </td>
         <td><p>systemSubmit</p></td>
@@ -272,7 +288,9 @@ Internal function for .onAttach Check if shell command exists</p></td>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#section-all-functions">All functions</a></li>
+      <li><a href="#section-main-functions">Main functions</a></li>
+      <li><a href="#section-side-fucntions">Side fucntions</a></li>
+      <li><a href="#section-helper-functions">Helper functions</a></li>
     </ul>
   </div>
 </div>
