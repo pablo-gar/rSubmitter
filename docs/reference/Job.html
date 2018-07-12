@@ -145,7 +145,7 @@ Concatenation is possible for most methods.</p>
 
     
     <ol>
-<li><p>Initialize
+<li><p><strong>Initialize</strong>
      <br />
      <code>x &lt;- JobInfo$new(commandVector, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)</code>
      <br /> Parameters:
@@ -162,12 +162,12 @@ Concatenation is possible for most methods.</p>
 <li><p>email : character - email address to send info when job is done. Equivalent to <code>--nodes</code> of SLURM sbatch</p></li>
 </ul>
      <br /> Return: <br /> object of class <code>Job</code></p></li>
-<li><p>Submit job(s)
+<li><p><strong>Submit job(s)</strong>
      <br />
      <code>x$submit()</code>
      <br /> Creates sbatch script to <code>outDir</code> and submits it through a system call to sbatch. The script, STDERR and STDOUT sbatch files will be written to <code>outDir</code>.In the case sbatch returns a non-zero status, it will try resubmitting up 12 times with a defined interval time(TIME_WAIT_JOB_STATUS option at ~/.rSubmitter)
      <br /> Return: <br /> self - for method concatenation</p></li>
-<li><p>Wait for job(s) to finish
+<li><p><strong>Wait for job(s) to finish</strong>
      <br />
      <code>x$wait(stopIfFailed = F, verbose = T)</code>
      <br /> Time between each job state check is defined in the entry TIME_WAIT_JOB_STATUS:seconds in the config file located at ~/.rSubmitter
@@ -178,11 +178,11 @@ Concatenation is possible for most methods.</p>
 <li><p>verbose : logical -  if TRUE prints the job state(s) at every check</p></li>
 </ul>
      <br /> Return: <br /> self - for method concatenation</p></li>
-<li><p>Cancel job(s)
+<li><p><strong>Cancel job(s)</strong>
      <br />
      <code>x$cancel()</code>
      <br /> Return: <br /> self - for method concatenation</p></li>
-<li><p>Get job(s) state
+<li><p><strong>Get job(s) state</strong>
      <br />
      <code>x$getState(simplify = F)</code>
      <br /> Parameters:
@@ -190,7 +190,7 @@ Concatenation is possible for most methods.</p>
 <li><p>simplify : logical - if TRUE returns a freqeuncy data.frame of job states, otherwise returns individual jobs and their associated job names, job ids, and states</p></li>
 </ul>
      <br /> Return: <br /> data.frame - With SLURM states</p></li>
-<li><p>Remove SLURM-associated files
+<li><p><strong>Remove SLURM-associated files</strong>
      <br />
      <code>x$clean(script = TRUE, out = TRUE, err = TRUE)</code>
      <br /> Parameters:

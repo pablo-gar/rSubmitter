@@ -27,7 +27,7 @@ Concatenation is possible for most methods.
 \section{Method description}{
 
 \enumerate{
- \item{Initialize}{
+ \item{\strong{Initialize}}{
      \cr
      \code{x <- JobInfo$new(commandVector, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)}
      \cr Parameters:
@@ -46,14 +46,14 @@ Concatenation is possible for most methods.
      \cr Return: \cr object of class \code{Job}
      }
      
- \item{Submit job(s)}{
+ \item{\strong{Submit job(s)}}{
      \cr
      \code{x$submit()}
      \cr Creates sbatch script to \code{outDir} and submits it through a system call to sbatch. The script, STDERR and STDOUT sbatch files will be written to \code{outDir}.In the case sbatch returns a non-zero status, it will try resubmitting up 12 times with a defined interval time(TIME_WAIT_JOB_STATUS option at ~/.rSubmitter)
      \cr Return: \cr self - for method concatenation
      }
  
- \item{Wait for job(s) to finish}{
+ \item{\strong{Wait for job(s) to finish}}{
      \cr
      \code{x$wait(stopIfFailed = F, verbose = T)}
      \cr Time between each job state check is defined in the entry TIME_WAIT_JOB_STATUS:seconds in the config file located at ~/.rSubmitter
@@ -67,13 +67,13 @@ Concatenation is possible for most methods.
      }
  
 
- \item{Cancel job(s)}{
+ \item{\strong{Cancel job(s)}}{
      \cr
      \code{x$cancel()}
      \cr Return: \cr self - for method concatenation
      }
 
- \item{Get job(s) state}{
+ \item{\strong{Get job(s) state}}{
      \cr
      \code{x$getState(simplify = F)}
      \cr Parameters:
@@ -83,7 +83,7 @@ Concatenation is possible for most methods.
      \cr Return: \cr data.frame - With SLURM states
      }
 
- \item{Remove SLURM-associated files}{
+ \item{\strong{Remove SLURM-associated files}}{
      \cr
      \code{x$clean(script = TRUE, out = TRUE, err = TRUE)}
      \cr Parameters:
