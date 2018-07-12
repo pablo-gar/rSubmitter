@@ -1,4 +1,4 @@
-# rSubmitter 
+# rSubmitter - R and SLURM!
 ### An interface between R and a SLURM cluster
 
 rSubmmiter is a package that allows simple communication between R and a SLURM cluster to achieve three main tasks:
@@ -6,20 +6,6 @@ rSubmmiter is a package that allows simple communication between R and a SLURM c
 2. Easy and fast submission of many jobs, by implementing SLURM arrays.
 3. Seamlessly lapply (loop) parallelization.
 
-### Installation
-Currently rSubmitter can only be installed via the R devtools package:
-```r
-library("devtools")
-install_github("pablo-gar/rSubmitter")
-```
 
-### Usage
-Online documentation can be found [here](https://pablo-gar.github.io/rSubmitter/index.html), or you can find a **quick-start** guide [here](https://pablo-gar.github.io/rSubmitter/articles/quick_start.html)
-
-You can also access the full documention of the main `rSubmitter` functions from R:
-```r
-library("rSubmitter")
-?Job
-?JobArray
-?superApply
-```
+### Installation, usage, tutorials and refence manual
+Online documentation can be found [here](https://pablo-gar.github.io/rSubmitter/index.html).
