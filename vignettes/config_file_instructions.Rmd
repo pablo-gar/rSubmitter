@@ -1,0 +1,26 @@
+---
+title: "Settings configuration"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Settings configuration}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+## Intro
+rSubmitter should work out of the box after installation. However there are some settings that the user can change to their preference. This is achieved by creating a config file and tweaking the settings there. All the options in the config file are global and will be applied to all calls from rSubmitter.
+
+
+## Available options
+
+Option | Default | Description
+------ | ------- | -----------
+MAX_JOBS_ALLOWED | 500 | Maximum number of jobs to have in queue
+TIME_WAIT_MAX_JOBS | 60 | If maximum jobs in queue has been reached, this is the wait time in-between each resubmission trial
+TIME_WAIT_FAILED_CMD | 5 | Time to wait in-between each failed sytem call execution
+TIME_WAIT_JOB_STATUS | 5 | Time to to wait in-between job status checks
+MAX_JOB_ARRAY_LENGTH | SLURM sytem default (MaxArraySize) | Maximum length allowed for Job Arrays
+
+
+## Setting options
+

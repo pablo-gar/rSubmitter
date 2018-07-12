@@ -60,7 +60,7 @@ are done executing, all results from individual jobs will be compiled into a sin
 }
 \examples{
 \dontrun{
-########
+#------------------------
 # Parallel execution of 100 function calls using 4 parellel tasks
 myFun <- function(x) {
     #Sys.sleep(10)
@@ -70,11 +70,13 @@ myFun <- function(x) {
 dir.create("~/testSap")
 sapOut <- superApply(1:100, FUN = myFun, tasks = 4, workingDir = "~/testSap", time = "60", mem = "1G")
 
-########
+
+#------------------------
 # Parallel execution of 100 function calls using 100  parellel tasks
 sapOut <- superApply(1:100, FUN = myFun, tasks = 100, workingDir = "~/testSap", time = "60", mem = "1G")
 
-########
+
+#------------------------
 # Parallel execution where a package is required in function calls
 myFun <- function(x) {
     return(ggplot(data.frame(x = 1:100, y = (1:100)*x), aes(x = x, y = y )) + geom_point() + ylim(0, 1e4))
@@ -83,7 +85,13 @@ myFun <- function(x) {
 dir.create("~/testSap")
 sapOut <- superApply(1:100, FUN = myFun, tasks = 4, workingDir = "~/testSap", packages = "ggplot2",  time = "60", mem = "1G")
 
-########
+
+#------------------------
+# Parallel execution where R has to be loaded in the system (e.g. in bash `module load R`)
+sapOut <- superApply(1:100, FUN = myFun, tasks = 4, workingDir = "~/testSap", time = "60", mem = "1G", extraBashLines = "module load R")
+
+
+#------------------------
 # Parellel execution where a source is required in funciton calls
 # Content of ./customRep.R
    customRep <- function(x) {
@@ -97,8 +105,5 @@ myFun <- function(x) {
 dir.create("~/testSap")
 sapOut <- superApply(1:100, FUN = myFun, tasks = 4, sources = "./customRep.R", workingDir = "~/testSap", time = "60", mem = "1G")
 
-########
-# Parellel execution where R has to be loaded in the system (e.g. in bash `module load R`
-sapOut <- superApply(1:100, FUN = myFun, tasks = 4, workingDir = "~/testSap", time = "60", mem = "1G", extraBashLines = "module load R")
 }
 }

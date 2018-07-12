@@ -2,7 +2,7 @@
 title: "1. Quick-start guide"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{1. Quick-start guide}
+  %\VignetteIndexEntry{Quick-start guide}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
@@ -100,7 +100,7 @@ for(i in 1:4)
     x[[i]] <- as.character(i)
 ```
 
-rSubmitter comes with an implementation of lapply, `superApply`, that enables parallelization of lapply function calls using a SLURM cluster. Under the hood, it implements the JobArray class (described above) along with some complicated file management to partition one lapply call into many indepent ones that are parallely executed, then when they are all done the results of indivudal calls are compiled and returned to the user. 
+rSubmitter comes with an implementation of lapply, `superApply`, that enables parallelization of lapply function calls using a SLURM cluster. Under the hood, it implements the JobArray class (described above) along with some complicated file management to partition one lapply call into many indepent ones that are parallely executed, then when they are all done the results of indivudal calls are gathered and returned to the user. 
 
 The number of parallel tasks is defined in the `tasks` argument of `superApply`, **on its simplest form a parallel lapply call looks like this:**
 
@@ -121,7 +121,7 @@ x <- superApply(1:100, myFun, tasks = 4)
 #   2018-05-04 15:29:47 Cleaning done
 ```
 
-This will partition the lapply call into 4 different ones, each having an equally distributed elements of `1:100`, this partitions will be submitted as independents jobs, the results will be compiled and returned without the need of doing anything else.
+This will partition the lapply call into 4 different ones, each having an equally distributed elements of `1:100`, these partitions will be submitted as independents jobs, the results will be compiled and returned without the need of doing anything else.
 
 It is important to note that not all systems come with an out-of-the-box R executable, and since superApply performs independent R calls in the SLURM cluster then you have to make sure that these R calls can be executed. If you have to execute any commands from your shell enviroment to be able to open the R interpreter, then you have to include those commands in the `extraBashLines` argument of `superApply`
 

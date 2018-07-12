@@ -81,6 +81,9 @@
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
+      <a href="../articles/config_file_instructions.html">Settings configuration</a>
+    </li>
+    <li>
       <a href="../articles/quick_start.html">1. Quick-start guide</a>
     </li>
     <li>
@@ -214,7 +217,7 @@ are done executing, all results from individual jobs will be compiled into a sin
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='co'>########</span>
+<span class='co'>#------------------------</span>
 <span class='co'># Parallel execution of 100 function calls using 4 parellel tasks</span>
 <span class='no'>myFun</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) {
     <span class='co'>#Sys.sleep(10)</span>
@@ -224,11 +227,13 @@ are done executing, all results from individual jobs will be compiled into a sin
 <span class='fu'>dir.create</span>(<span class='st'>"~/testSap"</span>)
 <span class='no'>sapOut</span> <span class='kw'>&lt;-</span> <span class='fu'>superApply</span>(<span class='fl'>1</span>:<span class='fl'>100</span>, <span class='kw'>FUN</span> <span class='kw'>=</span> <span class='no'>myFun</span>, <span class='kw'>tasks</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>workingDir</span> <span class='kw'>=</span> <span class='st'>"~/testSap"</span>, <span class='kw'>time</span> <span class='kw'>=</span> <span class='st'>"60"</span>, <span class='kw'>mem</span> <span class='kw'>=</span> <span class='st'>"1G"</span>)
 
-<span class='co'>########</span>
+
+<span class='co'>#------------------------</span>
 <span class='co'># Parallel execution of 100 function calls using 100  parellel tasks</span>
 <span class='no'>sapOut</span> <span class='kw'>&lt;-</span> <span class='fu'>superApply</span>(<span class='fl'>1</span>:<span class='fl'>100</span>, <span class='kw'>FUN</span> <span class='kw'>=</span> <span class='no'>myFun</span>, <span class='kw'>tasks</span> <span class='kw'>=</span> <span class='fl'>100</span>, <span class='kw'>workingDir</span> <span class='kw'>=</span> <span class='st'>"~/testSap"</span>, <span class='kw'>time</span> <span class='kw'>=</span> <span class='st'>"60"</span>, <span class='kw'>mem</span> <span class='kw'>=</span> <span class='st'>"1G"</span>)
 
-<span class='co'>########</span>
+
+<span class='co'>#------------------------</span>
 <span class='co'># Parallel execution where a package is required in function calls</span>
 <span class='no'>myFun</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) {
     <span class='fu'>return</span>(<span class='fu'>ggplot</span>(<span class='fu'>data.frame</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='fl'>1</span>:<span class='fl'>100</span>, <span class='kw'>y</span> <span class='kw'>=</span> (<span class='fl'>1</span>:<span class='fl'>100</span>)*<span class='no'>x</span>), <span class='fu'>aes</span>(<span class='kw'>x</span> <span class='kw'>=</span> <span class='no'>x</span>, <span class='kw'>y</span> <span class='kw'>=</span> <span class='no'>y</span> )) + <span class='fu'>geom_point</span>() + <span class='fu'>ylim</span>(<span class='fl'>0</span>, <span class='fl'>1e4</span>))
@@ -237,7 +242,13 @@ are done executing, all results from individual jobs will be compiled into a sin
 <span class='fu'>dir.create</span>(<span class='st'>"~/testSap"</span>)
 <span class='no'>sapOut</span> <span class='kw'>&lt;-</span> <span class='fu'>superApply</span>(<span class='fl'>1</span>:<span class='fl'>100</span>, <span class='kw'>FUN</span> <span class='kw'>=</span> <span class='no'>myFun</span>, <span class='kw'>tasks</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>workingDir</span> <span class='kw'>=</span> <span class='st'>"~/testSap"</span>, <span class='kw'>packages</span> <span class='kw'>=</span> <span class='st'>"ggplot2"</span>,  <span class='kw'>time</span> <span class='kw'>=</span> <span class='st'>"60"</span>, <span class='kw'>mem</span> <span class='kw'>=</span> <span class='st'>"1G"</span>)
 
-<span class='co'>########</span>
+
+<span class='co'>#------------------------</span>
+<span class='co'># Parallel execution where R has to be loaded in the system (e.g. in bash `module load R`)</span>
+<span class='no'>sapOut</span> <span class='kw'>&lt;-</span> <span class='fu'>superApply</span>(<span class='fl'>1</span>:<span class='fl'>100</span>, <span class='kw'>FUN</span> <span class='kw'>=</span> <span class='no'>myFun</span>, <span class='kw'>tasks</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>workingDir</span> <span class='kw'>=</span> <span class='st'>"~/testSap"</span>, <span class='kw'>time</span> <span class='kw'>=</span> <span class='st'>"60"</span>, <span class='kw'>mem</span> <span class='kw'>=</span> <span class='st'>"1G"</span>, <span class='kw'>extraBashLines</span> <span class='kw'>=</span> <span class='st'>"module load R"</span>)
+
+
+<span class='co'>#------------------------</span>
 <span class='co'># Parellel execution where a source is required in funciton calls</span>
 <span class='co'># Content of ./customRep.R</span>
    <span class='no'>customRep</span> <span class='kw'>&lt;-</span> <span class='kw'>function</span>(<span class='no'>x</span>) {
@@ -251,9 +262,6 @@ are done executing, all results from individual jobs will be compiled into a sin
 <span class='fu'>dir.create</span>(<span class='st'>"~/testSap"</span>)
 <span class='no'>sapOut</span> <span class='kw'>&lt;-</span> <span class='fu'>superApply</span>(<span class='fl'>1</span>:<span class='fl'>100</span>, <span class='kw'>FUN</span> <span class='kw'>=</span> <span class='no'>myFun</span>, <span class='kw'>tasks</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>sources</span> <span class='kw'>=</span> <span class='st'>"./customRep.R"</span>, <span class='kw'>workingDir</span> <span class='kw'>=</span> <span class='st'>"~/testSap"</span>, <span class='kw'>time</span> <span class='kw'>=</span> <span class='st'>"60"</span>, <span class='kw'>mem</span> <span class='kw'>=</span> <span class='st'>"1G"</span>)
 
-<span class='co'>########</span>
-<span class='co'># Parellel execution where R has to be loaded in the system (e.g. in bash `module load R`</span>
-<span class='no'>sapOut</span> <span class='kw'>&lt;-</span> <span class='fu'>superApply</span>(<span class='fl'>1</span>:<span class='fl'>100</span>, <span class='kw'>FUN</span> <span class='kw'>=</span> <span class='no'>myFun</span>, <span class='kw'>tasks</span> <span class='kw'>=</span> <span class='fl'>4</span>, <span class='kw'>workingDir</span> <span class='kw'>=</span> <span class='st'>"~/testSap"</span>, <span class='kw'>time</span> <span class='kw'>=</span> <span class='st'>"60"</span>, <span class='kw'>mem</span> <span class='kw'>=</span> <span class='st'>"1G"</span>, <span class='kw'>extraBashLines</span> <span class='kw'>=</span> <span class='st'>"module load R"</span>)
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

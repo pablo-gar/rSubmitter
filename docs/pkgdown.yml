@@ -2,6 +2,7 @@ pandoc: '2.2'
 pkgdown: 1.0.0
 pkgdown_sha: ~
 articles:
+  config_file_instructions: config_file_instructions.html
   quick_start: quick_start.html
   scratch: scratch.html
 

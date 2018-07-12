@@ -30,7 +30,7 @@
 #' @return list - results of FUN applied to each element in x
 #' @examples
 #' \dontrun{
-#' ########
+#' #------------------------
 #' # Parallel execution of 100 function calls using 4 parellel tasks
 #' myFun <- function(x) {
 #'     #Sys.sleep(10)
@@ -40,11 +40,13 @@
 #' dir.create("~/testSap")
 #' sapOut <- superApply(1:100, FUN = myFun, tasks = 4, workingDir = "~/testSap", time = "60", mem = "1G")
 #' 
-#' ########
+#' 
+#' #------------------------
 #' # Parallel execution of 100 function calls using 100  parellel tasks
 #' sapOut <- superApply(1:100, FUN = myFun, tasks = 100, workingDir = "~/testSap", time = "60", mem = "1G")
 #' 
-#' ########
+#' 
+#' #------------------------
 #' # Parallel execution where a package is required in function calls
 #' myFun <- function(x) {
 #'     return(ggplot(data.frame(x = 1:100, y = (1:100)*x), aes(x = x, y = y )) + geom_point() + ylim(0, 1e4))
@@ -53,7 +55,13 @@
 #' dir.create("~/testSap")
 #' sapOut <- superApply(1:100, FUN = myFun, tasks = 4, workingDir = "~/testSap", packages = "ggplot2",  time = "60", mem = "1G")
 #' 
-#' ########
+#' 
+#' #------------------------
+#' # Parallel execution where R has to be loaded in the system (e.g. in bash `module load R`)
+#' sapOut <- superApply(1:100, FUN = myFun, tasks = 4, workingDir = "~/testSap", time = "60", mem = "1G", extraBashLines = "module load R")
+#'
+#' 
+#' #------------------------
 #' # Parellel execution where a source is required in funciton calls
 #' # Content of ./customRep.R
 #'    customRep <- function(x) {
@@ -67,9 +75,6 @@
 #' dir.create("~/testSap")
 #' sapOut <- superApply(1:100, FUN = myFun, tasks = 4, sources = "./customRep.R", workingDir = "~/testSap", time = "60", mem = "1G")
 #' 
-#' ########
-#' # Parellel execution where R has to be loaded in the system (e.g. in bash `module load R`
-#' sapOut <- superApply(1:100, FUN = myFun, tasks = 4, workingDir = "~/testSap", time = "60", mem = "1G", extraBashLines = "module load R")
 #' }
 #' @export
 superApply <- function(x, FUN, ..., tasks = 1, workingDir = getwd(), packages = NULL, sources = NULL, extraBashLines = NULL, extraScriptLines = "", clean = T, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL){
