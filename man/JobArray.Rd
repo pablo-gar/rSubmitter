@@ -3,7 +3,7 @@
 \docType{class}
 \name{JobArray}
 \alias{JobArray}
-\title{JobArray class - inherits from JobInfo class}
+\title{Class for efficient SLURM multi-job submission and management}
 \format{R6 class}
 \usage{
 # x <- JobArray$new(commandList, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
@@ -34,6 +34,8 @@ vectors of shell commands.
 Submission is achived by creating and executing an sbatch script, for more details on SLURM refer
 to https://slurm.schedmd.com/. For job arrays refer to https://slurm.schedmd.com/job_array.html
 Concatenation is possible for most methods.
+
+JobArray class - inherits from JobInfo class
 }
 \section{Method description}{
 

@@ -2,7 +2,7 @@ reference:
 - title: "Main functions"
   desc: >
       Functions and classes to communicate, submit jobs, 
-      and parallelize task using a SLURM cluster
+      and parallelize tasks using a SLURM cluster
   contents:
   - '`Job`'
   - '`JobArray`'

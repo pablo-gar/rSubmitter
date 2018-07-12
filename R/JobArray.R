@@ -1,5 +1,5 @@
-#' JobArray class - inherits from JobInfo class
-#' 
+#' Class for efficient SLURM multi-job submission and management
+#'
 #' R6 Class that enables easy submission and manipulation of SLURM job arrays.
 #'
 #' Job arrays are quickly genearated and submitted allowing for efficient creation and execution
@@ -14,6 +14,8 @@
 #' Submission is achived by creating and executing an sbatch script, for more details on SLURM refer
 #' to https://slurm.schedmd.com/. For job arrays refer to https://slurm.schedmd.com/job_array.html
 #' Concatenation is possible for most methods.
+#'
+#' JobArray class - inherits from JobInfo class
 #'
 #' @usage 
 #' # x <- JobArray$new(commandList, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)

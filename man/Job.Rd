@@ -3,7 +3,7 @@
 \docType{class}
 \name{Job}
 \alias{Job}
-\title{Job class - inherits from JobInfo class}
+\title{Class for SLURM individual job submission and management}
 \format{R6 class}
 \usage{
 # x <- Job$new(commandVector, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)
@@ -23,6 +23,8 @@ R6 Class that enables easy submission and manipulation of individual shell jobs 
 Submission is achived by creating and executing an sbatch script, for more details on SLURM refer
 to \url{https://slurm.schedmd.com/}
 Concatenation is possible for most methods.
+
+Job class - inherits from JobInfo class
 }
 \section{Method description}{
 

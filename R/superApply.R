@@ -1,4 +1,4 @@
-#' Parallel lapply
+#' Efficient parallel lapply using a SLURM cluster
 #'
 #' An easy-to-use form of lapply that emulates parallelization using a SLURM cluster.
 #'

@@ -1,10 +1,12 @@
-#' Job class - inherits from JobInfo class
+#' Class for SLURM individual job submission and management
 #' 
 #' R6 Class that enables easy submission and manipulation of individual shell jobs to a SLURM cluster.
 #'
 #' Submission is achived by creating and executing an sbatch script, for more details on SLURM refer
 #' to \url{https://slurm.schedmd.com/}
 #' Concatenation is possible for most methods.
+#'
+#' Job class - inherits from JobInfo class
 #'
 #' @usage
 #' # x <- Job$new(commandVector, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)

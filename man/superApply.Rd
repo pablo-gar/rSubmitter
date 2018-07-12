@@ -2,7 +2,7 @@
 % Please edit documentation in R/superApply.R
 \name{superApply}
 \alias{superApply}
-\title{Parallel lapply}
+\title{Efficient parallel lapply using a SLURM cluster}
 \usage{
 superApply(x, FUN, ..., tasks = 1, workingDir = getwd(), packages = NULL,
   sources = NULL, extraBashLines = NULL, extraScriptLines = "",
