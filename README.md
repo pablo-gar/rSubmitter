@@ -14,7 +14,7 @@ install_github("pablo-gar/rSubmitter")
 ```
 
 ### Usage
-Online documentation can be found [here], or you can find a **quick-start** guide [here](https://pablo-gar.github.io/rSubmitter/articles/quick_start.html)
+Online documentation can be found [here](https://pablo-gar.github.io/rSubmitter/index.html), or you can find a **quick-start** guide [here](https://pablo-gar.github.io/rSubmitter/articles/quick_start.html)
 
 You can also access the full documention of the main `rSubmitter` functions from R:
 ```r
