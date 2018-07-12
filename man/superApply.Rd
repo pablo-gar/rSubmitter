@@ -24,7 +24,7 @@ superApply(x, FUN, ..., tasks = 1, workingDir = getwd(), packages = NULL,
 
 \item{sources}{character vector - paths to R code to be loaded in individual tasks}
 
-\item{extraBashLines}{character vector - each element will be added as a line to the inidividual task execution bash script before R gets executed. For instance, here you may want to load R if is not in your system by default}
+\item{extraBashLines}{character vector - each element will be added as a line to the inidividual task execution bash script before R gets executed. For instance, here you may want to load R if it is not in your system by default}
 
 \item{extraScriptLines}{character vector - each element will be added as a line to the individual task execution R script before starting lapply}
 
@@ -57,4 +57,48 @@ jobs to a SLURM cluster.
 Each job batch, err, out, and script files are stored in a temporary folder. Once
 all jobs have been submmitted, the function waits for them to finish. When they
 are done executing, all results from individual jobs will be compiled into a single list.
+}
+\examples{
+\dontrun{
+########
+# Parallel execution of 100 function calls using 4 parellel tasks
+myFun <- function(x) {
+    #Sys.sleep(10)
+    return(rep(x, 3))
+}
+
+dir.create("~/testSap")
+sapOut <- superApply(1:100, FUN = myFun, tasks = 4, workingDir = "~/testSap", time = "60", mem = "1G")
+
+########
+# Parallel execution of 100 function calls using 100  parellel tasks
+sapOut <- superApply(1:100, FUN = myFun, tasks = 100, workingDir = "~/testSap", time = "60", mem = "1G")
+
+########
+# Parallel execution where a package is required in function calls
+myFun <- function(x) {
+    return(ggplot(data.frame(x = 1:100, y = (1:100)*x), aes(x = x, y = y )) + geom_point() + ylim(0, 1e4))
+}
+
+dir.create("~/testSap")
+sapOut <- superApply(1:100, FUN = myFun, tasks = 4, workingDir = "~/testSap", packages = "ggplot2",  time = "60", mem = "1G")
+
+########
+# Parellel execution where a source is required in funciton calls
+# Content of ./customRep.R
+   customRep <- function(x) {
+           return(paste("customFunction", rep(x, 3)))
+   }
+# Super appply execution 
+myFun <- function(x) {
+    return(customRep(x))
+}
+
+dir.create("~/testSap")
+sapOut <- superApply(1:100, FUN = myFun, tasks = 4, sources = "./customRep.R", workingDir = "~/testSap", time = "60", mem = "1G")
+
+########
+# Parellel execution where R has to be loaded in the system (e.g. in bash `module load R`
+sapOut <- superApply(1:100, FUN = myFun, tasks = 4, workingDir = "~/testSap", time = "60", mem = "1G", extraBashLines = "module load R")
+}
 }

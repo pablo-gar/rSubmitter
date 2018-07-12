@@ -141,12 +141,12 @@
 
     <p>Job arrays are quickly genearated and submitted allowing for efficient creation and execution
 of many shell jobs in a SLURM cluster, thus facilitating parallelization when needed. This class eliminates the cumbersome task of
-manually creating SLURM arrays, in its simplest form two lines of code are sufficient for a job array submmission.
-Additionally, there is an added functionallity to monitor and wait for all jobs in an array once they have been submitted.</p>
+manually creating SLURM arrays: in its simplest form two lines of code are sufficient for a job array submmission.
+Additionally, there is an added functionallity to monitor and wait for all jobs to finished after they have been submitted.</p>
 <p>All jobs in an job array share the same execution requirements.
-Each element in `commandList` will be submitted as an individual jobs in the array. Elements of `commandList` should be
+Each element in `commandList` will be submitted as an individual job in the array. Elements of `commandList` should be
 vectors of shell commands.</p>
-<p>Submission is achived by creating and executing an sbatch script, for more details on SLURM refer
+<p>Submission is achived by creating and executing an sbatch script. For more details on SLURM refer
 to https://slurm.schedmd.com/. For job arrays refer to https://slurm.schedmd.com/job_array.html
 Concatenation is possible for most methods.</p>
 <p>JobArray class - inherits from JobInfo class</p>
@@ -169,7 +169,7 @@ Concatenation is possible for most methods.</p>
 <li><p>proc : integer - Number of processors requested per task. Equivalent to <code>--cpus-per-task</code> of SLURM sbatch</p></li>
 <li><p>totalProc : integer - Number of tasks requested for job. Equivalent to <code>--ntasks</code> of SLURM sbatch</p></li>
 <li><p>nodes : integer - Number of nodes requested for job. Equivalent to <code>--nodes</code> of SLURM sbatch</p></li>
-<li><p>email : character - email address to send info when job is done. Equivalent to <code>--nodes</code> of SLURM sbatch</p></li>
+<li><p>email : character - email address to send info when job is done. Equivalent to <code>--mail-user=</code> of SLURM sbatch</p></li>
 </ul>
      <br /> Return: <br /> object of class <code>Job</code></p></li>
 <li><p><strong>Submit job(s)</strong>
@@ -180,7 +180,7 @@ Concatenation is possible for most methods.</p>
 <li><p><strong>Wait for job(s) to finish</strong>
      <br />
      <code>x$wait(stopIfFailed = F, verbose = T)</code>
-     <br /> Time between each job state check is defined in the entry TIME_WAIT_JOB_STATUS:seconds in the config file located at ~/.rSubmitter
+     <br /> The time between each job state check is defined in the entry TIME_WAIT_JOB_STATUS:seconds in the config file located at ~/.rSubmitter
      <br /> Parameters:
       <ul>
 <li><p>stopIfFailed : logical -  if TRUE stops when one job has failed (only useful for JobArray) it then cancels the 
@@ -223,42 +223,23 @@ Concatenation is possible for most methods.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><span class='co'># NOT RUN {</span>
-<span class='co'># Create and submit dummy job with random job name</span>
-<span class='no'>job</span> <span class='kw'>&lt;-</span> <span class='no'>Job</span>$<span class='fu'>new</span>(<span class='st'>"echo hola world!"</span>)
-<span class='no'>job</span>$<span class='fu'>submit</span>()
+<span class='co'># Create and submit 10 dummy jobs</span>
+<span class='no'>commands</span> <span class='kw'>&lt;-</span> <span class='fu'>list</span>()
+<span class='kw'>for</span>(<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='fl'>10</span>) <span class='no'>commands</span><span class='kw'>[[</span><span class='no'>i</span>]] <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='st'>"echo adios"</span>,<span class='st'>"sleep 40"</span>)
+<span class='no'>jobArray</span> <span class='kw'>&lt;-</span> <span class='no'>JobArray</span>$<span class='fu'>new</span>(<span class='no'>commands</span>, <span class='kw'>jobName</span> <span class='kw'>=</span> <span class='st'>"dummy"</span>, <span class='kw'>outDir</span> <span class='kw'>=</span> <span class='st'>"~"</span>, <span class='kw'>mem</span> <span class='kw'>=</span> <span class='st'>"1G"</span>, <span class='kw'>time</span> <span class='kw'>=</span> <span class='st'>"02:00"</span>, <span class='kw'>proc</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+<span class='no'>jobArray</span>$<span class='fu'>submit</span>()
+<span class='no'>jobArray</span>$<span class='fu'>getState</span>()
+<span class='no'>jobArray</span>$<span class='fu'>wait</span>()
 
-<span class='co'># Create and submit dummy job with specific job name</span>
-<span class='no'>job</span> <span class='kw'>&lt;-</span> <span class='no'>Job</span>$<span class='fu'>new</span>(<span class='st'>"echo hola world!"</span>, <span class='kw'>jobName</span> <span class='kw'>=</span> <span class='st'>"dummy"</span>)
-<span class='no'>job</span>$<span class='fu'>submit</span>()
+<span class='co'># Create and submit 10 dummy jobs, where one fails and the rest of the jobs will be cancelled</span>
+<span class='no'>commands</span> <span class='kw'>&lt;-</span> <span class='fu'>list</span>()
+<span class='kw'>for</span>(<span class='no'>i</span> <span class='kw'>in</span> <span class='fl'>1</span>:<span class='fl'>9</span>) <span class='no'>commands</span><span class='kw'>[[</span><span class='no'>i</span>]] <span class='kw'>&lt;-</span> <span class='fu'>c</span>(<span class='st'>"echo adios"</span>,<span class='st'>"sleep 40"</span>)
+<span class='no'>commands</span><span class='kw'>[[</span><span class='fl'>10</span>]] <span class='kw'>&lt;-</span> <span class='st'>"notAcommand"</span>
+<span class='no'>jobArray</span> <span class='kw'>&lt;-</span> <span class='no'>JobArray</span>$<span class='fu'>new</span>(<span class='no'>commands</span>, <span class='kw'>jobName</span> <span class='kw'>=</span> <span class='st'>"dummy"</span>, <span class='kw'>outDir</span> <span class='kw'>=</span> <span class='st'>"~"</span>, <span class='kw'>mem</span> <span class='kw'>=</span> <span class='st'>"1G"</span>, <span class='kw'>time</span> <span class='kw'>=</span> <span class='st'>"02:00"</span>, <span class='kw'>proc</span> <span class='kw'>=</span> <span class='fl'>1</span>)
+<span class='no'>jobArray</span>$<span class='fu'>submit</span>()
+<span class='no'>jobArray</span>$<span class='fu'>getState</span>()
+<span class='no'>jobArray</span>$<span class='fu'>wait</span>(<span class='kw'>stopIfFailed</span> <span class='kw'>=</span> <span class='no'>T</span>)
 
-<span class='co'># Create, submit and wait for a job to finish</span>
-<span class='no'>job</span> <span class='kw'>&lt;-</span> <span class='no'>Job</span>$<span class='fu'>new</span>(<span class='fu'>c</span>(<span class='st'>"echo hola world!"</span>, <span class='st'>"sleep 60"</span>))
-<span class='no'>job</span>$<span class='fu'>submit</span>()
-<span class='no'>job</span>$<span class='fu'>wait</span>()
-
-<span class='co'># Method concatenation</span>
-<span class='no'>job</span> <span class='kw'>&lt;-</span> <span class='no'>Job</span>$<span class='fu'>new</span>(<span class='st'>"echo hola world!"</span>, <span class='kw'>jobName</span> <span class='kw'>=</span> <span class='st'>"dummy"</span>)
-<span class='no'>job</span>$<span class='fu'>submit</span>()$<span class='fu'>wait</span>()$<span class='fu'>clean</span>()
-
-<span class='co'># Create, submit and cancel a Job</span>
-<span class='no'>job</span> <span class='kw'>&lt;-</span> <span class='no'>Job</span>$<span class='fu'>new</span>(<span class='fu'>c</span>(<span class='st'>"echo hola world!"</span>, <span class='st'>"sleep 60"</span>))
-<span class='no'>job</span>$<span class='fu'>submit</span>()
-<span class='no'>job</span>$<span class='fu'>cancel</span>()
-
-<span class='co'># Create and submit a memory-heavy job</span>
-<span class='no'>job</span> <span class='kw'>&lt;-</span> <span class='no'>Job</span>$<span class='fu'>new</span>(<span class='st'>"echo this is too much memory!"</span>, <span class='kw'>mem</span> <span class='kw'>=</span> <span class='st'>"16G"</span>)
-<span class='no'>job</span>$<span class='fu'>submit</span>()
-
-<span class='co'># Create and submit a requesting multiple processors</span>
-<span class='no'>job</span> <span class='kw'>&lt;-</span> <span class='no'>Job</span>$<span class='fu'>new</span>(<span class='fu'>c</span>(<span class='st'>"echo this is multi-processing"</span>, <span class='st'>"nproc"</span>), <span class='kw'>proc</span> <span class='kw'>=</span> <span class='fl'>8</span>)
-<span class='no'>job</span>$<span class='fu'>submit</span>()
-
-<span class='co'># Many options defined</span>
-<span class='no'>job</span> <span class='kw'>&lt;-</span> <span class='no'>Job</span>$<span class='fu'>new</span>(<span class='fu'>c</span>(<span class='st'>"echo this are all the options"</span>, <span class='st'>"nproc"</span>), <span class='kw'>jobName</span> <span class='kw'>=</span> <span class='st'>"dummy"</span>, <span class='kw'>outDir</span> <span class='kw'>=</span> <span class='st'>"~"</span>, <span class='kw'>partition</span> <span class='kw'>=</span> <span class='st'>"normal"</span>, <span class='kw'>time</span> <span class='kw'>=</span> <span class='st'>"4:00:00"</span>, <span class='kw'>mem</span> <span class='kw'>=</span> <span class='st'>"8G"</span>, <span class='kw'>proc</span> <span class='kw'>=</span> <span class='fl'>8</span>, <span class='kw'>totalProc</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>nodes</span> <span class='kw'>=</span> <span class='fl'>1</span>, <span class='kw'>email</span> <span class='kw'>=</span> <span class='no'>my</span>@<span class='kw'>email.com</span>)
-<span class='no'>job</span>$<span class='fu'>submit</span>()
-
-<span class='co'># Removes script, err and output files</span>
-<span class='no'>job</span>$<span class='fu'>clean</span>()
 <span class='co'># }</span></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">

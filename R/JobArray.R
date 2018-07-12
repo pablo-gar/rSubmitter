@@ -4,14 +4,14 @@
 #'
 #' Job arrays are quickly genearated and submitted allowing for efficient creation and execution
 #' of many shell jobs in a SLURM cluster, thus facilitating parallelization when needed. This class eliminates the cumbersome task of
-#' manually creating SLURM arrays, in its simplest form two lines of code are sufficient for a job array submmission.
-#' Additionally, there is an added functionallity to monitor and wait for all jobs in an array once they have been submitted.
+#' manually creating SLURM arrays: in its simplest form two lines of code are sufficient for a job array submmission.
+#' Additionally, there is an added functionallity to monitor and wait for all jobs to finished after they have been submitted.
 #'
 #' All jobs in an job array share the same execution requirements.
-#' Each element in `commandList` will be submitted as an individual jobs in the array. Elements of `commandList` should be
+#' Each element in `commandList` will be submitted as an individual job in the array. Elements of `commandList` should be
 #' vectors of shell commands.
 #'
-#' Submission is achived by creating and executing an sbatch script, for more details on SLURM refer
+#' Submission is achived by creating and executing an sbatch script. For more details on SLURM refer
 #' to https://slurm.schedmd.com/. For job arrays refer to https://slurm.schedmd.com/job_array.html
 #' Concatenation is possible for most methods.
 #'
@@ -47,7 +47,7 @@
 #'          \item{proc} {: integer - Number of processors requested per task. Equivalent to \code{--cpus-per-task} of SLURM sbatch}
 #'          \item{totalProc} {: integer - Number of tasks requested for job. Equivalent to \code{--ntasks} of SLURM sbatch}
 #'          \item{nodes} {: integer - Number of nodes requested for job. Equivalent to \code{--nodes} of SLURM sbatch}
-#'          \item{email} {: character - email address to send info when job is done. Equivalent to \code{--nodes} of SLURM sbatch}
+#'          \item{email} {: character - email address to send info when job is done. Equivalent to \code{--mail-user=} of SLURM sbatch}
 #'          }
 #'      \cr Return: \cr object of class \code{Job}
 #'      }
@@ -62,7 +62,7 @@
 #'  \item{\strong{Wait for job(s) to finish}}{
 #'      \cr
 #'      \code{x$wait(stopIfFailed = F, verbose = T)}
-#'      \cr Time between each job state check is defined in the entry TIME_WAIT_JOB_STATUS:seconds in the config file located at ~/.rSubmitter
+#'      \cr The time between each job state check is defined in the entry TIME_WAIT_JOB_STATUS:seconds in the config file located at ~/.rSubmitter
 #'      \cr Parameters:
 #'       \itemize{
 #'          \item{stopIfFailed} {: logical -  if TRUE stops when one job has failed (only useful for JobArray) it then cancels the 
@@ -118,42 +118,23 @@
 #' @return \code{\link{R6Class}} with methods and fields for SLURM job array manipulation
 #' @examples
 #' \dontrun{
-#' # Create and submit dummy job with random job name
-#' job <- Job$new("echo hola world!")
-#' job$submit()
+#' # Create and submit 10 dummy jobs
+#' commands <- list()
+#' for(i in 1:10) commands[[i]] <- c("echo adios","sleep 40")
+#' jobArray <- JobArray$new(commands, jobName = "dummy", outDir = "~", mem = "1G", time = "02:00", proc = 1)
+#' jobArray$submit()
+#' jobArray$getState()
+#' jobArray$wait()
 #'
-#' # Create and submit dummy job with specific job name
-#' job <- Job$new("echo hola world!", jobName = "dummy")
-#' job$submit()
+#' # Create and submit 10 dummy jobs, where one fails and the rest of the jobs will be cancelled
+#' commands <- list()
+#' for(i in 1:9) commands[[i]] <- c("echo adios","sleep 40")
+#' commands[[10]] <- "notAcommand"
+#' jobArray <- JobArray$new(commands, jobName = "dummy", outDir = "~", mem = "1G", time = "02:00", proc = 1)
+#' jobArray$submit()
+#' jobArray$getState()
+#' jobArray$wait(stopIfFailed = T)
 #' 
-#' # Create, submit and wait for a job to finish
-#' job <- Job$new(c("echo hola world!", "sleep 60"))
-#' job$submit()
-#' job$wait()
-#'
-#' # Method concatenation
-#' job <- Job$new("echo hola world!", jobName = "dummy")
-#' job$submit()$wait()$clean()
-#'
-#' # Create, submit and cancel a Job
-#' job <- Job$new(c("echo hola world!", "sleep 60"))
-#' job$submit()
-#' job$cancel()
-#'
-#' # Create and submit a memory-heavy job
-#' job <- Job$new("echo this is too much memory!", mem = "16G")
-#' job$submit()
-#'
-#' # Create and submit a requesting multiple processors
-#' job <- Job$new(c("echo this is multi-processing", "nproc"), proc = 8)
-#' job$submit()
-#'
-#' # Many options defined
-#' job <- Job$new(c("echo this are all the options", "nproc"), jobName = "dummy", outDir = "~", partition = "normal", time = "4:00:00", mem = "8G", proc = 8, totalProc = 1, nodes = 1, email = my@email.com)
-#' job$submit()
-#'
-#' # Removes script, err and output files
-#' job$clean()
 #' }
 JobArray <- R6::R6Class(
                        
