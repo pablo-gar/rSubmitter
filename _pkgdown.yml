@@ -37,3 +37,10 @@ reference:
   - '`systemSubmit`'
   - '`trim`'
 
+articles:
+- title: All vignettes
+  desc: ~
+  contents:
+  - '`quick_start`'
+  - '`config_file_instructions`'
+  - '`scratch`'
