@@ -95,7 +95,8 @@
 <div id="intro" class="section level2">
 <h2 class="hasAnchor">
 <a href="#intro" class="anchor"></a>Intro</h2>
-<p>rSubmitter should work out of the box after installation. However there are some settings that the user can change to their preference. This is achieved by creating a config file and tweaking the settings there. All the options in the config file are global and will be applied to all calls from rSubmitter.</p>
+<p>rSubmitter should work out of the box after installation. However there are some settings that the user can change to their preference. This is achieved by creating a config file and tweaking the settings there.</p>
+<p>All the options in the config file are global and will be applied to all calls from rSubmitter.</p>
 </div>
 <div id="available-options" class="section level2">
 <h2 class="hasAnchor">
@@ -143,6 +144,13 @@
 <div id="setting-options" class="section level2">
 <h2 class="hasAnchor">
 <a href="#setting-options" class="anchor"></a>Setting options</h2>
+<p>Options are set in the config file <code>~/.rSubmitter</code>. Each line corresponds to one option and the syntax is “option:value”.</p>
+<p>A config file with default options would like this:</p>
+<pre><code>MAX_JOBS_ALLOWED:500
+TIME_WAIT_FAILED_CMD:5
+TIME_WAIT_MAX_JOBS:60
+TIME_WAIT_JOB_STATUS:5
+MAX_JOB_ARRAY_LENGTH:1000</code></pre>
 </div>
   </div>
 
