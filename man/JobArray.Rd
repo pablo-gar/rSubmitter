@@ -3,7 +3,7 @@
 \docType{class}
 \name{JobArray}
 \alias{JobArray}
-\title{Class for efficient SLURM multi-job submission and management}
+\title{Class for efficient multi-job SLURM submission and management}
 \format{R6 class}
 \usage{
 # x <- JobArray$new(commandList, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)

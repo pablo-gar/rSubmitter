@@ -3,7 +3,7 @@
 \docType{class}
 \name{Job}
 \alias{Job}
-\title{Class for SLURM individual job submission and management}
+\title{Class for individual SLURM job submission and management}
 \format{R6 class}
 \usage{
 # x <- Job$new(commandVector, jobName = NULL, outDir = NULL, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL)

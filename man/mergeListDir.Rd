@@ -2,8 +2,7 @@
 % Please edit documentation in R/superApply.R
 \name{mergeListDir}
 \alias{mergeListDir}
-\title{Helper of superApply
-merges the result of independ jobs after completion of parallel lapply executions}
+\title{Helper of superApply}
 \usage{
 mergeListDir(files, varNames, workingDir)
 }
@@ -15,6 +14,5 @@ mergeListDir(files, varNames, workingDir)
 \item{workingDir}{character - working directory}
 }
 \description{
-Helper of superApply
 merges the result of independ jobs after completion of parallel lapply executions
 }

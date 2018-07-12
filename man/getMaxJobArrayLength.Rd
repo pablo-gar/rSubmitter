@@ -2,14 +2,11 @@
 % Please edit documentation in R/utils.R
 \name{getMaxJobArrayLength}
 \alias{getMaxJobArrayLength}
-\title{getMaxJobArrayLength
-Internal function for .onAttach that gets the maximum length for a Job array
-from the SLURM config file}
+\title{Gets maximum length for a Job array in the current SLURM cluster}
 \usage{
 getMaxJobArrayLength()
 }
 \description{
-getMaxJobArrayLength
 Internal function for .onAttach that gets the maximum length for a Job array
 from the SLURM config file
 }

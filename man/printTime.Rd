@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{printTime}
 \alias{printTime}
-\title{printTime}
+\title{Prints message with current time and date}
 \usage{
 printTime(..., carriageReturn = F)
 }

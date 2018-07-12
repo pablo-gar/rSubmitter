@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{isWriteable}
 \alias{isWriteable}
-\title{isWriteable}
+\title{Returns TRUE if the path is writeable}
 \usage{
 isWriteable(x)
 }

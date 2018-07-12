@@ -1,4 +1,4 @@
-#' printTime
+#' Prints message with current time and date
 #'
 #' Prints to console the current date and time followed by
 #' the message(s) in x
@@ -17,9 +17,8 @@ printTime <- function(..., carriageReturn = F) {
 	cat(first, as.character(Sys.time()), x)
 }
 
-#' isWriteable
-#'
 #' Returns TRUE if the path is writeable
+#'
 #' @param x String - Path
 isWriteable <- function(x){
     tryCatch({
@@ -27,11 +26,9 @@ isWriteable <- function(x){
     }, error=function(e) FALSE)
 }
 
-#' parseArg
+#' Converts string into vector using a separator
 #' 
 #' Takes a string an creates a vector using sep as the separator
-#' Prints to console the current date and time followed by
-#' the message(s) in x
 #'
 #' @param x String - if a vector only first element will be considred
 #' @param sep String - if vector only first element will be considered
@@ -57,7 +54,7 @@ parseArg <- function(x, sep, trim = T) {
 	
 }
 
-#' trim
+#' Trims white space
 #' 
 #' Trims white space from a character vector
 #' @param x String or character vector
@@ -73,7 +70,7 @@ trim <- function(x) {
 	
 }
 
-#' grepTempFile
+#' From an existing file, creates a new one containing a given string
 #'
 #' Creates a new file based of x only with lines containing
 #' the specified pattern(s)
@@ -97,7 +94,8 @@ grepTempFile <- function(x, pattern, tempLocation = "."){
 
 }
 
-#' getMaxJobArrayLength
+#' Gets maximum length for a Job array in the current SLURM cluster
+#' 
 #' Internal function for .onAttach that gets the maximum length for a Job array
 #' from the SLURM config file
 getMaxJobArrayLength <- function() {

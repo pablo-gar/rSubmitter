@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{grepTempFile}
 \alias{grepTempFile}
-\title{grepTempFile}
+\title{From an existing file, creates a new one containing a given string}
 \usage{
 grepTempFile(x, pattern, tempLocation = ".")
 }

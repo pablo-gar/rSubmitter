@@ -2,13 +2,15 @@
 % Please edit documentation in R/superApply.R
 \name{getPartitionIndeces}
 \alias{getPartitionIndeces}
-\title{Helper of superApply
-Creates a list  with slots, containing the start and end indeces 
-corresponding to the partitions of x required to run the number of parallel tasks}
+\title{Helper of superApply}
 \usage{
 getPartitionIndeces(x, tasks = tasks)
 }
 \description{
+Creates a list  with slots, containing the start and end indeces 
+corresponding to the partitions of x required to run the number of parallel tasks
+}
+\details{
 Parsing x, is it vector, list? or is it number of repetitions (i.e. x is just a number)?
 This just to calculate the number of times the FUN has to be executed
 }

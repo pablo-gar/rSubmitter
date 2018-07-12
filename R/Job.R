@@ -1,4 +1,4 @@
-#' Class for SLURM individual job submission and management
+#' Class for individual SLURM job submission and management
 #' 
 #' R6 Class that enables easy submission and manipulation of individual shell jobs to a SLURM cluster.
 #'

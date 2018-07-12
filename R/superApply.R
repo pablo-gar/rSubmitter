@@ -97,6 +97,7 @@ superApply <- function(x, FUN, ..., tasks = 1, workingDir = getwd(), packages = 
 
 
 #' Helper of superApply
+#' 
 #' Creates a list  with slots, containing the start and end indeces 
 #' corresponding to the partitions of x required to run the number of parallel tasks
 #'
@@ -130,6 +131,7 @@ getPartitionIndeces <- function(x, tasks = tasks) {
 }   
 
 #' Helper of superApply
+#' 
 #' Submits multiple jobs from the partions of x created in get Partition Indeces
 #'
 #' @param x list/vector - data to be partition
@@ -161,6 +163,7 @@ getJobArray<- function(x, FUN, ..., idPrefix, partitionIndeces, workingDir, extr
 }
 
 #' Helper of superApply
+#' 
 #' Takes a vector/list x, a function FUN and extra paramaters (...) and creates a Rscript
 #' that executes lappy in x using FUN. Scripts are saved in workingDir
 #' 
@@ -240,6 +243,7 @@ createJobScriptsData <- function(x, FUN, ..., idPrefix, iStart, iEnd, workingDir
 }
 
 #' Helper of superApply
+#' 
 #' merges the result of independ jobs after completion of parallel lapply executions
 #' @param files character vector - files to be merged
 #' @param varNames character vector - varnames associated to each file to be merged

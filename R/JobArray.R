@@ -1,4 +1,4 @@
-#' Class for efficient SLURM multi-job submission and management
+#' Class for efficient multi-job SLURM submission and management
 #'
 #' R6 Class that enables easy submission and manipulation of SLURM job arrays.
 #'

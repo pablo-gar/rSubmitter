@@ -128,13 +128,13 @@
         <td>
           <p><code><a href="Job.html">Job</a></code> </p>
         </td>
-        <td><p>Class for SLURM individual job submission and management</p></td>
+        <td><p>Class for individual SLURM job submission and management</p></td>
       </tr><tr>
         <!--  -->
         <td>
           <p><code><a href="JobArray.html">JobArray</a></code> </p>
         </td>
-        <td><p>Class for efficient SLURM multi-job submission and management</p></td>
+        <td><p>Class for efficient multi-job SLURM submission and management</p></td>
       </tr><tr>
         <!--  -->
         <td>
@@ -166,15 +166,13 @@
         <td>
           <p><code><a href="getJobNumber.html">getJobNumber()</a></code> </p>
         </td>
-        <td><p>getJobNumber</p></td>
+        <td><p>Gets the number of existing SLURM jobs for a given user</p></td>
       </tr><tr>
         <!--  -->
         <td>
           <p><code><a href="getMaxJobArrayLength.html">getMaxJobArrayLength()</a></code> </p>
         </td>
-        <td><p>getMaxJobArrayLength
-Internal function for .onAttach that gets the maximum length for a Job array
-from the SLURM config file</p></td>
+        <td><p>Gets maximum length for a Job array in the current SLURM cluster</p></td>
       </tr>
     </tbody><tbody>
       <tr>
@@ -194,9 +192,7 @@ from the SLURM config file</p></td>
         <td>
           <p><code><a href="createJobScriptsData.html">createJobScriptsData()</a></code> </p>
         </td>
-        <td><p>Helper of superApply
-Takes a vector/list x, a function FUN and extra paramaters (...) and creates a Rscript
-that executes lappy in x using FUN. Scripts are saved in workingDir</p></td>
+        <td><p>Helper of superApply</p></td>
       </tr><tr>
         <!--  -->
         <td>
@@ -208,16 +204,13 @@ that executes lappy in x using FUN. Scripts are saved in workingDir</p></td>
         <td>
           <p><code><a href="getJobArray.html">getJobArray()</a></code> </p>
         </td>
-        <td><p>Helper of superApply
-Submits multiple jobs from the partions of x created in get Partition Indeces</p></td>
+        <td><p>Helper of superApply</p></td>
       </tr><tr>
         <!--  -->
         <td>
           <p><code><a href="getPartitionIndeces.html">getPartitionIndeces()</a></code> </p>
         </td>
-        <td><p>Helper of superApply
-Creates a list  with slots, containing the start and end indeces 
-corresponding to the partitions of x required to run the number of parallel tasks</p></td>
+        <td><p>Helper of superApply</p></td>
       </tr><tr>
         <!--  -->
         <td>
@@ -235,32 +228,31 @@ corresponding to the partitions of x required to run the number of parallel task
         <td>
           <p><code><a href="grepTempFile.html">grepTempFile()</a></code> </p>
         </td>
-        <td><p>grepTempFile</p></td>
+        <td><p>From an existing file, creates a new one containing a given string</p></td>
       </tr><tr>
         <!--  -->
         <td>
           <p><code><a href="isWriteable.html">isWriteable()</a></code> </p>
         </td>
-        <td><p>isWriteable</p></td>
+        <td><p>Returns TRUE if the path is writeable</p></td>
       </tr><tr>
         <!--  -->
         <td>
           <p><code><a href="mergeListDir.html">mergeListDir()</a></code> </p>
         </td>
-        <td><p>Helper of superApply
-merges the result of independ jobs after completion of parallel lapply executions</p></td>
+        <td><p>Helper of superApply</p></td>
       </tr><tr>
         <!--  -->
         <td>
           <p><code><a href="parseArg.html">parseArg()</a></code> </p>
         </td>
-        <td><p>parseArg</p></td>
+        <td><p>Converts string into vector using a separator</p></td>
       </tr><tr>
         <!--  -->
         <td>
           <p><code><a href="printTime.html">printTime()</a></code> </p>
         </td>
-        <td><p>printTime</p></td>
+        <td><p>Prints message with current time and date</p></td>
       </tr><tr>
         <!--  -->
         <td>
@@ -279,7 +271,7 @@ Internal function for .onAttach Check if shell command exists</p></td>
         <td>
           <p><code><a href="trim.html">trim()</a></code> </p>
         </td>
-        <td><p>trim</p></td>
+        <td><p>Trims white space</p></td>
       </tr>
     </tbody>
     </table>

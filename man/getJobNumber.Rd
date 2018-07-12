@@ -2,7 +2,7 @@
 % Please edit documentation in R/getJobNumber.R
 \name{getJobNumber}
 \alias{getJobNumber}
-\title{getJobNumber}
+\title{Gets the number of existing SLURM jobs for a given user}
 \usage{
 getJobNumber(user = Sys.info()["user"])
 }
@@ -13,5 +13,5 @@ getJobNumber(user = Sys.info()["user"])
 Integer - the current number of SLURM jobs in queue
 }
 \description{
-Returns the number of existing SLURM jobs of a given user
+Gets the number of existing SLURM jobs for a given user
 }

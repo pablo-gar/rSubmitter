@@ -2,8 +2,7 @@
 % Please edit documentation in R/superApply.R
 \name{getJobArray}
 \alias{getJobArray}
-\title{Helper of superApply
-Submits multiple jobs from the partions of x created in get Partition Indeces}
+\title{Helper of superApply}
 \usage{
 getJobArray(x, FUN, ..., idPrefix, partitionIndeces, workingDir,
   extraScriptLines, extraBashLines, JobArrayPars, packages, sources)
@@ -23,6 +22,5 @@ getJobArray(x, FUN, ..., idPrefix, partitionIndeces, workingDir,
 a JobArray object
 }
 \description{
-Helper of superApply
 Submits multiple jobs from the partions of x created in get Partition Indeces
 }

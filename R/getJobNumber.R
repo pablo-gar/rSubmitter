@@ -1,6 +1,4 @@
-#' getJobNumber
-#' 
-#' Returns the number of existing SLURM jobs of a given user
+#' Gets the number of existing SLURM jobs for a given user
 #'
 #' @param user Character - username, if blank it is gotten from sytem info
 #' @return Integer - the current number of SLURM jobs in queue

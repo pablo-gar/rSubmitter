@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{trim}
 \alias{trim}
-\title{trim}
+\title{Trims white space}
 \usage{
 trim(x)
 }

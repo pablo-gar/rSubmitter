@@ -2,9 +2,7 @@
 % Please edit documentation in R/superApply.R
 \name{createJobScriptsData}
 \alias{createJobScriptsData}
-\title{Helper of superApply
-Takes a vector/list x, a function FUN and extra paramaters (...) and creates a Rscript
-that executes lappy in x using FUN. Scripts are saved in workingDir}
+\title{Helper of superApply}
 \usage{
 createJobScriptsData(x, FUN, ..., idPrefix, iStart, iEnd, workingDir,
   extraScriptLines = "", extraBashLines = "", packages = NULL,
@@ -24,7 +22,6 @@ createJobScriptsData(x, FUN, ..., idPrefix, iStart, iEnd, workingDir,
 \item{iEnd}{numeric vector - end indeces where partitions were done on x}
 }
 \description{
-Helper of superApply
 Takes a vector/list x, a function FUN and extra paramaters (...) and creates a Rscript
 that executes lappy in x using FUN. Scripts are saved in workingDir
 }

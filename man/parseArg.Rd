@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{parseArg}
 \alias{parseArg}
-\title{parseArg}
+\title{Converts string into vector using a separator}
 \usage{
 parseArg(x, sep, trim = T)
 }
@@ -18,8 +18,6 @@ Character vector - with elements as characters after splitting by sep
 }
 \description{
 Takes a string an creates a vector using sep as the separator
-Prints to console the current date and time followed by
-the message(s) in x
 }
 \examples{
 parseArg("A, B, C", sep = ",")
