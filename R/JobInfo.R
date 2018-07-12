@@ -37,7 +37,7 @@
 #'      \cr Return: \cr object of class \code{Job}
 #'      }
 #'      
-#'  \item{Wait for job(s) to finish}{
+#'  \item{\strong{Wait for job(s) to finish}}{
 #'      \cr
 #'      \code{x$wait(stopIfFailed = F, verbose = T)}
 #'      \cr Time between each job state check is defined in the entry TIME_WAIT_JOB_STATUS:seconds in the config file located at ~/.rSubmitter
@@ -50,13 +50,13 @@
 #'      \cr Return: \cr self - for method concatenation
 #'      }
 #'
-#'  \item{Cancel job(s)}{
+#'  \item{\strong{Cancel job(s)}}{
 #'      \cr
 #'      \code{x$cancel()}
 #'      \cr Return: \cr self - for method concatenation
 #'      }
 #' 
-#'  \item{Get job(s) state}{
+#'  \item{\strong{Get job(s) state}}{
 #'      \cr
 #'      \code{x$getState(simplify = F)}
 #'      \cr Parameters:
@@ -66,7 +66,7 @@
 #'      \cr Return: \cr data.frame - With SLURM states
 #'      }
 #'
-#'  \item{Remove SLURM-associated files}{
+#'  \item{\strong{Remove SLURM-associated files}}{
 #'      \cr
 #'      \code{x$clean(script = TRUE, out = TRUE, err = TRUE)}
 #'      \cr Parameters:
