@@ -86,6 +86,7 @@ You can also access the full documentation of the JobArray class from R:
 
 ## Lapply parallelization (loop parallelization)
 
+# R loops (lapply)
 lapply is an R-base function that applies a function `FUN` to each element of a list or vector (similar to `map()` in python). It's one of the R ways of performing loops.
 
 For example this:
@@ -100,6 +101,7 @@ for(i in 1:4)
     x[[i]] <- as.character(i)
 ```
 
+# Parallelizing loops with rSubmitter
 rSubmitter comes with an implementation of lapply, `superApply`, that enables parallelization of lapply function calls using a SLURM cluster. Under the hood, it implements the JobArray class (described above) along with some complicated file management to partition one lapply call into many indepent ones that are parallely executed, then when they are all done the results of indivudal calls are gathered and returned to the user. 
 
 The number of parallel tasks is defined in the `tasks` argument of `superApply`, **on its simplest form a parallel lapply call looks like this:**

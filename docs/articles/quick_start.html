@@ -52,7 +52,7 @@
   </a>
   <ul class="dropdown-menu" role="menu">
 <li>
-      <a href="../articles/config_file_instructions.html">Settings configuration</a>
+      <a href="../articles/config_file_instructions.html">Configuration</a>
     </li>
     <li>
       <a href="../articles/quick_start.html">Quick-start guide</a>
@@ -154,6 +154,10 @@
 <div id="lapply-parallelization-loop-parallelization" class="section level2">
 <h2 class="hasAnchor">
 <a href="#lapply-parallelization-loop-parallelization" class="anchor"></a>Lapply parallelization (loop parallelization)</h2>
+</div>
+<div id="r-loops-lapply" class="section level1">
+<h1 class="hasAnchor">
+<a href="#r-loops-lapply" class="anchor"></a>R loops (lapply)</h1>
 <p>lapply is an R-base function that applies a function <code>FUN</code> to each element of a list or vector (similar to <code>map()</code> in python). It’s one of the R ways of performing loops.</p>
 <p>For example this:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, as.character)</a></code></pre></div>
@@ -161,6 +165,10 @@
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
 <a class="sourceLine" id="cb7-2" data-line-number="2"><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>)</a>
 <a class="sourceLine" id="cb7-3" data-line-number="3">    x[[i]] &lt;-<span class="st"> </span><span class="kw">as.character</span>(i)</a></code></pre></div>
+</div>
+<div id="parallelizing-loops-with-rsubmitter" class="section level1">
+<h1 class="hasAnchor">
+<a href="#parallelizing-loops-with-rsubmitter" class="anchor"></a>Parallelizing loops with rSubmitter</h1>
 <p>rSubmitter comes with an implementation of lapply, <code>superApply</code>, that enables parallelization of lapply function calls using a SLURM cluster. Under the hood, it implements the JobArray class (described above) along with some complicated file management to partition one lapply call into many indepent ones that are parallely executed, then when they are all done the results of indivudal calls are gathered and returned to the user.</p>
 <p>The number of parallel tasks is defined in the <code>tasks</code> argument of <code>superApply</code>, <strong>on its simplest form a parallel lapply call looks like this:</strong></p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">myFun &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
@@ -199,6 +207,8 @@
       <li><a href="#single-job-sumbssion">Single job sumbssion</a></li>
       <li><a href="#efficient-multiple-job-sumbssion">Efficient multiple job sumbssion</a></li>
       <li><a href="#lapply-parallelization-loop-parallelization">Lapply parallelization (loop parallelization)</a></li>
+      <li><a href="#r-loops-lapply">R loops (lapply)</a></li>
+      <li><a href="#parallelizing-loops-with-rsubmitter">Parallelizing loops with rSubmitter</a></li>
       </ul>
 </div>
       </div>

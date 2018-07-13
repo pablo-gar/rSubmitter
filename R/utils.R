@@ -112,7 +112,8 @@ getMaxJobArrayLength <- function() {
     return(maxArrayLength)
 }
 
-#' shellCmdExists 
+#' Check if shell command exists
+#'
 #' Internal function for .onAttach Check if shell command exists
 shellCmdExists <- function(cmd) {
     

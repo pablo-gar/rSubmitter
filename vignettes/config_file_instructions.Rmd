@@ -1,14 +1,14 @@
 ---
-title: "Settings configuration"
+title: "Configuration"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Settings configuration}
+  %\VignetteIndexEntry{Configuration}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
 
 ## Intro
-rSubmitter should work out of the box after installation. However there are some settings that the user can change to their preference. This is achieved by creating a config file and tweaking the settings there. 
+rSubmitter should work out of the box after installation. However there are some settings that you can change to your preference. This is achieved by creating a config file and tweaking the settings there. 
 
 All the options in the config file are global and will be applied to all calls from rSubmitter.
 

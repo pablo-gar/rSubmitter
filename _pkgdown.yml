@@ -22,20 +22,20 @@ reference:
       Internally used functions and classes
   contents:
   - '`JobInfo`'
+  - '`grepTempFile`'
+  - '`isWriteable`'
+  - '`parseArg`'
+  - '`printTime`'
+  - '`shellCmdExists`'
+  - '`systemSubmit`'
+  - '`trim`'
   - '`createJobScriptsData`'
   - '`createStringFunction`'
   - '`getJobArray`'
   - '`getPartitionIndeces`'
   - '`getUserFunctions`'
   - '`getUserPackages`'
-  - '`grepTempFile`'
-  - '`isWriteable`'
   - '`mergeListDir`'
-  - '`parseArg`'
-  - '`printTime`'
-  - '`shellCmdExists`'
-  - '`systemSubmit`'
-  - '`trim`'
 
 articles:
 - title: All vignettes

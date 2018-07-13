@@ -2,12 +2,10 @@
 % Please edit documentation in R/utils.R
 \name{shellCmdExists}
 \alias{shellCmdExists}
-\title{shellCmdExists 
-Internal function for .onAttach Check if shell command exists}
+\title{Check if shell command exists}
 \usage{
 shellCmdExists(cmd)
 }
 \description{
-shellCmdExists 
 Internal function for .onAttach Check if shell command exists
 }
