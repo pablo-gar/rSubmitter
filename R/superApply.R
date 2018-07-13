@@ -25,7 +25,7 @@
 #' @param proc integer - Number of processors requested per task. Equivalent to \code{--cpus-per-task} of SLURM sbatch
 #' @param totalProc integer - Number of tasks requested for job. Equivalent to \code{--ntasks} of SLURM sbatch
 #' @param nodes integer - Number of nodes requested for job. Equivalent to \code{--nodes} of SLURM sbatch
-#' @param email character - email address to send info when job is done. Equivalent to \code{--nodes} of SLURM sbatch
+#' @param email character -  email address to send info when job is done. Equivalent to \code{--mail-user=} of SLURM sbatch}
 #'
 #' @return list - results of FUN applied to each element in x
 #' @examples

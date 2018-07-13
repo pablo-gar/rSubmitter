@@ -41,8 +41,6 @@ superApply(x, FUN, ..., tasks = 1, workingDir = getwd(), packages = NULL,
 \item{totalProc}{integer - Number of tasks requested for job. Equivalent to \code{--ntasks} of SLURM sbatch}
 
 \item{nodes}{integer - Number of nodes requested for job. Equivalent to \code{--nodes} of SLURM sbatch}
-
-\item{email}{character - email address to send info when job is done. Equivalent to \code{--nodes} of SLURM sbatch}
 }
 \value{
 list - results of FUN applied to each element in x

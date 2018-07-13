@@ -2,18 +2,18 @@
 % Please edit documentation in R/getJobState.R
 \name{getJobState}
 \alias{getJobState}
-\title{Gets the job state(s) of or more SLURM jobs}
+\title{Gets the job state(s) of one or more SLURM jobs}
 \usage{
 getJobState(x, dateJob = NULL)
 }
 \arguments{
 \item{x}{character vector - job id(s)}
 
-\item{dateJov}{character - Upper date limit to look for the job state, if NULL it will be 10 days before today}
+\item{dateJob}{character - Lower date limit to look for the job state, if NULL it will be 10 days before today}
 }
 \value{
 data.frame - with columns jobId, jobName, and jobState
 }
 \description{
-Gets the job state(s) of or more SLURM jobs
+Gets the job state(s) of one or more SLURM jobs
 }

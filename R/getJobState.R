@@ -1,7 +1,7 @@
-#' Gets the job state(s) of or more SLURM jobs
+#' Gets the job state(s) of one or more SLURM jobs
 #' 
 #' @param x character vector - job id(s)
-#' @param dateJov character - Upper date limit to look for the job state, if NULL it will be 10 days before today
+#' @param dateJob character - Lower date limit to look for the job state, if NULL it will be 10 days before today
 #'
 #' @return data.frame - with columns jobId, jobName, and jobState
 getJobState <- function(x, dateJob = NULL) {
