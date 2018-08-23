@@ -1,0 +1,63 @@
+---
+title: "Job submission and management"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Job submission and management}
+  %\VignetteEngine{knitr::rmarkdown}
+  \usepackage[utf8]{inputenc}
+---
+
+## Intro
+
+The [`Job`](https://pablo-gar.github.io/rSubmitter/reference/Job.html) class in rSubmitter allows for submission and management of cluster jobs in a SLURM cluster from R. It does so in a semi-interactive fashion providing fleixibility to work in a SLURM cluster either from an interactive R session or from an automated R script.
+
+This tutorial describes in full detail the capabilities of the `Job` class
+
+```{r eval=FALSE}
+library("devtools")
+install_github("pablo-gar/rSubmitter")
+```
+
+## Creating a Job
+
+The first step to submit a job is to create an object of the `Job` class with some relevant information regarding the commands to execute and the SLURM parameters associated to the job.
+
+For example, if you want to submit a job with 8Gb of memory requested, you create a Job object like this:
+
+```{r eval=FALSE}
+library("rSubmitter")
+bash_cmd <- "echo Hello World"
+my_job <- Job$new(bash_cmd, mem = "8G")
+```
+
+The `Job` class is an R6 class, hence the use the `$new()` constructor method. `my_job` now contains all the information necessary to submit a job with 8Gb of memory requested and a simple "Hello world" bash command. Before we explore the submission process let's dive into the options available for you when creating a new Job, since you won't be able to change them in the future.
+
+### Commands to execute
+
+The main prupose of creating and submitting a job is to execute one or more commands in a cluster. When creating a job the only required argument is `commandVector`, which is the first positional argument too. This has to be a character vector with one or more bash commands to be executed in the cluster, for example this job will create a "Hello World" file and then a copy of it:
+
+
+```{r eval=FALSE}
+library("rSubmitter")
+bash_cmd <- c("echo Hello World > temp_file.txt", "cp temp_file.txt temp_file_copy.txt")
+my_job <- Job$new(commandVector = bash_cmd)
+```
+
+Alternatively you can provide a single string with commands separated by ";" following the bash syntax.
+
+### Job name
+
+You can specify a job name through the argument `jobName` of the `$new()` constructor method. This is useful as rSubmitter will use it as a prefix for output files, see below for more details
+
+### Requesting computing capabilities
+
+The computing capabilities required for your job have to be requested at the time of creation. These are passed as arguments to the `$new()` constructor method, currently the following options are available, you can check the [reference](https://pablo-gar.github.io/rSubmitter/reference/Job.html#method-description) to see the most updated list of options.
+
+* partition : character - Partition to use. Equivalent to --partition of SLURM sbatch
+* time : character - Time requested for job execution, one accepted format is "HH:MM:SS". Equivalent to --time of SLURM sbatch
+* mem : character - Memory requested for job execution, one accepted format is "xG" or "xMB". Equivalent to --mem of SLURM sbatch
+* proc : integer - Number of processors requested per task. Equivalent to --cpus-per-task of SLURM sbatch
+* totalProc : integer - Number of tasks requested for job. Equivalent to --ntasks of SLURM sbatch
+* nodes : integer - Number of nodes requested for job. Equivalent to --nodes of SLURM sbatch
+  
+### STDERR, STDOUT and SLURM batch script

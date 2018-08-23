@@ -42,5 +42,6 @@ articles:
   desc: ~
   contents:
   - '`quick_start`'
+  - '`job_submission_management`'
   - '`config_file_instructions`'
   - '`scratch`'
