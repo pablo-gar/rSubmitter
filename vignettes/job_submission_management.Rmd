@@ -13,10 +13,6 @@ The [`Job`](https://pablo-gar.github.io/rSubmitter/reference/Job.html) class in 
 
 This tutorial describes in full detail the capabilities of the `Job` class
 
-```{r eval=FALSE}
-library("devtools")
-install_github("pablo-gar/rSubmitter")
-```
 
 ## Creating a Job
 
@@ -30,11 +26,12 @@ bash_cmd <- "echo Hello World"
 my_job <- Job$new(bash_cmd, mem = "8G")
 ```
 
-The `Job` class is an R6 class, hence the use the `$new()` constructor method. `my_job` now contains all the information necessary to submit a job with 8Gb of memory requested and a simple "Hello world" bash command. Before we explore the submission process let's dive into the options available for you when creating a new Job, since you won't be able to change them in the future.
+The `Job` class is an R6 class, hence the use of the `$new()` constructor method. `my_job` now contains all the information necessary to submit a job with 8Gb and a simple "Hello world" bash command.
+Before we explore the submission process let's dive into the options available for you when creating a new Job, since you won't be able to change them in the future.
 
 #### Commands to execute
 
-The main prupose of creating and submitting a job is to execute one or more commands in a cluster. When creating a job the only required argument is `commandVector`, which is the first positional argument too. This has to be a character vector with one or more bash commands to be executed in the cluster, for example this job will create a "Hello World" file and then a copy of it:
+The main prupose of creating and submitting a job is to execute one or more commands in a cluster. When creating a job the only required argument is `commandVector`, which is the first positional argument too. This has to be a character vector with one or more bash commands to be executed in the cluster, for example this job will create a "Hello World" file and then will copy it:
 
 
 ```{r eval=FALSE}
@@ -45,9 +42,13 @@ my_job <- Job$new(commandVector = bash_cmd)
 
 Alternatively you can provide a single string with commands separated by ";" following the bash syntax.
 
+Currently the commands can only be bash commands and assumes that `/bin/bash` is available.
+
 #### Job name
 
-You can specify a job name through the argument `jobName` of the `$new()` constructor method. This is useful as rSubmitter will use it as a prefix for output files, see [below](#stderr-stdout-and-slurm-batch-script) for more details
+You can specify a job name through the argument `jobName` of the `$new()` constructor method. This is useful as rSubmitter will use it as a prefix for output files, see [below](#stderr-stdout-and-slurm-batch-script) for more details.
+
+The default job name is randomly generated with the form `rSubmitter_job_[random_alphanumeric]`
 
 #### Requesting computing capabilities
 
@@ -60,4 +61,31 @@ The computing capabilities required for your job have to be requested at the tim
 * totalProc : integer - Number of tasks requested for job. Equivalent to --ntasks of SLURM sbatch
 * nodes : integer - Number of nodes requested for job. Equivalent to --nodes of SLURM sbatch
   
-#### STDERR, STDOUT and SLURM batch script
+#### STDERR, STDOUT and SLURM batch files
+
+The the standard error, output files, and sbatch script are streamed into files in the current working directory with the file name of the form `jobName.[err|out|sbatch]`; where jobName can be specified when creating the `Job` object ([see above](#job-name))
+
+You can change the folder where these files will be generated through the `outDir` argument of `$new()` constructor method.
+
+#### Full exmaple
+
+This example demonstrates the use of all avaialbe options when creating a new `Job`
+
+```{r eval=FALSE}
+library("rSubmitter")
+bash_cmd <- c("echo Hello World", "echo Goodbye")
+my_job <- Job$new(commandVector = bash_cmd,
+                  jobName = "dummy_job",
+                  outDir = "~",
+                  partition = "normal", time = "2:00:00", mem = "8G", 
+                  proc = 1, totalProc = 1, nodes = 1)
+```
+
+Eventually the following files will be created (after job submission)
+
+```
+~/dummy_job.out
+~/dummy_job.err
+~/dummy_job.sbatch
+```
+
