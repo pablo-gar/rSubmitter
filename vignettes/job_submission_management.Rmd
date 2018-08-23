@@ -32,7 +32,7 @@ my_job <- Job$new(bash_cmd, mem = "8G")
 
 The `Job` class is an R6 class, hence the use the `$new()` constructor method. `my_job` now contains all the information necessary to submit a job with 8Gb of memory requested and a simple "Hello world" bash command. Before we explore the submission process let's dive into the options available for you when creating a new Job, since you won't be able to change them in the future.
 
-### Commands to execute
+#### Commands to execute
 
 The main prupose of creating and submitting a job is to execute one or more commands in a cluster. When creating a job the only required argument is `commandVector`, which is the first positional argument too. This has to be a character vector with one or more bash commands to be executed in the cluster, for example this job will create a "Hello World" file and then a copy of it:
 
@@ -45,11 +45,11 @@ my_job <- Job$new(commandVector = bash_cmd)
 
 Alternatively you can provide a single string with commands separated by ";" following the bash syntax.
 
-### Job name
+#### Job name
 
-You can specify a job name through the argument `jobName` of the `$new()` constructor method. This is useful as rSubmitter will use it as a prefix for output files, see below for more details
+You can specify a job name through the argument `jobName` of the `$new()` constructor method. This is useful as rSubmitter will use it as a prefix for output files, see [below](#stderr-stdout-and-slurm-batch-script) for more details
 
-### Requesting computing capabilities
+#### Requesting computing capabilities
 
 The computing capabilities required for your job have to be requested at the time of creation. These are passed as arguments to the `$new()` constructor method, currently the following options are available, you can check the [reference](https://pablo-gar.github.io/rSubmitter/reference/Job.html#method-description) to see the most updated list of options.
 

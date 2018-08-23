@@ -112,23 +112,23 @@
 <a class="sourceLine" id="cb2-2" data-line-number="2">bash_cmd &lt;-<span class="st"> "echo Hello World"</span></a>
 <a class="sourceLine" id="cb2-3" data-line-number="3">my_job &lt;-<span class="st"> </span>Job<span class="op">$</span><span class="kw">new</span>(bash_cmd, <span class="dt">mem =</span> <span class="st">"8G"</span>)</a></code></pre></div>
 <p>The <code>Job</code> class is an R6 class, hence the use the <code>$new()</code> constructor method. <code>my_job</code> now contains all the information necessary to submit a job with 8Gb of memory requested and a simple “Hello world” bash command. Before we explore the submission process let’s dive into the options available for you when creating a new Job, since you won’t be able to change them in the future.</p>
-<div id="commands-to-execute" class="section level3">
-<h3 class="hasAnchor">
-<a href="#commands-to-execute" class="anchor"></a>Commands to execute</h3>
+<div id="commands-to-execute" class="section level4">
+<h4 class="hasAnchor">
+<a href="#commands-to-execute" class="anchor"></a>Commands to execute</h4>
 <p>The main prupose of creating and submitting a job is to execute one or more commands in a cluster. When creating a job the only required argument is <code>commandVector</code>, which is the first positional argument too. This has to be a character vector with one or more bash commands to be executed in the cluster, for example this job will create a “Hello World” file and then a copy of it:</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)</a>
 <a class="sourceLine" id="cb3-2" data-line-number="2">bash_cmd &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">"echo Hello World &gt; temp_file.txt"</span>, <span class="st">"cp temp_file.txt temp_file_copy.txt"</span>)</a>
 <a class="sourceLine" id="cb3-3" data-line-number="3">my_job &lt;-<span class="st"> </span>Job<span class="op">$</span><span class="kw">new</span>(<span class="dt">commandVector =</span> bash_cmd)</a></code></pre></div>
 <p>Alternatively you can provide a single string with commands separated by “;” following the bash syntax.</p>
 </div>
-<div id="job-name" class="section level3">
-<h3 class="hasAnchor">
-<a href="#job-name" class="anchor"></a>Job name</h3>
-<p>You can specify a job name through the argument <code>jobName</code> of the <code>$new()</code> constructor method. This is useful as rSubmitter will use it as a prefix for output files, see below for more details</p>
+<div id="job-name" class="section level4">
+<h4 class="hasAnchor">
+<a href="#job-name" class="anchor"></a>Job name</h4>
+<p>You can specify a job name through the argument <code>jobName</code> of the <code>$new()</code> constructor method. This is useful as rSubmitter will use it as a prefix for output files, see <a href="#stderr-stdout-and-slurm-batch-script">below</a> for more details</p>
 </div>
-<div id="requesting-computing-capabilities" class="section level3">
-<h3 class="hasAnchor">
-<a href="#requesting-computing-capabilities" class="anchor"></a>Requesting computing capabilities</h3>
+<div id="requesting-computing-capabilities" class="section level4">
+<h4 class="hasAnchor">
+<a href="#requesting-computing-capabilities" class="anchor"></a>Requesting computing capabilities</h4>
 <p>The computing capabilities required for your job have to be requested at the time of creation. These are passed as arguments to the <code>$new()</code> constructor method, currently the following options are available, you can check the <a href="https://pablo-gar.github.io/rSubmitter/reference/Job.html#method-description">reference</a> to see the most updated list of options.</p>
 <ul>
 <li>partition : character - Partition to use. Equivalent to –partition of SLURM sbatch</li>
@@ -138,10 +138,10 @@
 <li>totalProc : integer - Number of tasks requested for job. Equivalent to –ntasks of SLURM sbatch</li>
 <li>nodes : integer - Number of nodes requested for job. Equivalent to –nodes of SLURM sbatch</li>
 </ul>
+</div>
 <div id="stderr-stdout-and-slurm-batch-script" class="section level4">
 <h4 class="hasAnchor">
 <a href="#stderr-stdout-and-slurm-batch-script" class="anchor"></a>STDERR, STDOUT and SLURM batch script</h4>
-</div>
 </div>
 </div>
   </div>
