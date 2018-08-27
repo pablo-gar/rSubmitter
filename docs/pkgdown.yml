@@ -3,6 +3,7 @@ pkgdown: 1.0.0
 pkgdown_sha: ~
 articles:
   config_file_instructions: config_file_instructions.html
+  job_arrays: job_arrays.html
   job_submission_management: job_submission_management.html
   quick_start: quick_start.html
   scratch: scratch.html

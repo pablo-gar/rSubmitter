@@ -1,8 +1,8 @@
 ---
-title: "Job submission and management"
+title: "Job arrays"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Job submission and management}
+  %\VignetteIndexEntry{Job arrays}
   %\VignetteEngine{knitr::rmarkdown}
   \usepackage[utf8]{inputenc}
 ---
