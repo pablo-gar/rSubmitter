@@ -26,7 +26,10 @@ bash_cmd <- "echo Hello World"
 my_job <- Job$new(bash_cmd, mem = "8G")
 ```
 
-The `Job` class is an R6 class, hence the use of the `$new()` constructor method. `my_job` now contains all the information necessary to submit a job with 8Gb and a simple "Hello world" bash command.
+The `Job` class is an R6 class, hence the use of the `Job$new()` constructor method to create a new object. `my_job` now contains all the information necessary to submit a job with 8Gb and a simple "Hello world" bash command.
+
+Being an R6 class object, `my_job` contains several methods to manipulate or execute actions related to this specific instance. These methods are called using the `$` operator, for example `my_job$submit()` submits the job associated to this object.
+
 Before we explore the submission process let's dive into the options available for you when creating a new Job, since you won't be able to change them in the future.
 
 #### Commands to execute
@@ -65,7 +68,7 @@ The computing capabilities required for your job have to be requested at the tim
 
 The the standard error, output files, and sbatch script are streamed into files in the current working directory with the file name of the form `jobName.[err|out|sbatch]`; where jobName can be specified when creating the `Job` object ([see above](#job-name))
 
-You can change the folder where these files will be generated through the `outDir` argument of `$new()` constructor method.
+You can change the folder where these files will be generated through the `outDir` argument of the `$new()` constructor method.
 
 #### Full exmaple
 
@@ -88,4 +91,65 @@ Eventually the following files will be created (after job submission)
 ~/dummy_job.err
 ~/dummy_job.sbatch
 ```
+
+## Submitting a Job
+
+Once you created a `Job` object you can submit it to SLURM using its method `$submit()`. This will create a sbatch script and submit it to the queue.
+
+```{r eval=FALSE}
+library("rSubmitter")
+bash_cmd <- "echo Hello World"
+my_job <- Job$new(bash_cmd, mem = "2G", time = "2:00")
+
+my_job$submit()
+```
+
+## Monitoring a Job
+
+After submission there are two main ways to monitor the status of a job. You can manually inspect the state of a job by using the method `$getState()` which will return a data.frame with three columns: the SLURM job id, the job name and its current state.
+
+```{r eval = FALSE}
+my_job$submit()
+last_state <- my_job$getState()
+
+last_state
+#     jobId                     jobName   jobState
+#1 24339250   rSubmitter_job_1324462985    PENDING
+```
+
+The second way and more recommended way to monitor a job is to use the `$wait()` method. This will put R in idle until the job is finished or failed, printing the status of the job every N seconds (N can be set in the [config file]("https://pablo-gar.github.io/rSubmitter/articles/config_file_instructions.html")). For convience if the job fails `$wait()` will throw an error.
+
+```{r eval = FALSE}
+my_job$submit()
+my_job$wait()
+
+# 2018-08-27 15:17:25 --- Cluster Status |  PENDING = 1 |
+# 2018-08-27 15:20:53 --- Cluster Status |  COMPLETED = 1 |
+```
+
+## Cancelling a job
+
+You can cancel any submitted jobs using their `$cancel()` method. This will send a kill signal to a submitted job associated to this object. After the signal has beent sent SLURM can take some time before completing the request.
+
+```{r eval = FALSE}
+my_job$submit()
+my_job$cancel()
+
+# 2018-08-27 15:18:10 Cancelling 1 job(s)
+# 2018-08-27 15:18:10 Finished sending cancel signal
+```
+
+## Cleaning job-associated files
+
+After finishing a job you may want to remove all the files created by rSubmitter that are associated to the job. The three files that are generated are STDOUT, STDERR and the sbatch script. You can deletem one or more of these using the `$clean()` method and specifying which ones you'd like to remove. By default all three are removed.
+
+
+```{r eval = FALSE}
+my_job$submit()
+my_job$cancel()
+my_job$clean(script = TRUE, out = TRUE, err = TRUE)
+```
+
+`$clean()` will throw an error if the job is submitted and it has not completed.
+
 

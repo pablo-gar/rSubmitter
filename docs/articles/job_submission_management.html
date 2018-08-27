@@ -109,7 +109,9 @@
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)</a>
 <a class="sourceLine" id="cb1-2" data-line-number="2">bash_cmd &lt;-<span class="st"> "echo Hello World"</span></a>
 <a class="sourceLine" id="cb1-3" data-line-number="3">my_job &lt;-<span class="st"> </span>Job<span class="op">$</span><span class="kw">new</span>(bash_cmd, <span class="dt">mem =</span> <span class="st">"8G"</span>)</a></code></pre></div>
-<p>The <code>Job</code> class is an R6 class, hence the use of the <code>$new()</code> constructor method. <code>my_job</code> now contains all the information necessary to submit a job with 8Gb and a simple “Hello world” bash command. Before we explore the submission process let’s dive into the options available for you when creating a new Job, since you won’t be able to change them in the future.</p>
+<p>The <code>Job</code> class is an R6 class, hence the use of the <code>Job$new()</code> constructor method to create a new object. <code>my_job</code> now contains all the information necessary to submit a job with 8Gb and a simple “Hello world” bash command.</p>
+<p>Being an R6 class object, <code>my_job</code> contains several methods to manipulate or execute actions related to this specific instance. These methods are called using the <code>$</code> operator, for example <code>my_job$submit()</code> submits the job associated to this object.</p>
+<p>Before we explore the submission process let’s dive into the options available for you when creating a new Job, since you won’t be able to change them in the future.</p>
 <div id="commands-to-execute" class="section level4">
 <h4 class="hasAnchor">
 <a href="#commands-to-execute" class="anchor"></a>Commands to execute</h4>
@@ -143,7 +145,7 @@
 <h4 class="hasAnchor">
 <a href="#stderr-stdout-and-slurm-batch-files" class="anchor"></a>STDERR, STDOUT and SLURM batch files</h4>
 <p>The the standard error, output files, and sbatch script are streamed into files in the current working directory with the file name of the form <code>jobName.[err|out|sbatch]</code>; where jobName can be specified when creating the <code>Job</code> object (<a href="#job-name">see above</a>)</p>
-<p>You can change the folder where these files will be generated through the <code>outDir</code> argument of <code>$new()</code> constructor method.</p>
+<p>You can change the folder where these files will be generated through the <code>outDir</code> argument of the <code>$new()</code> constructor method.</p>
 </div>
 <div id="full-exmaple" class="section level4">
 <h4 class="hasAnchor">
@@ -162,6 +164,52 @@
 ~/dummy_job.sbatch</code></pre>
 </div>
 </div>
+<div id="submitting-a-job" class="section level2">
+<h2 class="hasAnchor">
+<a href="#submitting-a-job" class="anchor"></a>Submitting a Job</h2>
+<p>Once you created a <code>Job</code> object you can submit it to SLURM using its method <code>$submit()</code>. This will create a sbatch script and submit it to the queue.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">bash_cmd &lt;-<span class="st"> "echo Hello World"</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">my_job &lt;-<span class="st"> </span>Job<span class="op">$</span><span class="kw">new</span>(bash_cmd, <span class="dt">mem =</span> <span class="st">"2G"</span>, <span class="dt">time =</span> <span class="st">"2:00"</span>)</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">my_job<span class="op">$</span><span class="kw">submit</span>()</a></code></pre></div>
+</div>
+<div id="monitoring-a-job" class="section level2">
+<h2 class="hasAnchor">
+<a href="#monitoring-a-job" class="anchor"></a>Monitoring a Job</h2>
+<p>After submission there are two main ways to monitor the status of a job. You can manually inspect the state of a job by using the method <code>$getState()</code> which will return a data.frame with three columns: the SLURM job id, the job name and its current state.</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">my_job<span class="op">$</span><span class="kw">submit</span>()</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">last_state &lt;-<span class="st"> </span>my_job<span class="op">$</span><span class="kw">getState</span>()</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">last_state</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#     jobId                     jobName   jobState</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#1 24339250   rSubmitter_job_1324462985    PENDING</span></a></code></pre></div>
+<p>The second way and more recommended way to monitor a job is to use the <code>$wait()</code> method. This will put R in idle until the job is finished or failed, printing the status of the job every N seconds (N can be set in the <a href="%22https://pablo-gar.github.io/rSubmitter/articles/config_file_instructions.html%22">config file</a>). For convience if the job fails <code>$wait()</code> will throw an error.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">my_job<span class="op">$</span><span class="kw">submit</span>()</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">my_job<span class="op">$</span><span class="kw">wait</span>()</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co"># 2018-08-27 15:17:25 --- Cluster Status |  PENDING = 1 |</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co"># 2018-08-27 15:20:53 --- Cluster Status |  COMPLETED = 1 |</span></a></code></pre></div>
+</div>
+<div id="cancelling-a-job" class="section level2">
+<h2 class="hasAnchor">
+<a href="#cancelling-a-job" class="anchor"></a>Cancelling a job</h2>
+<p>You can cancel any submitted jobs using their <code>$cancel()</code> method. This will send a kill signal to a submitted job associated to this object. After the signal has beent sent SLURM can take some time before completing the request.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">my_job<span class="op">$</span><span class="kw">submit</span>()</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">my_job<span class="op">$</span><span class="kw">cancel</span>()</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co"># 2018-08-27 15:18:10 Cancelling 1 job(s)</span></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co"># 2018-08-27 15:18:10 Finished sending cancel signal</span></a></code></pre></div>
+</div>
+<div id="cleaning-job-associated-files" class="section level2">
+<h2 class="hasAnchor">
+<a href="#cleaning-job-associated-files" class="anchor"></a>Cleaning job-associated files</h2>
+<p>After finishing a job you may want to remove all the files created by rSubmitter that are associated to the job. The three files that are generated are STDOUT, STDERR and the sbatch script. You can deletem one or more of these using the <code>$clean()</code> method and specifying which ones you’d like to remove. By default all three are removed.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">my_job<span class="op">$</span><span class="kw">submit</span>()</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">my_job<span class="op">$</span><span class="kw">cancel</span>()</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">my_job<span class="op">$</span><span class="kw">clean</span>(<span class="dt">script =</span> <span class="ot">TRUE</span>, <span class="dt">out =</span> <span class="ot">TRUE</span>, <span class="dt">err =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<p><code>$clean()</code> will throw an error if the job is submitted and it has not completed.</p>
+</div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
@@ -171,6 +219,10 @@
       <ul class="nav nav-pills nav-stacked">
 <li><a href="#intro">Intro</a></li>
       <li><a href="#creating-a-job">Creating a Job</a></li>
+      <li><a href="#submitting-a-job">Submitting a Job</a></li>
+      <li><a href="#monitoring-a-job">Monitoring a Job</a></li>
+      <li><a href="#cancelling-a-job">Cancelling a job</a></li>
+      <li><a href="#cleaning-job-associated-files">Cleaning job-associated files</a></li>
       </ul>
 </div>
       </div>
