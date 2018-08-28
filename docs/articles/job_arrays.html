@@ -120,7 +120,21 @@
 <div id="job-array-specifications" class="section level4">
 <h4 class="hasAnchor">
 <a href="#job-array-specifications" class="anchor"></a>Job array specifications</h4>
-<p>All of the job array specifications are declared exactly the same as in a <code>Job</code> by passing them as arguments to <code>JobArray$new()</code>. These include: * Job name (jobName) * Computing capabilitites * partition : character - Partition to use. Equivalent to –partition of SLURM sbatch * time : character - Time requested for job execution, one accepted format is “HH:MM:SS”. Equivalent to –time of SLURM sbatch * mem : character - Memory requested for job execution, one accepted format is “xG” or “xMB”. Equivalent to –mem of SLURM sbatch * proc : integer - Number of processors requested per task. Equivalent to –cpus-per-task of SLURM sbatch * totalProc : integer - Number of tasks requested for job. Equivalent to –ntasks of SLURM sbatch * nodes : integer - Number of nodes requested for job. Equivalent to –nodes of SLURM sbatch * Working folder (outDir) to create STDERR, STDOUT and sbacth script files</p>
+<p>All of the job array specifications are declared exactly the same as in a <code>Job</code> by passing them as arguments to <code>JobArray$new()</code>. These include:</p>
+<ul>
+<li>Job name (jobName)</li>
+<li>Computing capabilitites
+<ul>
+<li>partition : character - Partition to use. Equivalent to –partition of SLURM sbatch</li>
+<li>time : character - Time requested for job execution, one accepted format is “HH:MM:SS”. Equivalent to –time of SLURM sbatch</li>
+<li>mem : character - Memory requested for job execution, one accepted format is “xG” or “xMB”. Equivalent to –mem of SLURM sbatch</li>
+<li>proc : integer - Number of processors requested per task. Equivalent to –cpus-per-task of SLURM sbatch</li>
+<li>totalProc : integer - Number of tasks requested for job. Equivalent to –ntasks of SLURM sbatch</li>
+<li>nodes : integer - Number of nodes requested for job. Equivalent to –nodes of SLURM sbatch</li>
+</ul>
+</li>
+<li>Working folder (outDir) to create STDERR, STDOUT and sbacth script files</li>
+</ul>
 </div>
 <div id="stderr-stdout-and-slurm-batch-files" class="section level4">
 <h4 class="hasAnchor">

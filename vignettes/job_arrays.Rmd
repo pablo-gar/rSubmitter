@@ -37,6 +37,7 @@ After submission of this job array (using its `$submit()` method), three indepen
 #### Job array specifications
 
 All of the job array specifications are declared exactly the same as in a `Job` by passing them as arguments to `JobArray$new()`. These include:
+
 * Job name (jobName)
 * Computing capabilitites
     * partition : character - Partition to use. Equivalent to --partition of SLURM sbatch
