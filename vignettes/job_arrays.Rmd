@@ -9,145 +9,111 @@ vignette: >
 
 ## Intro
 
-The [`Job`](https://pablo-gar.github.io/rSubmitter/reference/Job.html) class in rSubmitter allows for submission and management of cluster jobs in a SLURM cluster from R. It does so in a semi-interactive fashion providing fleixibility to work in a SLURM cluster either from an interactive R session or from an automated R script.
+SLURM job arrays are an efficient way to submit multiple jobs that share the same requriments. They reduce the load on the scheduler by allowing one single submission for multiple jobs.
 
-This tutorial describes in full detail the capabilities of the `Job` class
+The [`JobArray`](https://pablo-gar.github.io/rSubmitter/reference/JobArray.html) class in rSubmitter implements SLURM job arrays in similar way to individual jobs from the [`Job`](https://pablo-gar.github.io/rSubmitter/reference/Job) class. So all the functionalities of the `Job` class are available for the `JobArray` class as well.
+
+This tutorial describes the few particularities of the `JobArray` class over the `Job` class. It's highly recommended to first go over the `Job` [tutorial]("https://pablo-gar.github.io/rSubmitter/articles/job_submission_management.html") before continuing.
 
 
-## Creating a job
+## Creating a job array
 
-The first step to submit a job is to create an object of the `Job` class with some relevant information regarding the commands to execute and the SLURM parameters associated to the job.
+Similar to `Job`, a `JobArray` object is created using the the `JobArray$new()` constructor method. However compared to `Job$new()`, the first and only required argument is `commandList`: a list of command vectors where each vector corresponds to the commands of inidvidual jobs in the array.
 
-For example, if you want to submit a job with 8Gb of memory requested, you create a Job object like this:
-
-```{r eval=FALSE}
-library("rSubmitter")
-bash_cmd <- "echo Hello World"
-my_job <- Job$new(bash_cmd, mem = "8G")
-```
-
-The `Job` class is an R6 class, hence the use of the `Job$new()` constructor method to create a new object. `my_job` now contains all the information necessary to submit a job with 8Gb and a simple "Hello world" bash command.
-
-Being an R6 class object, `my_job` contains several methods to manipulate or execute actions related to this specific instance. These methods are called using the `$` operator, for example `my_job$submit()` submits the job associated to this object.
-
-Before we explore the submission process let's dive into the options available for you when creating a new Job, since you won't be able to change them in the future.
-
-#### Commands to execute
-
-The main prupose of creating and submitting a job is to execute one or more commands in a cluster. When creating a job the only required argument is `commandVector`, which is the first positional argument too. This has to be a character vector with one or more bash commands to be executed in the cluster, for example this job will create a "Hello World" file and then will copy it:
+For example if you want to create a job array with 3 independent jobs, it would look like this:
 
 
 ```{r eval=FALSE}
 library("rSubmitter")
-bash_cmd <- c("echo Hello World > temp_file.txt", "cp temp_file.txt temp_file_copy.txt")
-my_job <- Job$new(commandVector = bash_cmd)
+bash_list_cmd <- list(c("echo Hello World", "sleep 30"), # First job
+                      c("date", "sleep 20"), # Second job
+                      c("ls ~", "du ~", "sleep 40") # Third job
+                     )
+my_job_array <- JobArray$new(bash_list_cmd)
 ```
 
-Alternatively you can provide a single string with commands separated by ";" following the bash syntax.
+After submission of this job array (using its `$submit()` method), three independent and parallel jobs will be executed. The first one prints _Hello World_ to its STDOUT and idles for 30 seconds, the scondone prints the current date and time to a different STDOUT and idles for 20 min, and the last prints the contents and usage of your home folder in yet a different STDOUT.
 
-Currently the commands can only be bash commands and assumes that `/bin/bash` is available.
+#### Job array specifications
 
-#### Job name
+All of the job array specifications are declared exactly the same as in a `Job` by passing them as arguments to `JobArray$new()`. These include:
+* Job name (jobName)
+* Computing capabilitites
+    * partition : character - Partition to use. Equivalent to --partition of SLURM sbatch
+    * time : character - Time requested for job execution, one accepted format is "HH:MM:SS". Equivalent to --time of SLURM sbatch
+    * mem : character - Memory requested for job execution, one accepted format is "xG" or "xMB". Equivalent to --mem of SLURM sbatch
+    * proc : integer - Number of processors requested per task. Equivalent to --cpus-per-task of SLURM sbatch
+    * totalProc : integer - Number of tasks requested for job. Equivalent to --ntasks of SLURM sbatch
+    * nodes : integer - Number of nodes requested for job. Equivalent to --nodes of SLURM sbatch
+* Working folder (outDir) to create STDERR, STDOUT and sbacth script files
 
-You can specify a job name through the argument `jobName` of the `$new()` constructor method. This is useful as rSubmitter will use it as a prefix for output files, see [below](#stderr-stdout-and-slurm-batch-script) for more details.
-
-The default job name is randomly generated with the form `rSubmitter_job_[random_alphanumeric]`
-
-#### Requesting computing capabilities
-
-The computing capabilities required for your job have to be requested at the time of creation. These are passed as arguments to the `$new()` constructor method, currently the following options are available, you can check the [reference](https://pablo-gar.github.io/rSubmitter/reference/Job.html#method-description) to see the most updated list of options.
-
-* partition : character - Partition to use. Equivalent to --partition of SLURM sbatch
-* time : character - Time requested for job execution, one accepted format is "HH:MM:SS". Equivalent to --time of SLURM sbatch
-* mem : character - Memory requested for job execution, one accepted format is "xG" or "xMB". Equivalent to --mem of SLURM sbatch
-* proc : integer - Number of processors requested per task. Equivalent to --cpus-per-task of SLURM sbatch
-* totalProc : integer - Number of tasks requested for job. Equivalent to --ntasks of SLURM sbatch
-* nodes : integer - Number of nodes requested for job. Equivalent to --nodes of SLURM sbatch
-  
 #### STDERR, STDOUT and SLURM batch files
 
-The the standard error, output files, and sbatch script are streamed into files in the current working directory with the file name of the form `jobName.[err|out|sbatch]`; where jobName can be specified when creating the `Job` object ([see above](#job-name))
+The the standard error, output files, and sbatch script are streamed into files in the specified _outDir_ folder. Only one sbatch script will be created but each individual job in the array will have its own associated STDOUT and STDERR files. These files will have the form of `jobName\_[n].[err|out]` where n is the number of the corresponding job in the array.
 
 You can change the folder where these files will be generated through the `outDir` argument of the `$new()` constructor method.
 
-#### Full exmaple
 
-This example demonstrates the use of all avaialbe options when creating a new `Job`
-
-```{r eval=FALSE}
-library("rSubmitter")
-bash_cmd <- c("echo Hello World", "echo Goodbye")
-my_job <- Job$new(commandVector = bash_cmd,
-                  jobName = "dummy_job",
-                  outDir = "~",
-                  partition = "normal", time = "2:00:00", mem = "8G", 
-                  proc = 1, totalProc = 1, nodes = 1)
-```
-
-Eventually the following files will be created (after job submission)
-
-```
-~/dummy_job.out
-~/dummy_job.err
-~/dummy_job.sbatch
-```
-
-## Submitting a job
+## Submitting a job array
 
 Once you created a `Job` object you can submit it to SLURM using its method `$submit()`. This will create a sbatch script and submit it to the queue.
 
 ```{r eval=FALSE}
-library("rSubmitter")
-bash_cmd <- "echo Hello World"
-my_job <- Job$new(bash_cmd, mem = "2G", time = "2:00")
-
-my_job$submit()
+my_job_array$submit()
 ```
 
-## Monitoring a job
+## Monitoring a job array
 
-After submission there are two main ways to monitor the status of a job. You can manually inspect the state of a job by using the method `$getState()` which will return a data.frame with three columns: the SLURM job id, the job name and its current state.
+For a `JobArray` this achieved mainly identically as a `Job` 
 
+The fist way is manually check the status of the jobs in the arrays by requesting a data.frame with states
 ```{r eval = FALSE}
-my_job$submit()
-last_state <- my_job$getState()
+my_job_array$submit()
+last_state <- my_job_array$getState()
 
 last_state
-#     jobId                     jobName   jobState
-#1 24339250   rSubmitter_job_1324462985    PENDING
+#        jobId                   jobName jobState
+# 1 24347700_3 rSubmitter_job_7305737665  RUNNING
+# 2 24347700_1 rSubmitter_job_7305737665  RUNNING
+# 3 24347700_2 rSubmitter_job_7305737665  RUNNING
 ```
 
-The second and more recommended way to monitor a job is to use the `$wait()` method. This will put R in idle until the job is finished or failed, printing the status of the job every N seconds (N can be set in the [config file]("https://pablo-gar.github.io/rSubmitter/articles/config_file_instructions.html")). For convience if the job fails `$wait()` will throw an error.
+The `$wait()` method is also available for job arrays. One key difference is that if the `stopIfFailed` argument is set to `TRUE`, `$wait()` will throw and error and cancel all jobs in the array if one or more failed; if it is set to `FALSE` only a warning will be thrown and it will continue to wait for the rest of jobs to be completed. Moreover if one or more jobs failed it will print out the path to the STDERR and STDOUT of the individual job(s) that failed.
 
 ```{r eval = FALSE}
-my_job$submit()
-my_job$wait()
+my_job_array$submit()
+my_job_array$wait(stopIfFailed = FALSE)
 
-# 2018-08-27 15:17:25 --- Cluster Status |  PENDING = 1 |
-# 2018-08-27 15:20:53 --- Cluster Status |  COMPLETED = 1 |
+#  2018-08-27 16:55:37 --- Cluster Status |  PENDING = 3 |
+#  2018-08-27 16:55:47 --- Cluster Status |  RUNNING = 3 |
+#  2018-08-27 16:57:20 --- Cluster Status |  COMPLETED = 2 |  TIMEOUT = 1 |
+# Warning message:
+# In my_job_array$submit()$wait() : 
+# One or more jobs failed. Failed jobs SLURM files:
+# /home/users/paedugar/rSubmitter_job_7305737665_24347830_3.[err|out]
+
 ```
 
-## Cancelling a job
+## Cancelling a job array
 
-You can cancel any submitted jobs using their `$cancel()` method. This will send a kill signal to a submitted job associated to this object. After the signal has been sent SLURM can take some time before completing the request.
+Exactly the same as in `Job`
 
 ```{r eval = FALSE}
-my_job$submit()
-my_job$cancel()
+my_job_array$submit()
+my_job_array$cancel()
 
-# 2018-08-27 15:18:10 Cancelling 1 job(s)
-# 2018-08-27 15:18:10 Finished sending cancel signal
+# 2018-08-27 17:03:58 Cancelling 3 job(s)
+# 2018-08-27 17:03:58 Finished sending cancel signal
 ```
 
 ## Cleaning job-associated files
 
-After a job is completed you may want to remove all the files created by rSubmitter that are associated to the job. The three files that are generated are STDOUT, STDERR and the sbatch script. You can delete one or more of these using the `$clean()` method and specifying which ones you'd like to remove. By default all three are removed.
-
+Exactly the same as in `Job`
 
 ```{r eval = FALSE}
-my_job$submit()
-my_job$cancel()
-my_job$clean(script = TRUE, out = TRUE, err = TRUE)
+my_job_array$submit()
+my_job_array$cancel()
+my_job_array$clean(script = TRUE, out = TRUE, err = TRUE)
 ```
 
 `$clean()` will throw an error if the job is submitted and it has not completed.
