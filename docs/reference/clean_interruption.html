@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Prints message with current time and date — printTime • rSubmitter</title>
+<title>Helper of superApply — clean_interruption • rSubmitter</title>
 
 <!-- jquery -->
 <script src="https://code.jquery.com/jquery-3.1.0.min.js" integrity="sha384-nrOSfDHtoPMzJHjVTdCopGqIqeYETSXhZDFyniQ8ZHcVy08QesyHcnOUpMpqnmWq" crossorigin="anonymous"></script>
@@ -28,10 +28,9 @@
 
 
 
-<meta property="og:title" content="Prints message with current time and date — printTime" />
+<meta property="og:title" content="Helper of superApply — clean_interruption" />
 
-<meta property="og:description" content="Prints to console the current date and time followed by
-the message(s) in x" />
+<meta property="og:description" content="Executes cleaning code after user sends cleaning signal (ctrl+c, ESC)" />
 <meta name="twitter:card" content="summary" />
 
 
@@ -119,44 +118,25 @@ the message(s) in x" />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Prints message with current time and date</h1>
-    <small class="dont-index">Source: <a href='https://github.com/pablo-gar/rSubmitter//blob/master/R/utils.R'><code>R/utils.R</code></a></small>
-    <div class="hidden name"><code>printTime.Rd</code></div>
+    <h1>Helper of superApply</h1>
+    <small class="dont-index">Source: <a href='https://github.com/pablo-gar/rSubmitter//blob/master/R/superApply.R'><code>R/superApply.R</code></a></small>
+    <div class="hidden name"><code>clean_interruption.Rd</code></div>
     </div>
 
     <div class="ref-description">
     
-    <p>Prints to console the current date and time followed by
-the message(s) in x</p>
+    <p>Executes cleaning code after user sends cleaning signal (ctrl+c, ESC)</p>
     
     </div>
 
-    <pre class="usage"><span class='fu'>printTime</span>(<span class='no'>...</span>, <span class='kw'>carriageReturn</span> <span class='kw'>=</span> <span class='no'>F</span>)</pre>
-    
-    <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
-    <table class="ref-arguments">
-    <colgroup><col class="name" /><col class="desc" /></colgroup>
-    <tr>
-      <th>carriageReturn</th>
-      <td><p>Logical, if TRUE print a carriage return at the end of line</p></td>
-    </tr>
-    <tr>
-      <th>x</th>
-      <td><p>String</p></td>
-    </tr>
-    </table>
-    
+    <pre class="usage"><span class='fu'>clean_interruption</span>(<span class='no'>jobArray</span>, <span class='no'>workingDir</span>, <span class='no'>idPrefix</span>)</pre>
+        
 
-    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
-    <pre class="examples"><div class='input'><span class='fu'>printTime</span>(<span class='st'>": is right now"</span>)</div><div class='output co'>#&gt;  2018-12-20 13:57:17 : is right now</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="sidebar">
     <h2>Contents</h2>
     <ul class="nav nav-pills nav-stacked">
-      <li><a href="#arguments">Arguments</a></li>
-            
-      <li><a href="#examples">Examples</a></li>
-    </ul>
+                </ul>
 
   </div>
 </div>

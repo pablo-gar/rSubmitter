@@ -120,7 +120,15 @@ superApply <- function(x, FUN, ..., tasks = 1, workingDir = getwd(), packages = 
     # Submmiting and waitng for jobs
     printTime("Submmiting parallel Jobs\n")
     jobArray$submit()
-    jobArray$wait(stopIfFailed = T)
+    submission <- tryCatch({
+                     jobArray$wait(stopIfFailed = T)
+                 }, interrupt = function(i) {
+                     clean_interruption(jobArray, workingDir, idPrefix)
+                     return (NULL)
+                 })
+    
+    if(is.null(submission))
+        return(invisible(NULL))
     
     # Merging output jobs
     printTime("Merging parellel results\n")
@@ -135,7 +143,7 @@ superApply <- function(x, FUN, ..., tasks = 1, workingDir = getwd(), packages = 
     # Removing jobs files if desired
     if(clean) {
         printTime("Cleaning partitioned data\n")
-        system(paste0("rm ", file.path(workingDir, paste0(idPrefix, "*"))), ignore.stdout = T, ignore.stderr = T, wait = F)
+        file.remove(list.files(workingDir, full.names = T, pattern = paste0(idPrefix, "*")))
         printTime("Cleaning done\n")
     }
     
@@ -353,5 +361,24 @@ createStringFunction <- function(fun, inside = NULL) {
     
     return(paste0(fun, inside))
 }
+#' Helper of superApply
+#'
+#' Executes cleaning code after user sends cleaning signal (ctrl+c, ESC)
 
-
+clean_interruption <- function(jobArray, workingDir, idPrefix) {
+    
+        cat("\n")
+        printTime("Sent kill signal, preparing to clean up\n")
+        printTime("Cancelling jobs\n")
+        jobArray$cancel()
+        printTime("Waiting for jobs to be cancelled to proceed with file removal\n")
+        jobArray$wait(stopIfFailed = F, verbose = F)
+        printTime("Cleaning job Array files\n")
+        jobArray$clean()
+        printTime("Cleaning partitioned data\n")
+        file.remove(list.files(workingDir, full.names = T, pattern = paste0(idPrefix, "*")))
+        printTime("Cleaning done\n")
+        
+        return(invisible(NULL))
+        
+}
