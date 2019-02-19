@@ -20,7 +20,7 @@ install_github("pablo-gar/rSubmitter")
 - Documention of the main `rSubmitter` functions [online](https://pablo-gar.github.io/rSubmitter/reference/index.html#section-main-functions):
    - [Job](https://pablo-gar.github.io/rSubmitter/reference/Job.html)
    - [JobArray](https://pablo-gar.github.io/rSubmitter/reference/JobArray.html)
-   - [superApply](https://pablo-gar.github.io/rSubmitter/reference/SuperApply.html)
+   - [superApply](https://pablo-gar.github.io/rSubmitter/reference/superApply.html)
 
 - Documention of the main `rSubmitter` functions from R:
 ```r
