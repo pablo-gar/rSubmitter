@@ -110,12 +110,12 @@
 <a href="#creating-a-job-array" class="anchor"></a>Creating a job array</h2>
 <p>Similar to <code>Job</code>, a <code>JobArray</code> object is created using the the <code>JobArray$new()</code> constructor method. However compared to <code>Job$new()</code>, the first and only required argument is <code>commandList</code>: a list of command vectors where each vector corresponds to the commands of inidvidual jobs in the array.</p>
 <p>For example if you want to create a job array with 3 independent jobs, it would look like this:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)
-bash_list_cmd &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">"echo Hello World"</span>, <span class="st">"sleep 30"</span>), <span class="co"># First job</span>
-                      <span class="kw">c</span>(<span class="st">"date"</span>, <span class="st">"sleep 20"</span>), <span class="co"># Second job</span>
-                      <span class="kw">c</span>(<span class="st">"ls ~"</span>, <span class="st">"du ~"</span>, <span class="st">"sleep 40"</span>) <span class="co"># Third job</span>
-                     )
-my_job_array &lt;-<span class="st"> </span>JobArray<span class="op">$</span><span class="kw">new</span>(bash_list_cmd)</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">bash_list_cmd &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">c</span>(<span class="st">"echo Hello World"</span>, <span class="st">"sleep 30"</span>), <span class="co"># First job</span></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">                      <span class="kw">c</span>(<span class="st">"date"</span>, <span class="st">"sleep 20"</span>), <span class="co"># Second job</span></a>
+<a class="sourceLine" id="cb1-4" data-line-number="4">                      <span class="kw">c</span>(<span class="st">"ls ~"</span>, <span class="st">"du ~"</span>, <span class="st">"sleep 40"</span>) <span class="co"># Third job</span></a>
+<a class="sourceLine" id="cb1-5" data-line-number="5">                     )</a>
+<a class="sourceLine" id="cb1-6" data-line-number="6">my_job_array &lt;-<span class="st"> </span>JobArray<span class="op">$</span><span class="kw">new</span>(bash_list_cmd)</a></code></pre></div>
 <p>After submission of this job array (using its <code>$submit()</code> method), three independent and parallel jobs will be executed. The first one prints <em>Hello World</em> to its STDOUT and idles for 30 seconds, the scondone prints the current date and time to a different STDOUT and idles for 20 min, and the last prints the contents and usage of your home folder in yet a different STDOUT.</p>
 <div id="job-array-specifications" class="section level4">
 <h4 class="hasAnchor">
@@ -147,50 +147,50 @@ my_job_array &lt;-<span class="st"> </span>JobArray<span class="op">$</span><spa
 <h2 class="hasAnchor">
 <a href="#submitting-a-job-array" class="anchor"></a>Submitting a job array</h2>
 <p>Once you created a <code>Job</code> object you can submit it to SLURM using its method <code>$submit()</code>. This will create a sbatch script and submit it to the queue.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_job_array<span class="op">$</span><span class="kw">submit</span>()</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1">my_job_array<span class="op">$</span><span class="kw">submit</span>()</a></code></pre></div>
 </div>
 <div id="monitoring-a-job-array" class="section level2">
 <h2 class="hasAnchor">
 <a href="#monitoring-a-job-array" class="anchor"></a>Monitoring a job array</h2>
 <p>For a <code>JobArray</code> this achieved mainly identically as a <code>Job</code></p>
 <p>The fist way is manually check the status of the jobs in the arrays by requesting a data.frame with states</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_job_array<span class="op">$</span><span class="kw">submit</span>()
-last_state &lt;-<span class="st"> </span>my_job_array<span class="op">$</span><span class="kw">getState</span>()
-
-last_state
-<span class="co">#        jobId                   jobName jobState</span>
-<span class="co"># 1 24347700_3 rSubmitter_job_7305737665  RUNNING</span>
-<span class="co"># 2 24347700_1 rSubmitter_job_7305737665  RUNNING</span>
-<span class="co"># 3 24347700_2 rSubmitter_job_7305737665  RUNNING</span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">my_job_array<span class="op">$</span><span class="kw">submit</span>()</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">last_state &lt;-<span class="st"> </span>my_job_array<span class="op">$</span><span class="kw">getState</span>()</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">last_state</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5"><span class="co">#        jobId                   jobName jobState</span></a>
+<a class="sourceLine" id="cb3-6" data-line-number="6"><span class="co"># 1 24347700_3 rSubmitter_job_7305737665  RUNNING</span></a>
+<a class="sourceLine" id="cb3-7" data-line-number="7"><span class="co"># 2 24347700_1 rSubmitter_job_7305737665  RUNNING</span></a>
+<a class="sourceLine" id="cb3-8" data-line-number="8"><span class="co"># 3 24347700_2 rSubmitter_job_7305737665  RUNNING</span></a></code></pre></div>
 <p>The <code>$wait()</code> method is also available for job arrays. One key difference is that if the <code>stopIfFailed</code> argument is set to <code>TRUE</code>, <code>$wait()</code> will throw and error and cancel all jobs in the array if one or more failed; if it is set to <code>FALSE</code> only a warning will be thrown and it will continue to wait for the rest of jobs to be completed. Moreover if one or more jobs failed it will print out the path to the STDERR and STDOUT of the individual job(s) that failed.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_job_array<span class="op">$</span><span class="kw">submit</span>()
-my_job_array<span class="op">$</span><span class="kw">wait</span>(<span class="dt">stopIfFailed =</span> <span class="ot">FALSE</span>)
-
-<span class="co">#  2018-08-27 16:55:37 --- Cluster Status |  PENDING = 3 |</span>
-<span class="co">#  2018-08-27 16:55:47 --- Cluster Status |  RUNNING = 3 |</span>
-<span class="co">#  2018-08-27 16:57:20 --- Cluster Status |  COMPLETED = 2 |  TIMEOUT = 1 |</span>
-<span class="co"># Warning message:</span>
-<span class="co"># In my_job_array$submit()$wait() : </span>
-<span class="co"># One or more jobs failed. Failed jobs SLURM files:</span>
-<span class="co"># /home/users/paedugar/rSubmitter_job_7305737665_24347830_3.[err|out]</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1">my_job_array<span class="op">$</span><span class="kw">submit</span>()</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">my_job_array<span class="op">$</span><span class="kw">wait</span>(<span class="dt">stopIfFailed =</span> <span class="ot">FALSE</span>)</a>
+<a class="sourceLine" id="cb4-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb4-4" data-line-number="4"><span class="co">#  2018-08-27 16:55:37 --- Cluster Status |  PENDING = 3 |</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5"><span class="co">#  2018-08-27 16:55:47 --- Cluster Status |  RUNNING = 3 |</span></a>
+<a class="sourceLine" id="cb4-6" data-line-number="6"><span class="co">#  2018-08-27 16:57:20 --- Cluster Status |  COMPLETED = 2 |  TIMEOUT = 1 |</span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7"><span class="co"># Warning message:</span></a>
+<a class="sourceLine" id="cb4-8" data-line-number="8"><span class="co"># In my_job_array$submit()$wait() : </span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9"><span class="co"># One or more jobs failed. Failed jobs SLURM files:</span></a>
+<a class="sourceLine" id="cb4-10" data-line-number="10"><span class="co"># /home/users/paedugar/rSubmitter_job_7305737665_24347830_3.[err|out]</span></a></code></pre></div>
 </div>
 <div id="cancelling-a-job-array" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cancelling-a-job-array" class="anchor"></a>Cancelling a job array</h2>
 <p>Exactly the same as in <code>Job</code></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_job_array<span class="op">$</span><span class="kw">submit</span>()
-my_job_array<span class="op">$</span><span class="kw">cancel</span>()
-
-<span class="co"># 2018-08-27 17:03:58 Cancelling 3 job(s)</span>
-<span class="co"># 2018-08-27 17:03:58 Finished sending cancel signal</span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">my_job_array<span class="op">$</span><span class="kw">submit</span>()</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">my_job_array<span class="op">$</span><span class="kw">cancel</span>()</a>
+<a class="sourceLine" id="cb5-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"><span class="co"># 2018-08-27 17:03:58 Cancelling 3 job(s)</span></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5"><span class="co"># 2018-08-27 17:03:58 Finished sending cancel signal</span></a></code></pre></div>
 </div>
 <div id="cleaning-job-associated-files" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cleaning-job-associated-files" class="anchor"></a>Cleaning job-associated files</h2>
 <p>Exactly the same as in <code>Job</code></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_job_array<span class="op">$</span><span class="kw">submit</span>()
-my_job_array<span class="op">$</span><span class="kw">cancel</span>()
-my_job_array<span class="op">$</span><span class="kw">clean</span>(<span class="dt">script =</span> <span class="ot">TRUE</span>, <span class="dt">out =</span> <span class="ot">TRUE</span>, <span class="dt">err =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">my_job_array<span class="op">$</span><span class="kw">submit</span>()</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">my_job_array<span class="op">$</span><span class="kw">cancel</span>()</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3">my_job_array<span class="op">$</span><span class="kw">clean</span>(<span class="dt">script =</span> <span class="ot">TRUE</span>, <span class="dt">out =</span> <span class="ot">TRUE</span>, <span class="dt">err =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <p><code>$clean()</code> will throw an error if the job is submitted and it has not completed.</p>
 </div>
   </div>

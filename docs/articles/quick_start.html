@@ -113,49 +113,49 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p>Currently rSubmitter can only be installed via the R devtools package:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">"devtools"</span>)
-<span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"pablo-gar/rSubmitter"</span>)</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(<span class="st">"devtools"</span>)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2"><span class="kw"><a href="http://www.rdocumentation.org/packages/devtools/topics/install_github">install_github</a></span>(<span class="st">"pablo-gar/rSubmitter"</span>)</a></code></pre></div>
 </div>
 <div id="single-job-sumbssion" class="section level2">
 <h2 class="hasAnchor">
 <a href="#single-job-sumbssion" class="anchor"></a>Single job sumbssion</h2>
 <p>The creation, management and submission of individual jobs is achieved by the use of the <code>Job</code> class. The first step is to create an object of the <code>Job</code> class by using the <code>Job$new()</code> constructor method. The only required argument is a character vector, where each element is an independet shell command. Then you can submit the job to the SLURM cluster using the <code>$submit()</code> method of a <code>Job</code> object. And you can use the <code>$wait()</code> method to wait until a job is completed or failed.</p>
 <p>On its simplest form the submission of a job looks like this</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)
-myJob &lt;-<span class="st"> </span>Job<span class="op">$</span><span class="kw">new</span>(<span class="dt">commandVector =</span> <span class="kw">c</span>(<span class="st">"echo hola world!"</span>, <span class="st">"sleep 30"</span>))
-myJob<span class="op">$</span><span class="kw">submit</span>()
-myJob<span class="op">$</span><span class="kw">wait</span>()
-<span class="co">#  2018-04-23 18:22:35 --- Cluster Status |  PENDING = 1 |</span>
-<span class="co">#  2018-04-23 18:22:40 --- Cluster Status |  RUNNING = 1 |</span>
-<span class="co">#  2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">myJob &lt;-<span class="st"> </span>Job<span class="op">$</span><span class="kw">new</span>(<span class="dt">commandVector =</span> <span class="kw">c</span>(<span class="st">"echo hola world!"</span>, <span class="st">"sleep 30"</span>))</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">myJob<span class="op">$</span><span class="kw">submit</span>()</a>
+<a class="sourceLine" id="cb2-4" data-line-number="4">myJob<span class="op">$</span><span class="kw">wait</span>()</a>
+<a class="sourceLine" id="cb2-5" data-line-number="5"><span class="co">#  2018-04-23 18:22:35 --- Cluster Status |  PENDING = 1 |</span></a>
+<a class="sourceLine" id="cb2-6" data-line-number="6"><span class="co">#  2018-04-23 18:22:40 --- Cluster Status |  RUNNING = 1 |</span></a>
+<a class="sourceLine" id="cb2-7" data-line-number="7"><span class="co">#  2018-04-23 18:23:30 --- Cluster Status |  COMPLETED = 1 |</span></a></code></pre></div>
 <p>The STDERR and STDOUT are streamed to files of the form <code>rSubmitter_job_[randomNumber].[err|out]</code> in the current working directory. Refer to the advanced section if you wish to select the destination and names of these files, as well as to set the system requirements of memory, time, cpus, nodes, etc.</p>
 <p>You can also access the full documentation of the Job class from R:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><a href="../reference/Job.html">?Job</a></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1">?Job</a></code></pre></div>
 </div>
 <div id="efficient-multiple-job-sumbssion" class="section level2">
 <h2 class="hasAnchor">
 <a href="#efficient-multiple-job-sumbssion" class="anchor"></a>Efficient multiple job sumbssion</h2>
 <p>To submit many jobs at once in an efficient way you can use the <code>JobArray</code> class that implments the SLURM arrays. Similar to the <code>Job</code> class, you first create a JobArray object with the <code>JobArray$new()</code> constructor method. The difference is that you have to pass a list of character vectors, where each element of the list is a vector of commands which wil be submmitted as independent jobs. All jobs in the array will have the same system requirements of memory, cpus, etc. Identically to the <code>Job</code> class, you can submit the array using the <code>$submit()</code> method, and you can use the <code>$wait()</code> method to wait until all jobs are completed or one or more fail.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)
-commands &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">c</span>( <span class="co"># First Job</span>
-                    <span class="st">"echo hola"</span>,
-                    <span class="st">"sleep 20"</span>
-                   ),
-                 <span class="kw">c</span>( <span class="co"># Second Job</span>
-                   <span class="st">"echo adios"</span>,
-                   <span class="st">"sleep 60"</span>
-                 )
-               )
-    
-jobArray &lt;-<span class="st"> </span>JobArray<span class="op">$</span><span class="kw">new</span>(<span class="dt">commandList =</span> commands)
-jobArray<span class="op">$</span><span class="kw">submit</span>()
-jobArray<span class="op">$</span><span class="kw">wait</span>()
-<span class="co">#   2018-04-25 17:49:30 --- Cluster Status |  PENDING = 2 |</span>
-<span class="co">#   2018-04-25 17:49:45 --- Cluster Status |  RUNNING = 2 |</span>
-<span class="co">#   2018-04-25 17:50:50 --- Cluster Status |  COMPLETED = 2 |</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" data-line-number="1"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)</a>
+<a class="sourceLine" id="cb4-2" data-line-number="2">commands &lt;-<span class="st"> </span><span class="kw">list</span>(<span class="kw">c</span>( <span class="co"># First Job</span></a>
+<a class="sourceLine" id="cb4-3" data-line-number="3">                    <span class="st">"echo hola"</span>,</a>
+<a class="sourceLine" id="cb4-4" data-line-number="4">                    <span class="st">"sleep 20"</span></a>
+<a class="sourceLine" id="cb4-5" data-line-number="5">                   ),</a>
+<a class="sourceLine" id="cb4-6" data-line-number="6">                 <span class="kw">c</span>( <span class="co"># Second Job</span></a>
+<a class="sourceLine" id="cb4-7" data-line-number="7">                   <span class="st">"echo adios"</span>,</a>
+<a class="sourceLine" id="cb4-8" data-line-number="8">                   <span class="st">"sleep 60"</span></a>
+<a class="sourceLine" id="cb4-9" data-line-number="9">                 )</a>
+<a class="sourceLine" id="cb4-10" data-line-number="10">               )</a>
+<a class="sourceLine" id="cb4-11" data-line-number="11">    </a>
+<a class="sourceLine" id="cb4-12" data-line-number="12">jobArray &lt;-<span class="st"> </span>JobArray<span class="op">$</span><span class="kw">new</span>(<span class="dt">commandList =</span> commands)</a>
+<a class="sourceLine" id="cb4-13" data-line-number="13">jobArray<span class="op">$</span><span class="kw">submit</span>()</a>
+<a class="sourceLine" id="cb4-14" data-line-number="14">jobArray<span class="op">$</span><span class="kw">wait</span>()</a>
+<a class="sourceLine" id="cb4-15" data-line-number="15"><span class="co">#   2018-04-25 17:49:30 --- Cluster Status |  PENDING = 2 |</span></a>
+<a class="sourceLine" id="cb4-16" data-line-number="16"><span class="co">#   2018-04-25 17:49:45 --- Cluster Status |  RUNNING = 2 |</span></a>
+<a class="sourceLine" id="cb4-17" data-line-number="17"><span class="co">#   2018-04-25 17:50:50 --- Cluster Status |  COMPLETED = 2 |</span></a></code></pre></div>
 <p>The STDERR and STDOUT are streamed to files of the form <code>rSubmitter_job_[randomNumber]_[jobNumber].[err|out]</code> in the current working directory. Refer to the advanced section if you wish to select the destination and names of these files, as well as to set the system requirements of memory, time, cpus, nodes, etc.</p>
 <p>You can also access the full documentation of the JobArray class from R:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><a href="../reference/JobArray.html">?JobArray</a></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1">?JobArray</a></code></pre></div>
 </div>
 <div id="lapply-parallelization-loop-parallelization" class="section level2">
 <h2 class="hasAnchor">
@@ -165,40 +165,40 @@ jobArray<span class="op">$</span><span class="kw">wait</span>()
 <a href="#r-loops-lapply" class="anchor"></a>R loops (lapply)</h3>
 <p>lapply is an R-base function that applies a function <code>FUN</code> to each element of a list or vector (similar to <code>map()</code> in python). It’s one of the R ways of performing loops.</p>
 <p>For example this:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, as.character)</code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="kw">lapply</span>(<span class="dv">1</span><span class="op">:</span><span class="dv">4</span>, as.character)</a></code></pre></div>
 <p>Is equivalent to:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw">list</span>()
-<span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>)
-    x[[i]] &lt;-<span class="st"> </span><span class="kw">as.character</span>(i)</code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="kw">list</span>()</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2"><span class="cf">for</span>(i <span class="cf">in</span> <span class="dv">1</span><span class="op">:</span><span class="dv">4</span>)</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3">    x[[i]] &lt;-<span class="st"> </span><span class="kw">as.character</span>(i)</a></code></pre></div>
 </div>
 <div id="parallelizing-loops-with-rsubmitter" class="section level3">
 <h3 class="hasAnchor">
 <a href="#parallelizing-loops-with-rsubmitter" class="anchor"></a>Parallelizing loops with rSubmitter</h3>
 <p>rSubmitter comes with an implementation of lapply, <code>superApply</code>, that enables parallelization of lapply function calls using a SLURM cluster. Under the hood, it implements the JobArray class (described above) along with some complicated file management to partition one lapply call into many indepent ones that are parallely executed, then when they are all done the results of indivudal calls are gathered and returned to the user.</p>
 <p>The number of parallel tasks is defined in the <code>tasks</code> argument of <code>superApply</code>, <strong>on its simplest form a parallel lapply call looks like this:</strong></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">myFun &lt;-<span class="st"> </span><span class="cf">function</span>(x) {
-    <span class="kw">return</span>(<span class="kw">rep</span>(x, <span class="dv">3</span>)) 
-}
-
-<span class="kw">library</span>(<span class="st">"rSubmitter"</span>)
-x &lt;-<span class="st"> </span><span class="kw"><a href="../reference/superApply.html">superApply</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">100</span>, myFun, <span class="dt">tasks =</span> <span class="dv">4</span>)
-<span class="co">#   2018-05-04 15:29:34 Partitioning function calls </span>
-<span class="co">#   2018-05-04 15:29:35 Submmiting parallel Jobs</span>
-<span class="co">#   2018-05-04 15:29:40 --- Cluster Status |  PENDING = 4 |</span>
-<span class="co">#   2018-05-04 15:29:45 --- Cluster Status |  COMPLETED = 4 |</span>
-<span class="co">#   2018-05-04 15:29:45 Merging parellel results</span>
-<span class="co">#   2018-05-04 15:29:45 Merge done</span>
-<span class="co">#   2018-05-04 15:29:46 Cleaning partitioned data</span>
-<span class="co">#   2018-05-04 15:29:47 Cleaning done</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">myFun &lt;-<span class="st"> </span><span class="cf">function</span>(x) {</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">    <span class="kw">return</span>(<span class="kw">rep</span>(x, <span class="dv">3</span>)) </a>
+<a class="sourceLine" id="cb8-3" data-line-number="3">}</a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)</a>
+<a class="sourceLine" id="cb8-6" data-line-number="6">x &lt;-<span class="st"> </span><span class="kw"><a href="../reference/superApply.html">superApply</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">100</span>, myFun, <span class="dt">tasks =</span> <span class="dv">4</span>)</a>
+<a class="sourceLine" id="cb8-7" data-line-number="7"><span class="co">#   2018-05-04 15:29:34 Partitioning function calls </span></a>
+<a class="sourceLine" id="cb8-8" data-line-number="8"><span class="co">#   2018-05-04 15:29:35 Submmiting parallel Jobs</span></a>
+<a class="sourceLine" id="cb8-9" data-line-number="9"><span class="co">#   2018-05-04 15:29:40 --- Cluster Status |  PENDING = 4 |</span></a>
+<a class="sourceLine" id="cb8-10" data-line-number="10"><span class="co">#   2018-05-04 15:29:45 --- Cluster Status |  COMPLETED = 4 |</span></a>
+<a class="sourceLine" id="cb8-11" data-line-number="11"><span class="co">#   2018-05-04 15:29:45 Merging parellel results</span></a>
+<a class="sourceLine" id="cb8-12" data-line-number="12"><span class="co">#   2018-05-04 15:29:45 Merge done</span></a>
+<a class="sourceLine" id="cb8-13" data-line-number="13"><span class="co">#   2018-05-04 15:29:46 Cleaning partitioned data</span></a>
+<a class="sourceLine" id="cb8-14" data-line-number="14"><span class="co">#   2018-05-04 15:29:47 Cleaning done</span></a></code></pre></div>
 <p>This will partition the lapply call into 4 different ones, each having an equally distributed elements of <code>1:100</code>, these partitions will be submitted as independents jobs, the results will be compiled and returned without the need of doing anything else.</p>
 <p>It is important to note that not all systems come with an out-of-the-box R executable, and since superApply performs independent R calls in the SLURM cluster then you have to make sure that these R calls can be executed. If you have to execute any commands from your shell enviroment to be able to open the R interpreter, then you have to include those commands in the <code>extraBashLines</code> argument of <code>superApply</code></p>
 <p>For example, if in order to execute R in your system you usally do:</p>
-<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash">$ <span class="ex">module</span> load R
-$ <span class="ex">R</span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode bash"><code class="sourceCode bash"><a class="sourceLine" id="cb9-1" data-line-number="1">$ <span class="ex">module</span> load R</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">$ <span class="ex">R</span></a></code></pre></div>
 <p>Then you have to execute superApply like this:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">x &lt;-<span class="st"> </span><span class="kw"><a href="../reference/superApply.html">superApply</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">100</span>, myFun, <span class="dt">tasks =</span> <span class="dv">4</span>, <span class="dt">extraBashLines =</span> <span class="st">"module load R"</span>)</code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb10-1" data-line-number="1">x &lt;-<span class="st"> </span><span class="kw"><a href="../reference/superApply.html">superApply</a></span>(<span class="dv">1</span><span class="op">:</span><span class="dv">100</span>, myFun, <span class="dt">tasks =</span> <span class="dv">4</span>, <span class="dt">extraBashLines =</span> <span class="st">"module load R"</span>)</a></code></pre></div>
 <p>You can see the full documentation of superApply from R:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><a href="../reference/superApply.html">?superApply</a></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb11-1" data-line-number="1">?superApply</a></code></pre></div>
 </div>
 </div>
   </div>

@@ -109,9 +109,9 @@
 <a href="#creating-a-job" class="anchor"></a>Creating a job</h2>
 <p>The first step to submit a job is to create an object of the <code>Job</code> class with some relevant information regarding the commands to execute and the SLURM parameters associated to the job.</p>
 <p>For example, if you want to submit a job with 8Gb of memory requested, you create a Job object like this:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)
-bash_cmd &lt;-<span class="st"> "echo Hello World"</span>
-my_job &lt;-<span class="st"> </span>Job<span class="op">$</span><span class="kw">new</span>(bash_cmd, <span class="dt">mem =</span> <span class="st">"8G"</span>)</code></pre></div>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" data-line-number="1"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)</a>
+<a class="sourceLine" id="cb1-2" data-line-number="2">bash_cmd &lt;-<span class="st"> "echo Hello World"</span></a>
+<a class="sourceLine" id="cb1-3" data-line-number="3">my_job &lt;-<span class="st"> </span>Job<span class="op">$</span><span class="kw">new</span>(bash_cmd, <span class="dt">mem =</span> <span class="st">"8G"</span>)</a></code></pre></div>
 <p>The <code>Job</code> class is an R6 class, hence the use of the <code>Job$new()</code> constructor method to create a new object. <code>my_job</code> now contains all the information necessary to submit a job with 8Gb and a simple “Hello world” bash command.</p>
 <p>Being an R6 class object, <code>my_job</code> contains several methods to manipulate or execute actions related to this specific instance. These methods are called using the <code>$</code> operator, for example <code>my_job$submit()</code> submits the job associated to this object.</p>
 <p>Before we explore the submission process let’s dive into the options available for you when creating a new Job, since you won’t be able to change them in the future.</p>
@@ -119,9 +119,9 @@ my_job &lt;-<span class="st"> </span>Job<span class="op">$</span><span class="kw
 <h4 class="hasAnchor">
 <a href="#commands-to-execute" class="anchor"></a>Commands to execute</h4>
 <p>The main prupose of creating and submitting a job is to execute one or more commands in a cluster. When creating a job the only required argument is <code>commandVector</code>, which is the first positional argument too. This has to be a character vector with one or more bash commands to be executed in the cluster, for example this job will create a “Hello World” file and then will copy it:</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)
-bash_cmd &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">"echo Hello World &gt; temp_file.txt"</span>, <span class="st">"cp temp_file.txt temp_file_copy.txt"</span>)
-my_job &lt;-<span class="st"> </span>Job<span class="op">$</span><span class="kw">new</span>(<span class="dt">commandVector =</span> bash_cmd)</code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" data-line-number="1"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)</a>
+<a class="sourceLine" id="cb2-2" data-line-number="2">bash_cmd &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">"echo Hello World &gt; temp_file.txt"</span>, <span class="st">"cp temp_file.txt temp_file_copy.txt"</span>)</a>
+<a class="sourceLine" id="cb2-3" data-line-number="3">my_job &lt;-<span class="st"> </span>Job<span class="op">$</span><span class="kw">new</span>(<span class="dt">commandVector =</span> bash_cmd)</a></code></pre></div>
 <p>Alternatively you can provide a single string with commands separated by “;” following the bash syntax.</p>
 <p>Currently the commands can only be bash commands and assumes that <code>/bin/bash</code> is available.</p>
 </div>
@@ -154,13 +154,13 @@ my_job &lt;-<span class="st"> </span>Job<span class="op">$</span><span class="kw
 <h4 class="hasAnchor">
 <a href="#full-exmaple" class="anchor"></a>Full exmaple</h4>
 <p>This example demonstrates the use of all avaialbe options when creating a new <code>Job</code></p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)
-bash_cmd &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">"echo Hello World"</span>, <span class="st">"echo Goodbye"</span>)
-my_job &lt;-<span class="st"> </span>Job<span class="op">$</span><span class="kw">new</span>(<span class="dt">commandVector =</span> bash_cmd,
-                  <span class="dt">jobName =</span> <span class="st">"dummy_job"</span>,
-                  <span class="dt">outDir =</span> <span class="st">"~"</span>,
-                  <span class="dt">partition =</span> <span class="st">"normal"</span>, <span class="dt">time =</span> <span class="st">"2:00:00"</span>, <span class="dt">mem =</span> <span class="st">"8G"</span>, 
-                  <span class="dt">proc =</span> <span class="dv">1</span>, <span class="dt">totalProc =</span> <span class="dv">1</span>, <span class="dt">nodes =</span> <span class="dv">1</span>)</code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" data-line-number="1"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)</a>
+<a class="sourceLine" id="cb3-2" data-line-number="2">bash_cmd &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="st">"echo Hello World"</span>, <span class="st">"echo Goodbye"</span>)</a>
+<a class="sourceLine" id="cb3-3" data-line-number="3">my_job &lt;-<span class="st"> </span>Job<span class="op">$</span><span class="kw">new</span>(<span class="dt">commandVector =</span> bash_cmd,</a>
+<a class="sourceLine" id="cb3-4" data-line-number="4">                  <span class="dt">jobName =</span> <span class="st">"dummy_job"</span>,</a>
+<a class="sourceLine" id="cb3-5" data-line-number="5">                  <span class="dt">outDir =</span> <span class="st">"~"</span>,</a>
+<a class="sourceLine" id="cb3-6" data-line-number="6">                  <span class="dt">partition =</span> <span class="st">"normal"</span>, <span class="dt">time =</span> <span class="st">"2:00:00"</span>, <span class="dt">mem =</span> <span class="st">"8G"</span>, </a>
+<a class="sourceLine" id="cb3-7" data-line-number="7">                  <span class="dt">proc =</span> <span class="dv">1</span>, <span class="dt">totalProc =</span> <span class="dv">1</span>, <span class="dt">nodes =</span> <span class="dv">1</span>)</a></code></pre></div>
 <p>Eventually the following files will be created (after job submission)</p>
 <pre><code>~/dummy_job.out
 ~/dummy_job.err
@@ -171,46 +171,46 @@ my_job &lt;-<span class="st"> </span>Job<span class="op">$</span><span class="kw
 <h2 class="hasAnchor">
 <a href="#submitting-a-job" class="anchor"></a>Submitting a job</h2>
 <p>Once you created a <code>Job</code> object you can submit it to SLURM using its method <code>$submit()</code>. This will create a sbatch script and submit it to the queue.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)
-bash_cmd &lt;-<span class="st"> "echo Hello World"</span>
-my_job &lt;-<span class="st"> </span>Job<span class="op">$</span><span class="kw">new</span>(bash_cmd, <span class="dt">mem =</span> <span class="st">"2G"</span>, <span class="dt">time =</span> <span class="st">"2:00"</span>)
-
-my_job<span class="op">$</span><span class="kw">submit</span>()</code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" data-line-number="1"><span class="kw">library</span>(<span class="st">"rSubmitter"</span>)</a>
+<a class="sourceLine" id="cb5-2" data-line-number="2">bash_cmd &lt;-<span class="st"> "echo Hello World"</span></a>
+<a class="sourceLine" id="cb5-3" data-line-number="3">my_job &lt;-<span class="st"> </span>Job<span class="op">$</span><span class="kw">new</span>(bash_cmd, <span class="dt">mem =</span> <span class="st">"2G"</span>, <span class="dt">time =</span> <span class="st">"2:00"</span>)</a>
+<a class="sourceLine" id="cb5-4" data-line-number="4"></a>
+<a class="sourceLine" id="cb5-5" data-line-number="5">my_job<span class="op">$</span><span class="kw">submit</span>()</a></code></pre></div>
 </div>
 <div id="monitoring-a-job" class="section level2">
 <h2 class="hasAnchor">
 <a href="#monitoring-a-job" class="anchor"></a>Monitoring a job</h2>
 <p>After submission there are two main ways to monitor the status of a job. You can manually inspect the state of a job by using the method <code>$getState()</code> which will return a data.frame with three columns: the SLURM job id, the job name and its current state.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_job<span class="op">$</span><span class="kw">submit</span>()
-last_state &lt;-<span class="st"> </span>my_job<span class="op">$</span><span class="kw">getState</span>()
-
-last_state
-<span class="co">#     jobId                     jobName   jobState</span>
-<span class="co">#1 24339250   rSubmitter_job_1324462985    PENDING</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" data-line-number="1">my_job<span class="op">$</span><span class="kw">submit</span>()</a>
+<a class="sourceLine" id="cb6-2" data-line-number="2">last_state &lt;-<span class="st"> </span>my_job<span class="op">$</span><span class="kw">getState</span>()</a>
+<a class="sourceLine" id="cb6-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb6-4" data-line-number="4">last_state</a>
+<a class="sourceLine" id="cb6-5" data-line-number="5"><span class="co">#     jobId                     jobName   jobState</span></a>
+<a class="sourceLine" id="cb6-6" data-line-number="6"><span class="co">#1 24339250   rSubmitter_job_1324462985    PENDING</span></a></code></pre></div>
 <p>The second and more recommended way to monitor a job is to use the <code>$wait()</code> method. This will put R in idle until the job is finished or failed, printing the status of the job every N seconds (N can be set in the <a href="%22https://pablo-gar.github.io/rSubmitter/articles/config_file_instructions.html%22">config file</a>). For convience if the job fails <code>$wait()</code> will throw an error.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_job<span class="op">$</span><span class="kw">submit</span>()
-my_job<span class="op">$</span><span class="kw">wait</span>()
-
-<span class="co"># 2018-08-27 15:17:25 --- Cluster Status |  PENDING = 1 |</span>
-<span class="co"># 2018-08-27 15:20:53 --- Cluster Status |  COMPLETED = 1 |</span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb7-1" data-line-number="1">my_job<span class="op">$</span><span class="kw">submit</span>()</a>
+<a class="sourceLine" id="cb7-2" data-line-number="2">my_job<span class="op">$</span><span class="kw">wait</span>()</a>
+<a class="sourceLine" id="cb7-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb7-4" data-line-number="4"><span class="co"># 2018-08-27 15:17:25 --- Cluster Status |  PENDING = 1 |</span></a>
+<a class="sourceLine" id="cb7-5" data-line-number="5"><span class="co"># 2018-08-27 15:20:53 --- Cluster Status |  COMPLETED = 1 |</span></a></code></pre></div>
 </div>
 <div id="cancelling-a-job" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cancelling-a-job" class="anchor"></a>Cancelling a job</h2>
 <p>You can cancel any submitted jobs using their <code>$cancel()</code> method. This will send a kill signal to a submitted job associated to this object. After the signal has been sent SLURM can take some time before completing the request.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_job<span class="op">$</span><span class="kw">submit</span>()
-my_job<span class="op">$</span><span class="kw">cancel</span>()
-
-<span class="co"># 2018-08-27 15:18:10 Cancelling 1 job(s)</span>
-<span class="co"># 2018-08-27 15:18:10 Finished sending cancel signal</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb8-1" data-line-number="1">my_job<span class="op">$</span><span class="kw">submit</span>()</a>
+<a class="sourceLine" id="cb8-2" data-line-number="2">my_job<span class="op">$</span><span class="kw">cancel</span>()</a>
+<a class="sourceLine" id="cb8-3" data-line-number="3"></a>
+<a class="sourceLine" id="cb8-4" data-line-number="4"><span class="co"># 2018-08-27 15:18:10 Cancelling 1 job(s)</span></a>
+<a class="sourceLine" id="cb8-5" data-line-number="5"><span class="co"># 2018-08-27 15:18:10 Finished sending cancel signal</span></a></code></pre></div>
 </div>
 <div id="cleaning-job-associated-files" class="section level2">
 <h2 class="hasAnchor">
 <a href="#cleaning-job-associated-files" class="anchor"></a>Cleaning job-associated files</h2>
 <p>After a job is completed you may want to remove all the files created by rSubmitter that are associated to the job. The three files that are generated are STDOUT, STDERR and the sbatch script. You can delete one or more of these using the <code>$clean()</code> method and specifying which ones you’d like to remove. By default all three are removed.</p>
-<div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">my_job<span class="op">$</span><span class="kw">submit</span>()
-my_job<span class="op">$</span><span class="kw">cancel</span>()
-my_job<span class="op">$</span><span class="kw">clean</span>(<span class="dt">script =</span> <span class="ot">TRUE</span>, <span class="dt">out =</span> <span class="ot">TRUE</span>, <span class="dt">err =</span> <span class="ot">TRUE</span>)</code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb9-1" data-line-number="1">my_job<span class="op">$</span><span class="kw">submit</span>()</a>
+<a class="sourceLine" id="cb9-2" data-line-number="2">my_job<span class="op">$</span><span class="kw">cancel</span>()</a>
+<a class="sourceLine" id="cb9-3" data-line-number="3">my_job<span class="op">$</span><span class="kw">clean</span>(<span class="dt">script =</span> <span class="ot">TRUE</span>, <span class="dt">out =</span> <span class="ot">TRUE</span>, <span class="dt">err =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
 <p><code>$clean()</code> will throw an error if the job is submitted and it has not completed.</p>
 </div>
   </div>
