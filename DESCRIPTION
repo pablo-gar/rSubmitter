@@ -4,7 +4,7 @@ Version: 0.1
 Authors@R: person("Pablo E.", "Garcia-Nieto",
                   email = "paedugar@gmail.com",
                   role = c("aut", "cre"))
-Description: rSubmmiter is a package that allows simple communication between R and a SLURM cluster to achieve three main tasks
+Description: rSubmitter is a package that allows simple communication between R and a SLURM cluster to achieve three main tasks
   Easy submission, monitoring and management of individual cluster jobs.
   Easy and fast submission of many jobs, by implementing SLURM arrays.
   Seamlessly lapply (loop) parallelization.
