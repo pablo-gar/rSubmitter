@@ -80,7 +80,7 @@
 superApply <- function(x, FUN, ..., tasks = 1, workingDir = getwd(), packages = NULL, sources = NULL, extraBashLines = NULL, extraScriptLines = "", clean = T, partition = NULL, time = NULL, mem = NULL, proc = NULL, totalProc = NULL, nodes = NULL, email = NULL){
     
     if(!is.list(x) & !is.vector(x))
-        stop("x hast to be a list of a vector")
+        stop("x has to be a list or a vector")
     
     if(!is.numeric(tasks))
         stop("tasks has to be numerical")
