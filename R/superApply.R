@@ -289,7 +289,7 @@ createJobScriptsData <- function(x, FUN, ..., idPrefix, iStart, iEnd, workingDir
         if(!is.null(extraBashLines)) {
             cmds <- c(cmds, list(c(extraBashLines, paste0("Rscript --no-restore --no-environ ", RscriptFile))))
         } else {
-            cmds <- c(cmds, list(c(paste0("Rscript --no-restore e-no-environ ", RscriptFile))))
+            cmds <- c(cmds, list(c(paste0("Rscript --no-restore --no-environ ", RscriptFile))))
         }
             
     }
